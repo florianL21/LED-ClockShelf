@@ -11,9 +11,7 @@ Further animations can be easily added and existing animation can be adjusted to
 
 The whole codebase is highly modular and configurable and can be tweaked exactly to your liking.
 
-The documentation will be improved in the future. It will only conatin some basic information for now.
-
-Futher documentation is on the [Wiki.](https://github.com/florianL21/LED-ClockShelf/wiki)
+Detailed documentation is avaliable on the [Wiki.](https://github.com/florianL21/LED-ClockShelf/wiki)
 
 # Development Environment:
 
@@ -35,6 +33,3 @@ Files that are important for configuration (sorted by importance):
  5. /lib/SevenSegment/SegmentTransitions.cpp -> Configuring the animations between the digits
  6. at the top of /lib/SevenSegment/SevenSegment.h -> Configuraiong the animation speed between digits
  7. /lib/DisplayManager/Animations.cpp -> configuration of anmimations like the loading animation
-
-
-More documentation on the configuration and detailed configuration explenation is coming in the future
