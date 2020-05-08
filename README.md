@@ -13,6 +13,8 @@ The whole codebase is highly modular and configurable and can be tweaked exactly
 
 The documentation will be improved in the future. It will only conatin some basic information for now.
 
+Futher documentation is on the [Wiki.](https://github.com/florianL21/LED-ClockShelf/wiki)
+
 # Development Environment:
 
 I am using VScode with PlatformIO.
