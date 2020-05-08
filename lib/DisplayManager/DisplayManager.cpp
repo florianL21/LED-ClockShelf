@@ -1,6 +1,5 @@
 #include "DisplayManager.h"
 
-
 DisplayManager::DisplayManager()
 {
 	FastLED.addLeds<WS2812B, LED_DATA_PIN, GRB>(leds, NUM_LEDS);  // GRB ordering is typical
@@ -62,7 +61,7 @@ void DisplayManager::InitSegments(uint16_t indexOfFirstLed, uint8_t ledsPerSegme
 		animationManagers[diplayIndex[i]]->add(allSegments[i]);
 		currentLEDIndex += ledsPerSegment;
 	}
-	InitLoadingAnimation(3000);
+	InitLoadingAnimation(NUM_SEGMENTS_PROGRESS);
 }
 
 
@@ -208,7 +207,7 @@ void DisplayManager::turnAllSegmentsOff()
 
 void DisplayManager::showProgress(uint32_t progress, uint32_t total)
 {
-	for (int i = 0; i < (progress / (total / (NUM_LEDS_PER_SEGMENT*16))); i++)
+	for (int i = 0; i < (progress / (total / (NUM_LEDS_PER_SEGMENT * NUM_SEGMENTS_PROGRESS))); i++)
 	{
 		leds[i] = CRGB::Orange;
 	}

@@ -60,6 +60,16 @@
  */
 #define USE_24_HOUR_FORMAT			false
 
+/**
+ * @brief The number of segments to use for displaying a progress bar for the OTA updates
+ */
+#define NUM_SEGMENTS_PROGRESS		16
+
+/**
+ * @brief The time it shall take for one iteration of the loading animation
+ */
+#define NUM_SEGMENTS_PROGRESS		3000
+
 class DisplayManager
 {
 private:
