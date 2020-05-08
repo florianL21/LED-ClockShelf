@@ -288,6 +288,10 @@ void wifiSetup()
 			Serial.println("WIFI connection failed");
 			ShelfDisplays.setAllSegmentColors(CRGB::Red);
 		#endif
+		if(WiFi.status() != WL_CONNECTED)
+		{
+			while(1); //Never return from here since running the main loop without wifi connection will crash the controller
+		}
 	}
 	ShelfDisplays.stopLoadingAnimation();
 }
