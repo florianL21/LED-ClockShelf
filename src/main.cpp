@@ -185,11 +185,17 @@ void loop()
 #if IS_BLYNK_ACTIVE == true
 	BLYNK_CONNECTED()
 	{
+		Blynk.syncVirtual(V0);
 		Blynk.syncVirtual(V1);
 		Blynk.syncVirtual(V2);
 		#if BLYNK_SEPERATE_COLOR_CONTROL == true
 			Blynk.syncVirtual(V3);
 		#endif
+	}
+
+	BLYNK_WRITE(V0) 
+	{
+		ShelfDisplays.setGlobalBrightness(param[0].asInt());
 	}
 
 	BLYNK_WRITE(V1) 

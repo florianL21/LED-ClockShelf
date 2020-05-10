@@ -219,7 +219,7 @@ void DisplayManager::delay(uint32_t timeInMs)
 	animationManager.delay(timeInMs);
 }
 
-void setGlobalBrightness(uint8_t brightness)
+void DisplayManager::setGlobalBrightness(uint8_t brightness)
 {
 	FastLED.setBrightness(brightness);
 }
