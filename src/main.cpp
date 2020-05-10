@@ -118,7 +118,7 @@
 #endif
 
 DisplayManager ShelfDisplays;
-TimeManager timeM(TIMEZONE_OFFSET, DAYLIGHT_SAVING, NTP_SERVER, TIME_UPDATE_INTERVALL);
+TimeManager* timeM = nullptr;
 unsigned long lastMillis = millis();
 
 #if ENABLE_OTA_UPLOAD == true
@@ -129,11 +129,11 @@ void wifiSetup();
 void displayTime()
 {
 	TimeManager::TimeInfo currentTime;
-	currentTime = timeM.getCurrentTime();
+	currentTime = timeM->getCurrentTime();
 	ShelfDisplays.displayTime(currentTime.hours, currentTime.minutes);
 }
 
-void setup() 
+void setup()
 {
 	Serial.begin(115200);
 	
@@ -157,8 +157,9 @@ void setup()
 		Blynk.config(BLYNK_AUTH_TOKEN, BLYNK_SERVER, 80);
 	#endif
 
+	timeM = new TimeManager(TIMEZONE_OFFSET, DAYLIGHT_SAVING, NTP_SERVER, TIME_UPDATE_INTERVALL);
 	displayTime();
-	ShelfDisplays.displayTime(17, 00);
+	// ShelfDisplays.displayTime(17, 00);
 }
 
 void loop()
@@ -168,7 +169,7 @@ void loop()
 		ArduinoOTA.handle();
 	#endif
 
-	timeM.update();
+	timeM->update();
 	if(lastMillis + 1000 <= millis()) // update the time every second
 	{
 		lastMillis = millis();

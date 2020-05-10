@@ -106,7 +106,7 @@ void DisplayManager::displayTime(uint8_t hours, uint8_t minutes)
 {
 	if(hours > 24 || minutes > 59)
 	{
-		Serial.println("[E] Hours cannot be bigger than 24");
+		Serial.printf("[E] Hours cannot be bigger than 24 but the time was: %02d:%02d\n\r", hours, minutes);
 		return;
 	}
 	
@@ -143,7 +143,7 @@ void DisplayManager::displayTime(uint8_t hours, uint8_t minutes)
 		Displays[4]->DisplayNumber(firstMinuteDigit);
 	}
 	Displays[6]->DisplayNumber(minutes - firstMinuteDigit * 10); //get the last digit
-	Serial.printf("%d%d:%d%d\n\r", firstHourDigit, hours - firstHourDigit * 10, firstMinuteDigit, minutes - firstMinuteDigit * 10);
+	// Serial.printf("%d%d:%d%d\n\r", firstHourDigit, hours - firstHourDigit * 10, firstMinuteDigit, minutes - firstMinuteDigit * 10);
 }
 
 void DisplayManager::handle()

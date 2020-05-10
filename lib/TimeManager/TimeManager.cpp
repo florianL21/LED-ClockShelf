@@ -37,6 +37,7 @@ void TimeManager::update()
 			currentTime.hours = 0;
 			currentTime.minutes = 0;
 			currentTime.seconds = 0;
+			return;
 		}
 		currentTime.hours = timeinfo.tm_hour;
 		currentTime.minutes = timeinfo.tm_min;
