@@ -28,14 +28,14 @@ void DisplayManager::setAllSegmentColors(CRGB color)
 
 void DisplayManager::setHourSegmentColors(CRGB color)
 {
-	Displays[0]->updateColor(color);
-	Displays[2]->updateColor(color);
+	Displays[LOWER_DIGIT_HOUR_DISPLAY]->updateColor(color);
+	Displays[HIGHER_DIGIT_HOUR_DISPLAY]->updateColor(color);
 }
 
 void DisplayManager::setMinuteSegmentColors(CRGB color)
 {
-	Displays[4]->updateColor(color);
-	Displays[6]->updateColor(color);
+	Displays[LOWER_DIGIT_MINUTE_DISPLAY]->updateColor(color);
+	Displays[HIGHER_DIGIT_MINUTE_DISPLAY]->updateColor(color);
 }
 
 void DisplayManager::InitSegments(uint16_t indexOfFirstLed, uint8_t ledsPerSegment, CRGB initialColor)
@@ -125,24 +125,24 @@ void DisplayManager::displayTime(uint8_t hours, uint8_t minutes)
 	uint8_t firstHourDigit = hours/10;
 	if(firstHourDigit == 0 && DISPLAY_SWITCH_OFF_AT_0 == true)
 	{
-		Displays[0]->off();
+		Displays[HIGHER_DIGIT_HOUR_DISPLAY]->off();
 	}
 	else
 	{
-		Displays[0]->DisplayNumber(firstHourDigit);
+		Displays[HIGHER_DIGIT_HOUR_DISPLAY]->DisplayNumber(firstHourDigit);
 	}
-	Displays[2]->DisplayNumber(hours - firstHourDigit * 10); //get the last digit
+	Displays[LOWER_DIGIT_HOUR_DISPLAY]->DisplayNumber(hours - firstHourDigit * 10); //get the last digit
 
 	uint8_t firstMinuteDigit = minutes/10;
 	if(firstMinuteDigit == 0 && DISPLAY_SWITCH_OFF_AT_0 == true)
 	{
-		Displays[4]->off();
+		Displays[HIGHER_DIGIT_MINUTE_DISPLAY]->off();
 	}
 	else
 	{
-		Displays[4]->DisplayNumber(firstMinuteDigit);
+		Displays[HIGHER_DIGIT_MINUTE_DISPLAY]->DisplayNumber(firstMinuteDigit);
 	}
-	Displays[6]->DisplayNumber(minutes - firstMinuteDigit * 10); //get the last digit
+	Displays[LOWER_DIGIT_MINUTE_DISPLAY]->DisplayNumber(minutes - firstMinuteDigit * 10); //get the last digit
 	// Serial.printf("%d%d:%d%d\n\r", firstHourDigit, hours - firstHourDigit * 10, firstMinuteDigit, minutes - firstMinuteDigit * 10);
 }
 

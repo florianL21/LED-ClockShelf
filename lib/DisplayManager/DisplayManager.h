@@ -23,17 +23,17 @@
 /**
  * @brief Total number of segments that have LEDs in the shelf
  */
-#define NUM_SEGMENTS 			32
+#define NUM_SEGMENTS 			23
 
 /**
  * @brief Number of LEDs in each segment
  */
-#define NUM_LEDS_PER_SEGMENT	12
+#define NUM_LEDS_PER_SEGMENT	9
 
 /**
  * @brief Number of LEDs For interrior lights
  */
-#define ADDITIONAL_LEDS			12
+#define ADDITIONAL_LEDS			0
 
 /**
  * @brief Automatically calculated total number of LEDs used
@@ -43,7 +43,7 @@
 /**
  * @brief Number of displays in the shelf
  */
-#define NUM_DISPLAYS			7
+#define NUM_DISPLAYS			4
 
 /**
  * @brief If set to true the display will show 0 at midnight and 12 otherwise
@@ -72,6 +72,13 @@
 
 class DisplayManager
 {
+public:
+	/**
+	 * @brief These enum definitions are used in the code do address the different Seven segment displays. 
+	 * 		  The numbers have to match with the place of the display in the array above.
+	 */
+	enum DisplayIDs {LOWER_DIGIT_MINUTE_DISPLAY = 0, HIGHER_DIGIT_MINUTE_DISPLAY = 1, LOWER_DIGIT_HOUR_DISPLAY = 2, HIGHER_DIGIT_HOUR_DISPLAY = 3};
+
 private:
 	//segment configurations
 	static SevenSegment::SegmentPosition SegmentPositions[NUM_SEGMENTS];
