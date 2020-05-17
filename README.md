@@ -13,6 +13,8 @@ The whole codebase is highly modular and configurable and can be tweaked exactly
 
 Detailed documentation is avaliable on the [Wiki.](https://github.com/florianL21/LED-ClockShelf/wiki)
 
+If you are interested in my variation of the design which uses a lot of wood instad of the 3D prints and is a bit bigger than the original you can find it on [thingiverse here](https://www.thingiverse.com/thing:4352352)
+
 # Development Environment:
 
 I am using VScode with PlatformIO.
