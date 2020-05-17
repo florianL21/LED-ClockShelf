@@ -4,6 +4,10 @@ DisplayManager::DisplayManager()
 {
 	FastLED.addLeds<WS2812B, LED_DATA_PIN, GRB>(leds, NUM_LEDS);  // GRB ordering is typical
 
+	#if APPEND_DOWN_LIGHTERS == false
+		FastLED.addLeds<WS2812B, DOWNLIGHT_LED_DATA_PIN, GRB>(DownlightLeds, ADDITIONAL_LEDS);
+	#endif
+
 	for (uint16_t i = 0; i < NUM_LEDS; i++)
 	{
 		leds[i] = CRGB::Black;
@@ -157,9 +161,13 @@ void DisplayManager::handle()
 
 void DisplayManager::setInternalLEDColor(CRGB color)
 {
-	for (uint16_t i = NUM_LEDS - ADDITIONAL_LEDS; i < NUM_LEDS; i++)
+	for (uint16_t i = 0; i < ADDITIONAL_LEDS; i++)
 	{
-		leds[i] = color;
+		#if APPEND_DOWN_LIGHTERS == true
+			leds[NUM_LEDS - ADDITIONAL_LEDS + i] = color;
+		#else
+			DownlightLeds[i] = color;
+		#endif
 	}
 }
 

@@ -8,7 +8,7 @@
  * @brief If you want to run the system in a minimal mode to test some basic functionality or 
  * 		  debug something it could be useful to disable wifi functionality completley.s
  */
-#define RUN_WITHOUT_WIFI 		true
+#define RUN_WITHOUT_WIFI 		false
 
 #if RUN_WITHOUT_WIFI == false
 	/**

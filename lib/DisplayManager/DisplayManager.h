@@ -31,14 +31,28 @@
 #define NUM_LEDS_PER_SEGMENT	9
 
 /**
+ * @brief If you wired the down lighter LEDs to the end of the LED strips set this to true
+ */
+#define APPEND_DOWN_LIGHTERS	false
+
+/**
  * @brief Number of LEDs For interrior lights
  */
-#define ADDITIONAL_LEDS			0
+#define ADDITIONAL_LEDS			12
 
 /**
  * @brief Automatically calculated total number of LEDs used
  */
-#define NUM_LEDS 				(NUM_SEGMENTS * NUM_LEDS_PER_SEGMENT + ADDITIONAL_LEDS)
+#if APPEND_DOWN_LIGHTERS == true
+	#define NUM_LEDS 				(NUM_SEGMENTS * NUM_LEDS_PER_SEGMENT + ADDITIONAL_LEDS)
+#else
+	#define NUM_LEDS 				(NUM_SEGMENTS * NUM_LEDS_PER_SEGMENT)
+
+	/**
+	 * @brief Pin to which the downlight led Strip data pin is connected to
+	 */
+	#define DOWNLIGHT_LED_DATA_PIN			22
+#endif
 
 /**
  * @brief Number of displays in the shelf
@@ -99,8 +113,13 @@ private:
 	Animator::ComplexAmination LoadingAnimation;
 	void InitLoadingAnimation(uint16_t totalAnimationLength);
 
-public:
 	CRGB leds[NUM_LEDS];
+	#if APPEND_DOWN_LIGHTERS == false
+		CRGB DownlightLeds[ADDITIONAL_LEDS];
+	#endif
+
+public:
+	
 
 	DisplayManager();
 	~DisplayManager();

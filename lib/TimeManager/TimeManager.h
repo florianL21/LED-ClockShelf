@@ -7,7 +7,7 @@
 /**
  * @brief enable for wifi less operation or to demo all the animations
  */
-#define TIME_MANAGER_DEMO_MODE	true
+#define TIME_MANAGER_DEMO_MODE	false
 
 class TimeManager
 {
