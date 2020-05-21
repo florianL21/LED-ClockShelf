@@ -3,11 +3,7 @@
 
 #include <Arduino.h>
 #include "time.h"
-
-/**
- * @brief enable for wifi less operation or to demo all the animations
- */
-#define TIME_MANAGER_DEMO_MODE	false
+#include "Configuration.h"
 
 class TimeManager
 {

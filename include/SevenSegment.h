@@ -5,11 +5,7 @@
 #include "Segment.h"
 #include "AnimatableObject.h"
 #include "Animator.h"
-
-/**
- * @brief The time it takes for one digit to morph into another
- */
-#define DIGIT_ANIMATION_SPEED 400
+#include "Configuration.h"
 
 class SevenSegment : AnimatableObject
 {

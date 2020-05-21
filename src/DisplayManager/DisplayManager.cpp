@@ -12,6 +12,14 @@ DisplayManager::DisplayManager()
 	{
 		leds[i] = CRGB::Black;
 	}
+	
+	#if APPEND_DOWN_LIGHTERS == false
+		for (uint16_t i = 0; i < ADDITIONAL_LEDS; i++)
+		{
+			DownlightLeds[i] = CRGB::Black;
+		}
+	#endif
+	
 	for (uint8_t i = 0; i < NUM_DISPLAYS; i++)
 	{
 		animationManagers[i] = new Animator();

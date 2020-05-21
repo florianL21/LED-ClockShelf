@@ -6,8 +6,7 @@
 #define FASTLED_INTERNAL
 #include <FastLED.h>
 #include "AnimatableObject.h"
-
-#define FASTLED_SAFE_DELAY_MS 20
+#include "Configuration.h"
 
 class AnimatableObject;
 
