@@ -24,6 +24,11 @@ DisplayManager::DisplayManager()
 	{
 		animationManagers[i] = new Animator();
 	}
+	#if ENABLE_LIGHT_SENSOR == true
+		lastSensorMeasurement = 0;
+		takeBrightnessMeasurement();
+		setGlobalBrightness(128);
+	#endif
 }
 
 DisplayManager::~DisplayManager()
@@ -37,6 +42,64 @@ void DisplayManager::setAllSegmentColors(CRGB color)
 		allSegments[i]->updateColor(color);
 	}
 }
+
+#if ENABLE_LIGHT_SENSOR == true
+
+int SensorMeasurementsListSortFunction(uint16_t &a, uint16_t &b)
+{
+	return a < b;
+}
+
+void DisplayManager::takeBrightnessMeasurement()
+{
+	if(lastSensorMeasurement + LIGHT_SENSOR_READ_DELAY < millis())
+	{
+		uint8_t lightSensorBrightnessNew = 0;
+		lastSensorMeasurement = millis();
+		lightSensorMeasurements.add(analogRead(LIGHT_SENSOR_PIN));
+		if(lightSensorMeasurements.size() >= LIGHT_SENSOR_AVERAGE)
+		{
+			lightSensorMeasurements.shift();
+		}
+		if(lightSensorMeasurements.size() < LIGHT_SENSOR_MEDIAN_WIDTH)
+		{
+			//Calculate a normal average as long as the median width is not reached yet
+			uint64_t BrightnessListSum = 0;
+			for (uint16_t i = 0; i < lightSensorMeasurements.size(); i++)
+			{
+				BrightnessListSum += lightSensorMeasurements.get(i);
+			}
+			lightSensorBrightnessNew = map(BrightnessListSum / lightSensorMeasurements.size(), 0, 4095, 0, 255);
+		}
+		else
+		{
+			LinkedList<uint16_t> sortedMeasurements;
+			//copy all the values to a new temporary list in order to sort them
+			for (uint16_t i = 0; i < lightSensorMeasurements.size(); i++)
+			{
+				sortedMeasurements.add(lightSensorMeasurements.get(i));
+			}
+			sortedMeasurements.sort(SensorMeasurementsListSortFunction);
+			//calculate the average of the median window
+			uint64_t BrightnessListSum = 0;
+			uint16_t medianOffset = floor((sortedMeasurements.size() - LIGHT_SENSOR_MEDIAN_WIDTH) / 2);
+			for (uint16_t i = 0; i < LIGHT_SENSOR_MEDIAN_WIDTH; i++)
+			{
+				BrightnessListSum += sortedMeasurements.get(i + medianOffset);
+			}
+			lightSensorBrightnessNew = map(BrightnessListSum / LIGHT_SENSOR_MEDIAN_WIDTH, 0, 4095, 0, 255);
+		}
+
+		if(lightSensorBrightnessNew != lightSensorBrightness)
+		{
+			uint16_t compensatedBrightness = (((float)(LIGHT_SENSOR_SENSITIVITY)) * ((float)(lightSensorBrightnessNew))) + BrightnessOffset;
+			lightSensorBrightness = constrain(compensatedBrightness, 0, 255);
+			FastLED.setBrightness(lightSensorBrightness);
+		}
+		// Serial.printf("Sensor brightness: %d\n\r", lightSensorBrightness);
+	}
+}
+#endif
 
 void DisplayManager::setHourSegmentColors(CRGB color)
 {
@@ -165,6 +228,9 @@ void DisplayManager::handle()
 	{
 		animationManagers[i]->handle();
 	}
+	#if ENABLE_LIGHT_SENSOR == true
+		takeBrightnessMeasurement();
+	#endif
 }
 
 void DisplayManager::setInternalLEDColor(CRGB color)
@@ -237,5 +303,8 @@ void DisplayManager::delay(uint32_t timeInMs)
 
 void DisplayManager::setGlobalBrightness(uint8_t brightness)
 {
+	#if ENABLE_LIGHT_SENSOR == true
+		BrightnessOffset = -(LIGHT_SENSOR_SENSITIVITY * lightSensorBrightness - brightness);
+	#endif
 	FastLED.setBrightness(brightness);
 }

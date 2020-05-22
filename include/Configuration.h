@@ -192,6 +192,45 @@ enum DisplayIDs {LOWER_DIGIT_MINUTE_DISPLAY = 0, HIGHER_DIGIT_MINUTE_DISPLAY = 1
 #define NUM_SEGMENTS_PROGRESS		3000
 
 
+/***************************
+*
+* Light sensor settings
+*
+*****************************/
+
+/**
+ * @brief Enable automatic brightness adjustments based on a light sensor
+ */
+#define ENABLE_LIGHT_SENSOR			true
+
+#if ENABLE_LIGHT_SENSOR == true
+	/**
+	 * @brief ADC pin to which the light sensor is connected to
+	 */
+	#define LIGHT_SENSOR_PIN			34
+
+	/**
+	 * @brief How many measurements shall be avaeraged. Higher number -> smoother but slower change
+	 */
+	#define LIGHT_SENSOR_AVERAGE		30
+
+	/**
+	 * @brief Width of the meadian calculation. Higher number -> smoother change
+	 * 		  Should never be higher than the LIGHT_SENSOR_AVERAGE
+	 */
+	#define LIGHT_SENSOR_MEDIAN_WIDTH	10
+
+	/**
+	 * @brief Time that should pass before the light sensor is read again. Higher number -> slower adjustments but also changes will be more sudden
+	 */
+	#define LIGHT_SENSOR_READ_DELAY		500
+
+	/**
+	 * @brief Float value between 0 and 1 that defines the steepness of the led brightness adjustment
+	 */
+	#define LIGHT_SENSOR_SENSITIVITY	0.5
+#endif
+
 
 /*********************************
 *

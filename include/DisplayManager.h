@@ -9,6 +9,7 @@
 #include "SevenSegment.h"
 #include "TimeManager.h"
 #include "Configuration.h"
+#include "LinkedList.h"
 
 
 class DisplayManager
@@ -29,6 +30,13 @@ private:
 	Segment* allSegments[NUM_SEGMENTS];
 	SevenSegment* Displays[NUM_DISPLAYS];
 
+	#if ENABLE_LIGHT_SENSOR == true
+		LinkedList<uint16_t> lightSensorMeasurements;
+		uint64_t lastSensorMeasurement;
+		uint8_t lightSensorBrightness;
+		uint16_t BrightnessOffset;
+	#endif
+
 	void AnimationManagersTemporaryOverride(Animator* OverrideanimationManager);
 	void restoreAnimationManagers();
 
@@ -39,6 +47,10 @@ private:
 	CRGB leds[NUM_LEDS];
 	#if APPEND_DOWN_LIGHTERS == false
 		CRGB DownlightLeds[ADDITIONAL_LEDS];
+	#endif
+
+	#if ENABLE_LIGHT_SENSOR == true
+		void takeBrightnessMeasurement();
 	#endif
 
 public:
