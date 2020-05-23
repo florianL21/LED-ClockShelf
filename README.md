@@ -28,10 +28,7 @@ Via the platformio home the following libraries have to be installed:
 
 # Important files for configuration:
 Files that are important for configuration (sorted by importance):
- 1. At the top of /src/main.cpp -> General functionallity, like OTA updates, Blynk etc.
+ 1. At the top of /include/Configuration.h -> Contains almost all important settings, like WIFI config, pin configurations etc.
  2. /lib/DisplayManager/DisplayConfiguration.cpp -> Configuration of which leds belong to which segments and whioch segments belong to which display, the order of the segments and their animation directions *It is really important to get this one right!*
- 3. At the top of /lib/DisplayManager/DisplayManager.h -> Configuring the number of LEDs, Data pin, display options etc.
- 4. at the top of /lib/SevenSegment/SevenSegment.cpp -> Configuring the appearance of the digits *If the appearence of the segments is altered the animations have to be adjusted as well*
- 5. /lib/SevenSegment/SegmentTransitions.cpp -> Configuring the animations between the digits
- 6. at the top of /lib/SevenSegment/SevenSegment.h -> Configuraiong the animation speed between digits
- 7. /lib/DisplayManager/Animations.cpp -> configuration of anmimations like the loading animation
+ 3. /lib/SevenSegment/SegmentTransitions.cpp -> Configuring the animations between the digits
+ 4. /lib/DisplayManager/Animations.cpp -> configuration of anmimations like the loading animation
