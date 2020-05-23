@@ -4,14 +4,36 @@ DisplayManager::DisplayManager()
 {
 	FastLED.addLeds<WS2812B, LED_DATA_PIN, GRB>(leds, NUM_LEDS);  // GRB ordering is typical
 
+	#if APPEND_DOWN_LIGHTERS == false
+		FastLED.addLeds<WS2812B, DOWNLIGHT_LED_DATA_PIN, GRB>(DownlightLeds, ADDITIONAL_LEDS);
+	#endif
+
 	for (uint16_t i = 0; i < NUM_LEDS; i++)
 	{
 		leds[i] = CRGB::Black;
 	}
+	
+	#if APPEND_DOWN_LIGHTERS == false
+		for (uint16_t i = 0; i < ADDITIONAL_LEDS; i++)
+		{
+			DownlightLeds[i] = CRGB::Black;
+		}
+	#endif
+	
 	for (uint8_t i = 0; i < NUM_DISPLAYS; i++)
 	{
 		animationManagers[i] = new Animator();
 	}
+
+	LEDBrightnessSetPoint = 128;
+	LEDBrightnessCurrent = 0;
+	LEDBrightnessSmoothingStartPoint = 0;
+	setGlobalBrightness(128);
+
+	#if ENABLE_LIGHT_SENSOR == true
+		lastSensorMeasurement = 0;
+		takeBrightnessMeasurement();
+	#endif
 }
 
 DisplayManager::~DisplayManager()
@@ -26,16 +48,67 @@ void DisplayManager::setAllSegmentColors(CRGB color)
 	}
 }
 
+#if ENABLE_LIGHT_SENSOR == true
+
+void DisplayManager::takeBrightnessMeasurement()
+{
+	if(lastSensorMeasurement + LIGHT_SENSOR_READ_DELAY < millis())
+	{
+		uint8_t lightSensorBrightnessNew = 0;
+		lastSensorMeasurement = millis();
+		lightSensorMeasurements.add(analogRead(LIGHT_SENSOR_PIN));
+		if(lightSensorMeasurements.size() >= LIGHT_SENSOR_AVERAGE)
+		{
+			lightSensorMeasurements.shift();
+		}
+		if(lightSensorMeasurements.size() < LIGHT_SENSOR_MEDIAN_WIDTH)
+		{
+			//Calculate a normal average as long as the median width is not reached yet
+			uint64_t BrightnessListSum = 0;
+			for (uint16_t i = 0; i < lightSensorMeasurements.size(); i++)
+			{
+				BrightnessListSum += lightSensorMeasurements.get(i);
+			}
+			lightSensorBrightnessNew = map(BrightnessListSum / lightSensorMeasurements.size(), 0, 4095, 0, 255);
+		}
+		else
+		{
+			LinkedList<uint16_t> sortedMeasurements;
+			//copy all the values to a new temporary list in order to sort them
+			for (uint16_t i = 0; i < lightSensorMeasurements.size(); i++)
+			{
+				sortedMeasurements.add(lightSensorMeasurements.get(i));
+			}
+			sortedMeasurements.sort(SortFunction_SmallerThan);
+			//calculate the average of the median window
+			uint64_t BrightnessListSum = 0;
+			uint16_t medianOffset = floor((sortedMeasurements.size() - LIGHT_SENSOR_MEDIAN_WIDTH) / 2);
+			for (uint16_t i = 0; i < LIGHT_SENSOR_MEDIAN_WIDTH; i++)
+			{
+				BrightnessListSum += sortedMeasurements.get(i + medianOffset);
+			}
+			lightSensorBrightnessNew = map(BrightnessListSum / LIGHT_SENSOR_MEDIAN_WIDTH, LIGHT_SENSOR_MIN, LIGHT_SENSOR_MAX, LIGHT_SENSOR_SENSITIVITY, 0);
+		}
+		if(lightSensorBrightnessNew != lightSensorBrightness)
+		{
+			lightSensorBrightness = lightSensorBrightnessNew;
+			setGlobalBrightness(currentLEDBrightness);
+		}
+		// Serial.printf("Sensor brightness: %d\n\r", lightSensorBrightness);
+	}
+}
+#endif
+
 void DisplayManager::setHourSegmentColors(CRGB color)
 {
-	Displays[0]->updateColor(color);
-	Displays[2]->updateColor(color);
+	Displays[LOWER_DIGIT_HOUR_DISPLAY]->updateColor(color);
+	Displays[HIGHER_DIGIT_HOUR_DISPLAY]->updateColor(color);
 }
 
 void DisplayManager::setMinuteSegmentColors(CRGB color)
 {
-	Displays[4]->updateColor(color);
-	Displays[6]->updateColor(color);
+	Displays[LOWER_DIGIT_MINUTE_DISPLAY]->updateColor(color);
+	Displays[HIGHER_DIGIT_MINUTE_DISPLAY]->updateColor(color);
 }
 
 void DisplayManager::InitSegments(uint16_t indexOfFirstLed, uint8_t ledsPerSegment, CRGB initialColor)
@@ -125,24 +198,24 @@ void DisplayManager::displayTime(uint8_t hours, uint8_t minutes)
 	uint8_t firstHourDigit = hours/10;
 	if(firstHourDigit == 0 && DISPLAY_SWITCH_OFF_AT_0 == true)
 	{
-		Displays[0]->off();
+		Displays[HIGHER_DIGIT_HOUR_DISPLAY]->off();
 	}
 	else
 	{
-		Displays[0]->DisplayNumber(firstHourDigit);
+		Displays[HIGHER_DIGIT_HOUR_DISPLAY]->DisplayNumber(firstHourDigit);
 	}
-	Displays[2]->DisplayNumber(hours - firstHourDigit * 10); //get the last digit
+	Displays[LOWER_DIGIT_HOUR_DISPLAY]->DisplayNumber(hours - firstHourDigit * 10); //get the last digit
 
 	uint8_t firstMinuteDigit = minutes/10;
 	if(firstMinuteDigit == 0 && DISPLAY_SWITCH_OFF_AT_0 == true)
 	{
-		Displays[4]->off();
+		Displays[HIGHER_DIGIT_MINUTE_DISPLAY]->off();
 	}
 	else
 	{
-		Displays[4]->DisplayNumber(firstMinuteDigit);
+		Displays[HIGHER_DIGIT_MINUTE_DISPLAY]->DisplayNumber(firstMinuteDigit);
 	}
-	Displays[6]->DisplayNumber(minutes - firstMinuteDigit * 10); //get the last digit
+	Displays[LOWER_DIGIT_MINUTE_DISPLAY]->DisplayNumber(minutes - firstMinuteDigit * 10); //get the last digit
 	// Serial.printf("%d%d:%d%d\n\r", firstHourDigit, hours - firstHourDigit * 10, firstMinuteDigit, minutes - firstMinuteDigit * 10);
 }
 
@@ -153,13 +226,30 @@ void DisplayManager::handle()
 	{
 		animationManagers[i]->handle();
 	}
+
+	#if ENABLE_LIGHT_SENSOR == true
+		takeBrightnessMeasurement();
+	#endif
+	uint64_t currentMillis = millis();
+	if(LEDBrightnessCurrent != LEDBrightnessSetPoint && lastBrightnessChange + BRIGHTNESS_INTERPOLATION >= currentMillis)
+	{
+		double progress = easeInOutCubic(map_float(currentMillis - lastBrightnessChange, 0.0, BRIGHTNESS_INTERPOLATION, 0.0, 1.0));
+		uint8_t smoothedBrightness = map_float(progress, 0, 1, LEDBrightnessSmoothingStartPoint, LEDBrightnessSetPoint);
+		LEDBrightnessCurrent = smoothedBrightness;
+		FastLED.setBrightness(LEDBrightnessCurrent);
+		Serial.printf("b: %d\n\r", LEDBrightnessCurrent);
+	}
 }
 
 void DisplayManager::setInternalLEDColor(CRGB color)
 {
-	for (uint16_t i = NUM_LEDS - ADDITIONAL_LEDS; i < NUM_LEDS; i++)
+	for (uint16_t i = 0; i < ADDITIONAL_LEDS; i++)
 	{
-		leds[i] = color;
+		#if APPEND_DOWN_LIGHTERS == true
+			leds[NUM_LEDS - ADDITIONAL_LEDS + i] = color;
+		#else
+			DownlightLeds[i] = color;
+		#endif
 	}
 }
 
@@ -219,7 +309,23 @@ void DisplayManager::delay(uint32_t timeInMs)
 	animationManager.delay(timeInMs);
 }
 
-void DisplayManager::setGlobalBrightness(uint8_t brightness)
+void DisplayManager::setGlobalBrightness(uint8_t brightness, bool enableSmoothTransition)
 {
-	FastLED.setBrightness(brightness);
+	currentLEDBrightness = brightness;
+	
+	#if ENABLE_LIGHT_SENSOR == true
+		LEDBrightnessSetPoint = constrain(brightness - lightSensorBrightness, 0, 255);
+	#else
+		LEDBrightnessSetPoint = brightness;
+	#endif
+	if(enableSmoothTransition)
+	{
+		LEDBrightnessSmoothingStartPoint = LEDBrightnessCurrent;
+		lastBrightnessChange = millis();
+	}
+	else
+	{
+		LEDBrightnessSmoothingStartPoint = LEDBrightnessCurrent = LEDBrightnessSetPoint;
+		FastLED.setBrightness(LEDBrightnessCurrent);
+	}
 }

@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include "time.h"
+#include "Configuration.h"
 
 class TimeManager
 {

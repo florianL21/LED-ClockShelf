@@ -8,70 +8,15 @@
 #include "Segment.h"
 #include "SevenSegment.h"
 #include "TimeManager.h"
-
-/***************************
-*
-* LED Configuration
-*
-*****************************/
-
-/**
- * @brief Pin to which the led Strip data pin is connected to
- */
-#define LED_DATA_PIN			21
-
-/**
- * @brief Total number of segments that have LEDs in the shelf
- */
-#define NUM_SEGMENTS 			32
-
-/**
- * @brief Number of LEDs in each segment
- */
-#define NUM_LEDS_PER_SEGMENT	12
-
-/**
- * @brief Number of LEDs For interrior lights
- */
-#define ADDITIONAL_LEDS			12
-
-/**
- * @brief Automatically calculated total number of LEDs used
- */
-#define NUM_LEDS 				(NUM_SEGMENTS * NUM_LEDS_PER_SEGMENT + ADDITIONAL_LEDS)
-
-/**
- * @brief Number of displays in the shelf
- */
-#define NUM_DISPLAYS			7
-
-/**
- * @brief If set to true the display will show 0 at midnight and 12 otherwise
- */
-#define DISPLAY_0_AT_MIDNIGHT 		false
-
-/**
- * @brief If set to true the higher displays will turn off in case they would show 0
- */
-#define DISPLAY_SWITCH_OFF_AT_0 	false
-
-/**
- * @brief If set to true 24 hour format will be used. For this one additional column is needed in the shelf to display it correctly
- */
-#define USE_24_HOUR_FORMAT			false
-
-/**
- * @brief The number of segments to use for displaying a progress bar for the OTA updates
- */
-#define NUM_SEGMENTS_PROGRESS		16
-
-/**
- * @brief The time it shall take for one iteration of the loading animation
- */
-#define NUM_SEGMENTS_PROGRESS		3000
+#include "Configuration.h"
+#include "LinkedList.h"
+#include "misc.h"
 
 class DisplayManager
 {
+public:
+	
+
 private:
 	//segment configurations
 	static SevenSegment::SegmentPosition SegmentPositions[NUM_SEGMENTS];
@@ -84,6 +29,18 @@ private:
 	Animator* animationManagerTempBuffer[NUM_DISPLAYS];
 	Segment* allSegments[NUM_SEGMENTS];
 	SevenSegment* Displays[NUM_DISPLAYS];
+	uint8_t currentLEDBrightness;
+	uint8_t LEDBrightnessSmoothingStartPoint;
+	uint8_t LEDBrightnessSetPoint;
+	uint8_t LEDBrightnessCurrent;
+	uint64_t lastBrightnessChange;
+
+
+	#if ENABLE_LIGHT_SENSOR == true
+		LinkedList<uint16_t> lightSensorMeasurements;
+		uint64_t lastSensorMeasurement;
+		uint8_t lightSensorBrightness;
+	#endif
 
 	void AnimationManagersTemporaryOverride(Animator* OverrideanimationManager);
 	void restoreAnimationManagers();
@@ -92,8 +49,17 @@ private:
 	Animator::ComplexAmination LoadingAnimation;
 	void InitLoadingAnimation(uint16_t totalAnimationLength);
 
-public:
 	CRGB leds[NUM_LEDS];
+	#if APPEND_DOWN_LIGHTERS == false
+		CRGB DownlightLeds[ADDITIONAL_LEDS];
+	#endif
+
+	#if ENABLE_LIGHT_SENSOR == true
+		void takeBrightnessMeasurement();
+	#endif
+
+public:
+	
 
 	DisplayManager();
 	~DisplayManager();
@@ -182,8 +148,9 @@ public:
 	/**
 	 * @brief Sets the Brightness globally for all leds
 	 * @param brightness value between 0 for lowest, and 255 for the highes brightness
+	 * @param enableSmoothTransition If true the LEDs will transition to the new value smoothly
 	 */
-	void setGlobalBrightness(uint8_t brightness);
+	void setGlobalBrightness(uint8_t brightness, bool enableSmoothTransition = true);
 
 
 	
