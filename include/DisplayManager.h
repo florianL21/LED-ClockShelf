@@ -10,7 +10,7 @@
 #include "TimeManager.h"
 #include "Configuration.h"
 #include "LinkedList.h"
-
+#include "misc.h"
 
 class DisplayManager
 {
@@ -29,12 +29,17 @@ private:
 	Animator* animationManagerTempBuffer[NUM_DISPLAYS];
 	Segment* allSegments[NUM_SEGMENTS];
 	SevenSegment* Displays[NUM_DISPLAYS];
+	uint8_t currentLEDBrightness;
+	uint8_t LEDBrightnessSmoothingStartPoint;
+	uint8_t LEDBrightnessSetPoint;
+	uint8_t LEDBrightnessCurrent;
+	uint64_t lastBrightnessChange;
+
 
 	#if ENABLE_LIGHT_SENSOR == true
 		LinkedList<uint16_t> lightSensorMeasurements;
 		uint64_t lastSensorMeasurement;
 		uint8_t lightSensorBrightness;
-		uint16_t BrightnessOffset;
 	#endif
 
 	void AnimationManagersTemporaryOverride(Animator* OverrideanimationManager);
@@ -143,8 +148,9 @@ public:
 	/**
 	 * @brief Sets the Brightness globally for all leds
 	 * @param brightness value between 0 for lowest, and 255 for the highes brightness
+	 * @param enableSmoothTransition If true the LEDs will transition to the new value smoothly
 	 */
-	void setGlobalBrightness(uint8_t brightness);
+	void setGlobalBrightness(uint8_t brightness, bool enableSmoothTransition = true);
 
 
 	

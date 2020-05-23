@@ -24,10 +24,15 @@ DisplayManager::DisplayManager()
 	{
 		animationManagers[i] = new Animator();
 	}
+
+	LEDBrightnessSetPoint = 128;
+	LEDBrightnessCurrent = 0;
+	LEDBrightnessSmoothingStartPoint = 0;
+	setGlobalBrightness(128);
+
 	#if ENABLE_LIGHT_SENSOR == true
 		lastSensorMeasurement = 0;
 		takeBrightnessMeasurement();
-		setGlobalBrightness(128);
 	#endif
 }
 
@@ -44,11 +49,6 @@ void DisplayManager::setAllSegmentColors(CRGB color)
 }
 
 #if ENABLE_LIGHT_SENSOR == true
-
-int SensorMeasurementsListSortFunction(uint16_t &a, uint16_t &b)
-{
-	return a < b;
-}
 
 void DisplayManager::takeBrightnessMeasurement()
 {
@@ -79,7 +79,7 @@ void DisplayManager::takeBrightnessMeasurement()
 			{
 				sortedMeasurements.add(lightSensorMeasurements.get(i));
 			}
-			sortedMeasurements.sort(SensorMeasurementsListSortFunction);
+			sortedMeasurements.sort(SortFunction_SmallerThan);
 			//calculate the average of the median window
 			uint64_t BrightnessListSum = 0;
 			uint16_t medianOffset = floor((sortedMeasurements.size() - LIGHT_SENSOR_MEDIAN_WIDTH) / 2);
@@ -87,14 +87,12 @@ void DisplayManager::takeBrightnessMeasurement()
 			{
 				BrightnessListSum += sortedMeasurements.get(i + medianOffset);
 			}
-			lightSensorBrightnessNew = map(BrightnessListSum / LIGHT_SENSOR_MEDIAN_WIDTH, 0, 4095, 0, 255);
+			lightSensorBrightnessNew = map(BrightnessListSum / LIGHT_SENSOR_MEDIAN_WIDTH, LIGHT_SENSOR_MIN, LIGHT_SENSOR_MAX, LIGHT_SENSOR_SENSITIVITY, 0);
 		}
-
 		if(lightSensorBrightnessNew != lightSensorBrightness)
 		{
-			uint16_t compensatedBrightness = (((float)(LIGHT_SENSOR_SENSITIVITY)) * ((float)(lightSensorBrightnessNew))) + BrightnessOffset;
-			lightSensorBrightness = constrain(compensatedBrightness, 0, 255);
-			FastLED.setBrightness(lightSensorBrightness);
+			lightSensorBrightness = lightSensorBrightnessNew;
+			setGlobalBrightness(currentLEDBrightness);
 		}
 		// Serial.printf("Sensor brightness: %d\n\r", lightSensorBrightness);
 	}
@@ -228,9 +226,19 @@ void DisplayManager::handle()
 	{
 		animationManagers[i]->handle();
 	}
+
 	#if ENABLE_LIGHT_SENSOR == true
 		takeBrightnessMeasurement();
 	#endif
+	uint64_t currentMillis = millis();
+	if(LEDBrightnessCurrent != LEDBrightnessSetPoint && lastBrightnessChange + BRIGHTNESS_INTERPOLATION >= currentMillis)
+	{
+		double progress = easeInOutCubic(map_float(currentMillis - lastBrightnessChange, 0.0, BRIGHTNESS_INTERPOLATION, 0.0, 1.0));
+		uint8_t smoothedBrightness = map_float(progress, 0, 1, LEDBrightnessSmoothingStartPoint, LEDBrightnessSetPoint);
+		LEDBrightnessCurrent = smoothedBrightness;
+		FastLED.setBrightness(LEDBrightnessCurrent);
+		Serial.printf("b: %d\n\r", LEDBrightnessCurrent);
+	}
 }
 
 void DisplayManager::setInternalLEDColor(CRGB color)
@@ -301,10 +309,23 @@ void DisplayManager::delay(uint32_t timeInMs)
 	animationManager.delay(timeInMs);
 }
 
-void DisplayManager::setGlobalBrightness(uint8_t brightness)
+void DisplayManager::setGlobalBrightness(uint8_t brightness, bool enableSmoothTransition)
 {
+	currentLEDBrightness = brightness;
+	
 	#if ENABLE_LIGHT_SENSOR == true
-		BrightnessOffset = -(LIGHT_SENSOR_SENSITIVITY * lightSensorBrightness - brightness);
+		LEDBrightnessSetPoint = constrain(brightness - lightSensorBrightness, 0, 255);
+	#else
+		LEDBrightnessSetPoint = brightness;
 	#endif
-	FastLED.setBrightness(brightness);
+	if(enableSmoothTransition)
+	{
+		LEDBrightnessSmoothingStartPoint = LEDBrightnessCurrent;
+		lastBrightnessChange = millis();
+	}
+	else
+	{
+		LEDBrightnessSmoothingStartPoint = LEDBrightnessCurrent = LEDBrightnessSetPoint;
+		FastLED.setBrightness(LEDBrightnessCurrent);
+	}
 }

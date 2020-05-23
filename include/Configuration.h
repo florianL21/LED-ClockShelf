@@ -191,6 +191,11 @@ enum DisplayIDs {LOWER_DIGIT_MINUTE_DISPLAY = 0, HIGHER_DIGIT_MINUTE_DISPLAY = 1
  */
 #define NUM_SEGMENTS_PROGRESS		3000
 
+/**
+ * @brief How fast the brightness interpolation shall react to brightness changes
+ */
+#define BRIGHTNESS_INTERPOLATION	10000
+
 
 /***************************
 *
@@ -212,13 +217,13 @@ enum DisplayIDs {LOWER_DIGIT_MINUTE_DISPLAY = 0, HIGHER_DIGIT_MINUTE_DISPLAY = 1
 	/**
 	 * @brief How many measurements shall be avaeraged. Higher number -> smoother but slower change
 	 */
-	#define LIGHT_SENSOR_AVERAGE		30
+	#define LIGHT_SENSOR_AVERAGE		15
 
 	/**
 	 * @brief Width of the meadian calculation. Higher number -> smoother change
 	 * 		  Should never be higher than the LIGHT_SENSOR_AVERAGE
 	 */
-	#define LIGHT_SENSOR_MEDIAN_WIDTH	10
+	#define LIGHT_SENSOR_MEDIAN_WIDTH	5
 
 	/**
 	 * @brief Time that should pass before the light sensor is read again. Higher number -> slower adjustments but also changes will be more sudden
@@ -226,9 +231,20 @@ enum DisplayIDs {LOWER_DIGIT_MINUTE_DISPLAY = 0, HIGHER_DIGIT_MINUTE_DISPLAY = 1
 	#define LIGHT_SENSOR_READ_DELAY		500
 
 	/**
-	 * @brief Float value between 0 and 1 that defines the steepness of the led brightness adjustment
+	 * @brief AnalogRead value if the light sensor reads complete darkness
 	 */
-	#define LIGHT_SENSOR_SENSITIVITY	0.5
+	#define LIGHT_SENSOR_MIN			0
+
+	/**
+	 * @brief AnalogRead value if the light sensor reads the brightest
+	 */
+	#define LIGHT_SENSOR_MAX			4095
+
+	/**
+	 * @brief Value betwee 0 and 255 that determines how much the light sensor values can influence the led brightness
+	 */
+	#define LIGHT_SENSOR_SENSITIVITY	100
+
 #endif
 
 
