@@ -124,17 +124,17 @@
 /**
  * @brief Total number of segments that have LEDs in the shelf
  */
-#define NUM_SEGMENTS 			23
+#define NUM_SEGMENTS 			32
 
 /**
  * @brief Number of LEDs in each segment
  */
-#define NUM_LEDS_PER_SEGMENT	9
+#define NUM_LEDS_PER_SEGMENT	12
 
 /**
  * @brief If you wired the down lighter LEDs to the end of the LED strips set this to true
  */
-#define APPEND_DOWN_LIGHTERS	false
+#define APPEND_DOWN_LIGHTERS	true
 
 /**
  * @brief Number of LEDs For interrior lights
@@ -158,13 +158,13 @@
 /**
  * @brief Number of displays in the shelf
  */
-#define NUM_DISPLAYS			4
+#define NUM_DISPLAYS			7
 
 /**
  * @brief These enum definitions are used in the code do address the different Seven segment displays. 
  * 		  The numbers have to match with the place of the display in the SegmentDisplayModes array in the file DisplayConfiguration.cpp
  */
-enum DisplayIDs {LOWER_DIGIT_MINUTE_DISPLAY = 0, HIGHER_DIGIT_MINUTE_DISPLAY = 1, LOWER_DIGIT_HOUR_DISPLAY = 2, HIGHER_DIGIT_HOUR_DISPLAY = 3};
+enum DisplayIDs {LOWER_DIGIT_MINUTE_DISPLAY = 6, HIGHER_DIGIT_MINUTE_DISPLAY = 4, LOWER_DIGIT_HOUR_DISPLAY = 2, HIGHER_DIGIT_HOUR_DISPLAY = 0};
 
 /**
  * @brief If set to true the display will show 0 at midnight and 12 otherwise
@@ -194,7 +194,7 @@ enum DisplayIDs {LOWER_DIGIT_MINUTE_DISPLAY = 0, HIGHER_DIGIT_MINUTE_DISPLAY = 1
 /**
  * @brief How fast the brightness interpolation shall react to brightness changes
  */
-#define BRIGHTNESS_INTERPOLATION	10000
+#define BRIGHTNESS_INTERPOLATION	5000
 
 
 /***************************
@@ -206,7 +206,7 @@ enum DisplayIDs {LOWER_DIGIT_MINUTE_DISPLAY = 0, HIGHER_DIGIT_MINUTE_DISPLAY = 1
 /**
  * @brief Enable automatic brightness adjustments based on a light sensor
  */
-#define ENABLE_LIGHT_SENSOR			true
+#define ENABLE_LIGHT_SENSOR			false
 
 #if ENABLE_LIGHT_SENSOR == true
 	/**
