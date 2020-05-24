@@ -19,12 +19,16 @@ DisplayManager ShelfDisplays;
 TimeManager* timeM = nullptr;
 unsigned long lastMillis = millis();
 
+TaskHandle_t core0Loop;
+
 #if ENABLE_OTA_UPLOAD == true
 	void setupOTA();
 #endif
 #if RUN_WITHOUT_WIFI == false
 	void wifiSetup();
 #endif
+
+void core0LoopCode( void * pvParameters );
 
 void displayTime()
 {
@@ -62,6 +66,16 @@ void setup()
 
 	timeM = new TimeManager(TIMEZONE_OFFSET, DAYLIGHT_SAVING, NTP_SERVER, TIME_UPDATE_INTERVALL);
 	displayTime();
+
+	//Setup the loop task on the second core
+	xTaskCreatePinnedToCore(
+                    core0LoopCode,   /* Task function. */
+                    "core0Loop",     /* name of task. */
+                    10000,       /* Stack size of task */
+                    NULL,        /* parameter of the task */
+                    1,           /* priority of the task */
+                    &core0Loop,      /* Task handle to keep track of created task */
+                    0);          /* pin task to core 0 */
 	
 	// ShelfDisplays.setInternalLEDColor(CRGB::SeaGreen);
 	// ShelfDisplays.setAllSegmentColors(CRGB::Blue);
@@ -69,11 +83,9 @@ void setup()
 
 void loop()
 {
-	
 	#if ENABLE_OTA_UPLOAD == true
 		ArduinoOTA.handle();
 	#endif
-
 	timeM->update();
 	if(lastMillis + 1000 <= millis()) // update the time every second
 	{
@@ -81,10 +93,19 @@ void loop()
 		displayTime();
 	}
 	ShelfDisplays.handle();
+}
 
-	#if IS_BLYNK_ACTIVE == true
-		Blynk.run();
-	#endif
+void core0LoopCode( void * pvParameters )
+{
+	Serial.printf("Loop task running on core %d\n\r", xPortGetCoreID());
+
+	for(;;)
+	{
+		#if IS_BLYNK_ACTIVE == true
+			Blynk.run();
+		#endif
+		delay(1); //needed to serve the wdg
+	} 
 }
 
 #if IS_BLYNK_ACTIVE == true
@@ -279,7 +300,7 @@ void loop()
 
 		ArduinoOTA.begin();
 
-		Serial.println("Ready");
+		Serial.println("OTA update functionality is ready");
 		Serial.print("IP address: ");
 		Serial.println(WiFi.localIP());
 	}

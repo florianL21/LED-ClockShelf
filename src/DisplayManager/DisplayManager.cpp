@@ -237,7 +237,6 @@ void DisplayManager::handle()
 		uint8_t smoothedBrightness = map_float(progress, 0, 1, LEDBrightnessSmoothingStartPoint, LEDBrightnessSetPoint);
 		LEDBrightnessCurrent = smoothedBrightness;
 		FastLED.setBrightness(LEDBrightnessCurrent);
-		Serial.printf("b: %d\n\r", LEDBrightnessCurrent);
 	}
 }
 
