@@ -23,7 +23,7 @@
 		/**
 		 * @brief If you want Blynk functionallity paste your authentication token here.
 		 */
-		#define BLYNK_AUTH_TOKEN 	"AUTH_TOKEN_GOES_HERE" 
+		#define BLYNK_AUTH_TOKEN 	"AUTH_TOKEN_GOES_HERE"
 
 		/**
 		 * @brief In case the blynk communication is not working this line causes Blynk to send debug output to the serial port.
@@ -105,9 +105,9 @@
 #define DAYLIGHT_SAVING 3600
 
 /**
- * @brief Time update intervall in milliseconds
+ * @brief Time in seconds for the intervall in which the time should be synchronized with the time server
  */
-#define TIME_UPDATE_INTERVALL 15000
+#define TIME_SYNC_INTERVALL 1800
 
 
 /***************************
@@ -187,7 +187,7 @@ enum DisplayIDs {LOWER_DIGIT_MINUTE_DISPLAY = 6, HIGHER_DIGIT_MINUTE_DISPLAY = 4
 #define NUM_SEGMENTS_PROGRESS		16
 
 /**
- * @brief The time it shall take for one iteration of the loading animation
+ * @brief The number of LEDs that shall be used for one iteration of the loading animation
  */
 #define NUM_SEGMENTS_PROGRESS		3000
 

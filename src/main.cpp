@@ -64,18 +64,18 @@ void setup()
 		Blynk.config(BLYNK_AUTH_TOKEN, BLYNK_SERVER, 80);
 	#endif
 
-	timeM = new TimeManager(TIMEZONE_OFFSET, DAYLIGHT_SAVING, NTP_SERVER, TIME_UPDATE_INTERVALL);
+	timeM = TimeManager::getInstance();
 	displayTime();
 
 	//Setup the loop task on the second core
 	xTaskCreatePinnedToCore(
-                    core0LoopCode,   /* Task function. */
-                    "core0Loop",     /* name of task. */
-                    10000,       /* Stack size of task */
-                    NULL,        /* parameter of the task */
-                    1,           /* priority of the task */
-                    &core0Loop,      /* Task handle to keep track of created task */
-                    0);          /* pin task to core 0 */
+	core0LoopCode,	// Task function. 
+	"core0Loop",	// name of task. 
+	10000,			// Stack size of task 
+	NULL,			// parameter of the task 
+	1,				// priority of the task 
+	&core0Loop,		// Task handle to keep track of created task 
+	0);				// pin task to core 0 
 	
 	// ShelfDisplays.setInternalLEDColor(CRGB::SeaGreen);
 	// ShelfDisplays.setAllSegmentColors(CRGB::Blue);
@@ -86,7 +86,6 @@ void loop()
 	#if ENABLE_OTA_UPLOAD == true
 		ArduinoOTA.handle();
 	#endif
-	timeM->update();
 	if(lastMillis + 1000 <= millis()) // update the time every second
 	{
 		lastMillis = millis();
@@ -260,6 +259,8 @@ void core0LoopCode( void * pvParameters )
 			}
 			// NOTE: if updating SPIFFS this would be the place to unmount SPIFFS using SPIFFS.end()
 			Serial.println("Start updating " + type);
+			timeM->disableTimer();
+			vTaskDelete(core0Loop);
 			ShelfDisplays.setAllSegmentColors(CRGB::Orange);
 			ShelfDisplays.turnAllSegmentsOff(); //instead of the loading animation show a progress bar
 		})

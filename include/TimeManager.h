@@ -4,9 +4,13 @@
 #include <Arduino.h>
 #include "time.h"
 #include "Configuration.h"
+#if RUN_WITHOUT_WIFI == false
+	#include "WiFi.h"
+#endif
 
 class TimeManager
 {
+	friend void IRAM_ATTR onTimer();
 public:
 	typedef struct 
 	{
@@ -15,17 +19,22 @@ public:
 		uint8_t seconds;
 	}TimeInfo;
 private:
-	uint64_t lastUpdate;
 	TimeInfo currentTime;
-	uint32_t updateInterv;
+	hw_timer_t* timer;
+	uint32_t offlineTimeCounter;
+	static TimeManager* TimeManagerSingelton;
+
+	TimeManager();
+	void advanceByOneSecondOffline();
 public:
-	TimeManager(long gmtOffset_sec, int daylightOffset_sec, const char* server1, uint32_t updateIntervall);
 	~TimeManager();
 
+	static TimeManager* getInstance();
+
 	/**
-	 * @brief update the current time based on the internal clock, I am too lazy for finding out how timer interrupts work on the esp
+	 * @brief Synchronize the time with the NTP server
 	 */
-	void update();
+	bool synchronize();
 
 	/**
 	 * @brief get the current time in a struct
@@ -36,6 +45,8 @@ public:
 	 * @brief get the current time as a string
 	 */
 	String getCurrentTimeString();
+
+	void disableTimer();
 };
 
 #endif
