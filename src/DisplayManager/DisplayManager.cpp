@@ -216,7 +216,7 @@ void DisplayManager::displayTime(uint8_t hours, uint8_t minutes)
 		Displays[HIGHER_DIGIT_MINUTE_DISPLAY]->DisplayNumber(firstMinuteDigit);
 	}
 	Displays[LOWER_DIGIT_MINUTE_DISPLAY]->DisplayNumber(minutes - firstMinuteDigit * 10); //get the last digit
-	// Serial.printf("%d%d:%d%d\n\r", firstHourDigit, hours - firstHourDigit * 10, firstMinuteDigit, minutes - firstMinuteDigit * 10);
+	Serial.printf("%d%d:%d%d\n\r", firstHourDigit, hours - firstHourDigit * 10, firstMinuteDigit, minutes - firstMinuteDigit * 10);
 }
 
 void DisplayManager::handle()

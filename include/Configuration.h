@@ -90,6 +90,11 @@
 #define MINUTE_COLOR	CRGB::Azure
 
 /**
+ * @brief Color of the internal LEDs, this will be the default color if blynk functionality is disabled
+ */
+#define INTERNAL_COLOR	CRGB::Blue
+
+/**
  * @brief Server for the time
  */
 #define NTP_SERVER "pool.ntp.org"
@@ -108,6 +113,16 @@
  * @brief Time in seconds for the intervall in which the time should be synchronized with the time server
  */
 #define TIME_SYNC_INTERVALL 1800
+
+/**
+ * @brief Flash the current time in case a timer is expired instead of flashing 00:00
+ */
+#define ALARM_FLASH_TIME false
+
+/**
+ * @brief Number of flashes until an alarm is considered complete and the system goes back to normal
+ */
+#define ALARM_FLASH_COUNT 10
 
 
 /***************************
@@ -194,7 +209,7 @@ enum DisplayIDs {LOWER_DIGIT_MINUTE_DISPLAY = 6, HIGHER_DIGIT_MINUTE_DISPLAY = 4
 /**
  * @brief How fast the brightness interpolation shall react to brightness changes
  */
-#define BRIGHTNESS_INTERPOLATION	5000
+#define BRIGHTNESS_INTERPOLATION	3000
 
 
 /***************************

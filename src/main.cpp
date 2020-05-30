@@ -15,9 +15,17 @@
 	#include <BlynkSimpleEsp32.h>
 #endif
 
+#define TIME_UPDATE_INTERVALL	500
+
 DisplayManager ShelfDisplays;
 TimeManager* timeM = nullptr;
 unsigned long lastMillis = millis();
+bool blynkUIUpdateRequired = false;
+enum ClockStates {CLOCK_MODE, TIMER_MODE, ALARM_MODE};
+ClockStates MainState = CLOCK_MODE;
+uint8_t clockBrightness = 128;
+bool currentAlarmSignalState = false;
+uint16_t arlarmToogleCount = 0;
 
 TaskHandle_t core0Loop;
 
@@ -29,13 +37,8 @@ TaskHandle_t core0Loop;
 #endif
 
 void core0LoopCode( void * pvParameters );
-
-void displayTime()
-{
-	TimeManager::TimeInfo currentTime;
-	currentTime = timeM->getCurrentTime();
-	ShelfDisplays.displayTime(currentTime.hours, currentTime.minutes);
-}
+void TimerTick();
+void TimerDone();
 
 void setup()
 {
@@ -45,6 +48,8 @@ void setup()
 
 	ShelfDisplays.setHourSegmentColors(HOUR_COLOR);
 	ShelfDisplays.setMinuteSegmentColors(MINUTE_COLOR);
+	ShelfDisplays.setInternalLEDColor(INTERNAL_COLOR);
+	ShelfDisplays.setGlobalBrightness(128);
 
 	#if RUN_WITHOUT_WIFI == false
 		wifiSetup();
@@ -65,7 +70,10 @@ void setup()
 	#endif
 
 	timeM = TimeManager::getInstance();
-	displayTime();
+	timeM->setTimerTickCallback(TimerTick);
+	timeM->setTimerDoneCallback(TimerDone);
+	
+	//TODO: This would be the place to call a cool startup animation
 
 	//Setup the loop task on the second core
 	xTaskCreatePinnedToCore(
@@ -75,10 +83,7 @@ void setup()
 	NULL,			// parameter of the task 
 	1,				// priority of the task 
 	&core0Loop,		// Task handle to keep track of created task 
-	0);				// pin task to core 0 
-	
-	// ShelfDisplays.setInternalLEDColor(CRGB::SeaGreen);
-	// ShelfDisplays.setAllSegmentColors(CRGB::Blue);
+	0);				// pin task to core 0
 }
 
 void loop()
@@ -86,15 +91,52 @@ void loop()
 	#if ENABLE_OTA_UPLOAD == true
 		ArduinoOTA.handle();
 	#endif
-	if(lastMillis + 1000 <= millis()) // update the time every second
+	if(lastMillis + TIME_UPDATE_INTERVALL <= millis()) // update the display only in a certain intervall
 	{
 		lastMillis = millis();
-		displayTime();
+		TimeManager::TimeInfo currentTime;
+		currentTime = timeM->getCurrentTime();
+		switch (MainState)
+		{
+		case CLOCK_MODE:
+			ShelfDisplays.displayTime(currentTime.hours, currentTime.minutes);
+		break;
+		case TIMER_MODE:
+			//timers only support up to one hour durations, but really only 19 minutes if the first segment can only display a one
+			ShelfDisplays.displayTime(currentTime.minutes, currentTime.seconds);
+		break;
+		case ALARM_MODE:
+			if(currentAlarmSignalState == true)
+			{
+				ShelfDisplays.setGlobalBrightness(255, false);
+			}
+			else
+			{
+				ShelfDisplays.setGlobalBrightness(0, false);
+			}
+			currentAlarmSignalState = !currentAlarmSignalState;
+			arlarmToogleCount++;
+			#if ALARM_FLASH_TIME == true
+				ShelfDisplays.displayTime(currentTime.hours, currentTime.minutes);
+			#else
+				ShelfDisplays.displayTime(0, 0);
+			#endif
+			if(arlarmToogleCount >= ALARM_FLASH_COUNT)
+			{
+				ShelfDisplays.setGlobalBrightness(clockBrightness);
+				ShelfDisplays.displayTime(currentTime.hours, currentTime.minutes);
+				MainState = CLOCK_MODE;
+			}
+		break;
+		
+		default:
+			break;
+		}
 	}
 	ShelfDisplays.handle();
 }
 
-void core0LoopCode( void * pvParameters )
+void core0LoopCode(void* pvParameters)
 {
 	Serial.printf("Loop task running on core %d\n\r", xPortGetCoreID());
 
@@ -102,9 +144,34 @@ void core0LoopCode( void * pvParameters )
 	{
 		#if IS_BLYNK_ACTIVE == true
 			Blynk.run();
+			if(blynkUIUpdateRequired == true)
+			{
+				blynkUIUpdateRequired = false;
+				if(MainState != TIMER_MODE)
+				{
+					Blynk.virtualWrite(V5, 0);
+				}
+				else
+				{
+					TimeManager::TimeInfo currentTimerValue = timeM->getCurrentTime();
+					int time = currentTimerValue.hours * 3600 + currentTimerValue.minutes * 60 + currentTimerValue.seconds;
+					// Blynk.virtualWrite(V4, time, 0);
+				}
+			}
 		#endif
 		delay(1); //needed to serve the wdg
 	} 
+}
+
+void TimerTick()
+{
+	blynkUIUpdateRequired = true;
+}
+
+void TimerDone()
+{
+	MainState = ALARM_MODE;
+	blynkUIUpdateRequired = true;
 }
 
 #if IS_BLYNK_ACTIVE == true
@@ -116,11 +183,14 @@ void core0LoopCode( void * pvParameters )
 		#if BLYNK_SEPERATE_COLOR_CONTROL == true
 			Blynk.syncVirtual(V3);
 		#endif
+		Blynk.syncVirtual(V4);
+		Blynk.virtualWrite(V5, 0);
 	}
 
 	BLYNK_WRITE(V0) 
 	{
-		ShelfDisplays.setGlobalBrightness(param[0].asInt());
+		clockBrightness = param[0].asInt();
+		ShelfDisplays.setGlobalBrightness(clockBrightness);
 	}
 
 	BLYNK_WRITE(V1) 
@@ -143,7 +213,9 @@ void core0LoopCode( void * pvParameters )
 		#else
 			ShelfDisplays.setAllSegmentColors(currentColor);
 		#endif
-		displayTime();
+		TimeManager::TimeInfo currentTime;
+		currentTime = timeM->getCurrentTime();
+		ShelfDisplays.displayTime(currentTime.hours, currentTime.minutes);
 	}
 
 	#if BLYNK_SEPERATE_COLOR_CONTROL == true
@@ -154,9 +226,39 @@ void core0LoopCode( void * pvParameters )
 			currentColor.g  = param[1].asInt();
 			currentColor.b  = param[2].asInt();
 			ShelfDisplays.setMinuteSegmentColors(currentColor);
-			displayTime();
+			TimeManager::TimeInfo currentTime;
+			currentTime = timeM->getCurrentTime();
+			ShelfDisplays.displayTime(currentTime.hours, currentTime.minutes);
 		}
 	#endif
+
+	BLYNK_WRITE(V4)
+	{
+		TimeManager::TimeInfo TimerDuration;
+		TimeInputParam t(param);
+		//Timers do not support values larger than 24 minutes, This is a bit of a hack but there is no other way around it :/
+		TimerDuration.hours = 0; //t.getStartHour();
+		TimerDuration.minutes = t.getStartHour();
+		TimerDuration.seconds = t.getStartMinute();
+		//Serial.printf("StartTime: %d:%d:%d\n\r", TimerDuration.hours, TimerDuration.minutes, TimerDuration.seconds);
+		timeM->setTimerDuration(TimerDuration);
+	}
+
+	BLYNK_WRITE(V5) 
+	{
+		if(param[0].asInt() == 1)
+		{
+			timeM->startTimer();
+			Serial.println("TimerStarted");
+			MainState = TIMER_MODE;
+		}
+		else
+		{
+			timeM->stopTimer();
+			Serial.println("Timer Stopped");
+			MainState = CLOCK_MODE;
+		}
+	}
 #endif
 
 

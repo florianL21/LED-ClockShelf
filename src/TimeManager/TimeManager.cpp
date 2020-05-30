@@ -13,6 +13,15 @@ TimeManager::TimeManager()
 	currentTime.minutes = 0;
 	currentTime.seconds = 0;
 	offlineTimeCounter = 0;
+	TimerDuration.hours = 0;
+	TimerDuration.minutes = 0;
+	TimerDuration.seconds = 0;
+	TimerInitialDuration.hours = 0;
+	TimerInitialDuration.minutes = 0;
+	TimerInitialDuration.seconds = 0;
+	TimerTickCallback = nullptr;
+	TimerDoneCallback = nullptr;
+	TimerModeActive = false;
 
 	// timer 0 divider 80 because 80Mhz and count up
 	timer = timerBegin(0, 80, true);
@@ -62,7 +71,14 @@ String TimeManager::getCurrentTimeString()
 
 TimeManager::TimeInfo TimeManager::getCurrentTime()
 {
-	return currentTime;
+	if(TimerModeActive == false)
+	{
+		return currentTime;
+	}
+	else
+	{
+		return TimerDuration;
+	}
 }
 
 bool TimeManager::synchronize()
@@ -104,6 +120,51 @@ void TimeManager::advanceByOneSecondOffline()
 	}
 }
 
+void TimeManager::TimerCountDOwnByOneSecond()
+{
+	TimerDuration.seconds--;
+	if(TimerDuration.seconds > 59)
+	{
+		TimerDuration.minutes--;
+		TimerDuration.seconds = 59;
+	}
+	if(TimerDuration.minutes > 59)
+	{
+		TimerDuration.hours--;
+		TimerDuration.minutes = 59;
+	}
+	if(TimerDuration.hours > 24)
+	{
+		TimerDuration.hours = 24;
+	}
+}
+
+void TimeManager::setTimerDuration(TimeInfo newTimerDuration)
+{
+	TimerInitialDuration = newTimerDuration;
+	TimerDuration = newTimerDuration;
+}
+
+void TimeManager::startTimer()
+{
+	TimerModeActive = true;
+}
+
+void TimeManager::stopTimer()
+{
+	TimerModeActive = false;
+}
+
+void TimeManager::setTimerTickCallback(TimerCallBack callback)
+{
+	TimerTickCallback = callback;
+}
+
+void TimeManager::setTimerDoneCallback(TimerCallBack callback)
+{
+	TimerDoneCallback = callback;
+}
+
 void IRAM_ATTR onTimer()
 {
 	TimeManager* timeM = TimeManager::getInstance();
@@ -124,6 +185,24 @@ void IRAM_ATTR onTimer()
 		else
 		{
 			timeM->advanceByOneSecondOffline();
+		}
+		//handle timer
+		if(timeM->TimerModeActive == true)
+		{
+			timeM->TimerCountDOwnByOneSecond();
+			if(timeM->TimerTickCallback != nullptr)
+			{
+				timeM->TimerTickCallback();
+			}
+			if(timeM->TimerDuration.hours == 0 && timeM->TimerDuration.minutes == 0 && timeM->TimerDuration.seconds == 0)
+			{
+				if(timeM->TimerDoneCallback != nullptr)
+				{
+					timeM->TimerDoneCallback();
+				}
+				timeM->TimerDuration = timeM->TimerInitialDuration;
+				timeM->TimerModeActive = false;
+			}
 		}
 	#else
 		//DEMO CODE: Useful for testing animations

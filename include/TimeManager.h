@@ -18,18 +18,34 @@ public:
 		uint8_t minutes;
 		uint8_t seconds;
 	}TimeInfo;
+
+	typedef void (*TimerCallBack)(void);
 private:
 	TimeInfo currentTime;
 	hw_timer_t* timer;
 	uint32_t offlineTimeCounter;
 	static TimeManager* TimeManagerSingelton;
+	TimeInfo TimerInitialDuration;
+	TimeInfo TimerDuration;
+	TimerCallBack TimerTickCallback;
+	TimerCallBack TimerDoneCallback;
+	bool TimerModeActive;
 
 	TimeManager();
 	void advanceByOneSecondOffline();
+	void TimerCountDOwnByOneSecond();
 public:
 	~TimeManager();
 
+	/**
+	 * @brief Get the singelton instance ot the Time Manager
+	 */
 	static TimeManager* getInstance();
+
+	/**
+	 * @brief Disable the timer and deactivate the interrupt
+	 */
+	void disableTimer();
 
 	/**
 	 * @brief Synchronize the time with the NTP server
@@ -46,7 +62,26 @@ public:
 	 */
 	String getCurrentTimeString();
 
-	void disableTimer();
+	/**
+	 * @brief Set the duration for the Timer
+	 */
+	void setTimerDuration(TimeInfo newTimerDuration);
+
+	/**
+	 * @brief Start the timer
+	 */
+	void startTimer();
+
+	/**
+	 * @brief Stop the timer
+	 */
+	void stopTimer();
+
+	void setTimerTickCallback(TimerCallBack callback);
+
+	void setTimerDoneCallback(TimerCallBack callback);
+
+
 };
 
 #endif
