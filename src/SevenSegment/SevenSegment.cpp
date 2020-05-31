@@ -126,85 +126,39 @@ void SevenSegment::DisplayNumberWithoutAnim(uint8_t value)
 	}
 }
 
+Animator::ComplexAmination* SevenSegment::getTransition(uint8_t from, uint8_t to)
+{
+	return TransformationLookupTable[from][to];
+}
+
 void SevenSegment::DisplayNumber(uint8_t value)
 {
 	if(DsiplayMode == HALF_SEGMENT) // do nothing if we are only dealing with a half segment
 	{
 		return;
 	}
-
-	//TODO: fix this hack
+	Animator::ComplexAmination* anim = nullptr;
 	if(DsiplayMode == ONLY_ONE)
 	{
 		if(currentValue != 1 && value == 1)
 		{
-			AnimationHandler->PlayComplexAnimation(AnimateOFFto1, (AnimatableObject**)Segments);
+			anim = getTransition(SEGMENT_OFF, 1);
 		}else if(currentValue == 1 && value != 1)
 		{
-			AnimationHandler->PlayComplexAnimation(Animate1toOFF, (AnimatableObject**)Segments);
-		} else
-		{
-			DisplayNumberWithoutAnim(value);
-		}
-		
+			anim = getTransition(1, SEGMENT_OFF);
+		}	
 	}
 	else
 	{
-		if(currentValue == 0 && value == 1)
-		{
-			AnimationHandler->PlayComplexAnimation(Animate0to1, (AnimatableObject**)Segments);
-		}
-		else if(currentValue == 1 && value == 2)
-		{
-			AnimationHandler->PlayComplexAnimation(Animate1to2, (AnimatableObject**)Segments);
-		}
-		else if(currentValue == 2 && value == 3)
-		{
-			AnimationHandler->PlayComplexAnimation(Animate2to3, (AnimatableObject**)Segments);
-		}
-		else if(currentValue == 2 && value == 0)
-		{
-			AnimationHandler->PlayComplexAnimation(Animate2to0, (AnimatableObject**)Segments);
-		}
-		else if(currentValue == 2 && value == 1)
-		{
-			AnimationHandler->PlayComplexAnimation(Animate2to1, (AnimatableObject**)Segments);
-		}
-		else if(currentValue == 3 && value == 4)
-		{
-			AnimationHandler->PlayComplexAnimation(Animate3to4, (AnimatableObject**)Segments);
-		}
-		else if(currentValue == 4 && value == 5)
-		{
-			AnimationHandler->PlayComplexAnimation(Animate4to5, (AnimatableObject**)Segments);
-		}
-		else if(currentValue == 5 && value == 6)
-		{
-			AnimationHandler->PlayComplexAnimation(Animate5to6, (AnimatableObject**)Segments);
-		}
-		else if(currentValue == 5 && value == 0)
-		{
-			AnimationHandler->PlayComplexAnimation(Animate5to0, (AnimatableObject**)Segments);
-		}
-		else if(currentValue == 6 && value == 7)
-		{
-			AnimationHandler->PlayComplexAnimation(Animate6to7, (AnimatableObject**)Segments);
-		}
-		else if(currentValue == 7 && value == 8)
-		{
-			AnimationHandler->PlayComplexAnimation(Animate7to8, (AnimatableObject**)Segments);
-		}
-		else if(currentValue == 8 && value == 9)
-		{
-			AnimationHandler->PlayComplexAnimation(Animate8to9, (AnimatableObject**)Segments);
-		}
-		else if(currentValue == 9 && value == 0)
-		{
-			AnimationHandler->PlayComplexAnimation(Animate9to0, (AnimatableObject**)Segments);
-		} else
-		{
-			DisplayNumberWithoutAnim(value);
-		}
+		anim = getTransition(currentValue, value);
+	}
+	if(anim != nullptr)
+	{
+		AnimationHandler->PlayComplexAnimation(anim, (AnimatableObject**)Segments);
+	}
+	else
+	{
+		DisplayNumberWithoutAnim(value);
 	}
 	currentValue = value;
 }

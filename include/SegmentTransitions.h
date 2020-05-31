@@ -3,7 +3,9 @@
 
 #include "SevenSegment.h"
 
-extern Animator::ComplexAmination* TransformationLookupTable[10][10];
+#define SEGMENT_OFF		10
+
+extern Animator::ComplexAmination* TransformationLookupTable[11][11];
 extern Animator::ComplexAmination* Animate0to1;
 extern Animator::ComplexAmination* Animate1to2;
 extern Animator::ComplexAmination* Animate2to3;

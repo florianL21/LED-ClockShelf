@@ -1,19 +1,5 @@
 #include "SegmentTransitions.h"
 
-Animator::ComplexAmination* TransformationLookupTable[10][10] = {
-//To:0  1  2  3  4  5  6  7  8  9
-	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},//from 0
-	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},//from 1
-	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},//from 2
-	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},//from 3
-	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},//from 4
-	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},//from 5
-	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},//from 6
-	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},//from 7
-	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},//from 8
-	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0} //from 9
-};
-
 Animator::ComplexAmination* InitAnimate0to1(uint16_t totalAnimationLength);
 Animator::ComplexAmination* InitAnimate1to2(uint16_t totalAnimationLength);
 Animator::ComplexAmination* InitAnimate2to3(uint16_t totalAnimationLength);
@@ -32,9 +18,9 @@ Animator::ComplexAmination* InitAnimate1toOFF(uint16_t totalAnimationLength);
 Animator::ComplexAmination* Animate0to1 = InitAnimate0to1(DIGIT_ANIMATION_SPEED);
 Animator::ComplexAmination* Animate1to2 = InitAnimate1to2(DIGIT_ANIMATION_SPEED);
 Animator::ComplexAmination* Animate2to3 = InitAnimate2to3(DIGIT_ANIMATION_SPEED);
-Animator::ComplexAmination* Animate3to4 = InitAnimate2to0(DIGIT_ANIMATION_SPEED);
-Animator::ComplexAmination* Animate2to0 = InitAnimate2to1(DIGIT_ANIMATION_SPEED);
-Animator::ComplexAmination* Animate2to1 = InitAnimate3to4(DIGIT_ANIMATION_SPEED);
+Animator::ComplexAmination* Animate3to4 = InitAnimate3to4(DIGIT_ANIMATION_SPEED);
+Animator::ComplexAmination* Animate2to0 = InitAnimate2to0(DIGIT_ANIMATION_SPEED);
+Animator::ComplexAmination* Animate2to1 = InitAnimate2to1(DIGIT_ANIMATION_SPEED);
 Animator::ComplexAmination* Animate4to5 = InitAnimate4to5(DIGIT_ANIMATION_SPEED);
 Animator::ComplexAmination* Animate5to6 = InitAnimate5to6(DIGIT_ANIMATION_SPEED);
 Animator::ComplexAmination* Animate5to0 = InitAnimate5to0(DIGIT_ANIMATION_SPEED);
@@ -44,6 +30,21 @@ Animator::ComplexAmination* Animate8to9 = InitAnimate8to9(DIGIT_ANIMATION_SPEED)
 Animator::ComplexAmination* Animate9to0 = InitAnimate9to0(DIGIT_ANIMATION_SPEED);
 Animator::ComplexAmination* AnimateOFFto1 = InitAnimateOFFto1(DIGIT_ANIMATION_SPEED);
 Animator::ComplexAmination* Animate1toOFF = InitAnimate1toOFF(DIGIT_ANIMATION_SPEED);
+
+Animator::ComplexAmination* TransformationLookupTable[11][11] = {
+		  //To:0              1              2              3              4              5              6              7              8              9             OFF
+/*from 0	*/{nullptr      , Animate0to1  , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      },
+/*from 1	*/{nullptr      , nullptr      , Animate1to2  , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , Animate1toOFF},
+/*from 2	*/{Animate2to0  , Animate2to1  , nullptr      , Animate2to3  , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      },
+/*from 3	*/{nullptr      , nullptr      , nullptr      , nullptr      , Animate3to4  , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      },
+/*from 4	*/{nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , Animate4to5  , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      },
+/*from 5	*/{Animate5to0  , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , Animate5to6  , nullptr      , nullptr      , nullptr      , nullptr      },
+/*from 6	*/{nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , Animate6to7  , nullptr      , nullptr      , nullptr      },
+/*from 7	*/{nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , Animate7to8  , nullptr      , nullptr      },
+/*from 8	*/{nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , Animate8to9  , nullptr      },
+/*from 9	*/{Animate9to0  , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      },
+/*from OFF	*/{nullptr      , AnimateOFFto1, nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      } 
+};
 
 Animator::ComplexAmination* InitAnimate0to1(uint16_t totalAnimationLength)
 {

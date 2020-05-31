@@ -73,7 +73,20 @@ TimeManager::TimeInfo TimeManager::getCurrentTime()
 {
 	if(TimerModeActive == false)
 	{
-		return currentTime;
+		TimeInfo returnTime = currentTime;
+		#if DISPLAY_0_AT_MIDNIGHT == true
+		if(currentTime.hours == 24)
+		{
+			returnTime.hours = 0;
+		}
+		#endif
+		#if USE_24_HOUR_FORMAT == false
+			if(currentTime.hours >= 13)
+			{
+				returnTime.hours -= 12;
+			}
+		#endif
+		return returnTime;
 	}
 	else
 	{

@@ -40,6 +40,51 @@ void core0LoopCode( void * pvParameters );
 void TimerTick();
 void TimerDone();
 
+void startupAnimation()
+{
+	uint8_t currHourH = 0;
+	uint8_t currHourL = 0;
+	uint8_t currMinH = 0;
+	uint8_t currMinL = 0;
+	uint8_t targetHourH = 0;
+	uint8_t targetHourL = 0;
+	uint8_t targetMinH = 0;
+	uint8_t targetMinL = 0;
+
+	TimeManager::TimeInfo currentTime;
+	currentTime = timeM->getCurrentTime();
+	targetHourH = currentTime.hours / 10;
+	targetHourL = currentTime.hours % 10;
+	targetMinH = currentTime.minutes / 10;
+	targetMinL = currentTime.minutes % 10;
+	Serial.printf("%d%d:%d%d\n\r", targetHourH, targetHourL, targetMinH, targetMinL);
+
+	ShelfDisplays.displayTime(0, 0);
+	ShelfDisplays.delay(DIGIT_ANIMATION_SPEED + 10);
+
+	while (currHourH != targetHourH || currHourL != targetHourL || currMinH != targetMinH || currMinL != targetMinL)
+	{
+		if(currHourH < targetHourH)
+		{
+			currHourH++;
+		}
+		if(currHourL < targetHourL)
+		{
+			currHourL++;
+		}
+		if(currMinH < targetMinH)
+		{
+			currMinH++;
+		}
+		if(currMinL < targetMinL)
+		{
+			currMinL++;
+		}
+		ShelfDisplays.displayTime(currHourH * 10 + currHourL, currMinH * 10 + currMinL);
+		ShelfDisplays.delay(DIGIT_ANIMATION_SPEED + 10);
+	}
+}
+
 void setup()
 {
 	Serial.begin(115200);
@@ -73,8 +118,6 @@ void setup()
 	timeM->setTimerTickCallback(TimerTick);
 	timeM->setTimerDoneCallback(TimerDone);
 
-	//TODO: This would be the place to call a cool startup animation
-
 	//Setup the loop task on the second core
 	xTaskCreatePinnedToCore(
 	core0LoopCode,	// Task function. 
@@ -84,6 +127,8 @@ void setup()
 	1,				// priority of the task 
 	&core0Loop,		// Task handle to keep track of created task 
 	0);				// pin task to core 0
+
+	startupAnimation();
 }
 
 void loop()
@@ -215,7 +260,7 @@ void TimerDone()
 		#endif
 		TimeManager::TimeInfo currentTime;
 		currentTime = timeM->getCurrentTime();
-		ShelfDisplays.displayTime(currentTime.hours, currentTime.minutes);
+		// ShelfDisplays.displayTime(currentTime.hours, currentTime.minutes);
 	}
 
 	#if BLYNK_SEPERATE_COLOR_CONTROL == true
@@ -228,7 +273,7 @@ void TimerDone()
 			ShelfDisplays.setMinuteSegmentColors(currentColor);
 			TimeManager::TimeInfo currentTime;
 			currentTime = timeM->getCurrentTime();
-			ShelfDisplays.displayTime(currentTime.hours, currentTime.minutes);
+			// ShelfDisplays.displayTime(currentTime.hours, currentTime.minutes);
 		}
 	#endif
 
