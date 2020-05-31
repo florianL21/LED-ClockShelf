@@ -162,41 +162,45 @@ void Animator::startAnimationStep(uint16_t stepindex)
 	for (int j = 0; j < currentComplexAnimation->animationComplexity; j++)
 	{
 		
-		if(StepToStart->objects[j] != nullptr)
+		if(StepToStart->arrayIndex[j] != -1)
 		{
-			setAnimationDuration(StepToStart->objects[j], currentComplexAnimation->LengthPerAnimation);
-			StepToStart->objects[j]->ComplexAnimationManager = this;
+			setAnimationDuration(animationObjects[StepToStart->arrayIndex[j]], currentComplexAnimation->LengthPerAnimation);
+			animationObjects[StepToStart->arrayIndex[j]]->ComplexAnimationManager = this;
 			if(hasCallbacks == false) //only assign the callbacks to one object as all of them should start and end at the same time
 			{
 				hasCallbacks = true;
-				StepToStart->objects[j]->ComplexAnimDoneCallback = &Animator::animationIterationDoneCallback;
-				StepToStart->objects[j]->ComplexAnimStartCallback = &Animator::animationIterationStartCallback;
+				animationObjects[StepToStart->arrayIndex[j]]->ComplexAnimDoneCallback = &Animator::animationIterationDoneCallback;
+				animationObjects[StepToStart->arrayIndex[j]]->ComplexAnimStartCallback = &Animator::animationIterationStartCallback;
 			}
-			startAnimation(StepToStart->objects[j], StepToStart->animationEffects[j]);
+			startAnimation(animationObjects[StepToStart->arrayIndex[j]], StepToStart->animationEffects[j]);
 		}
 	}
 }
 
-void Animator::PlayComplexAnimation(ComplexAmination* animation, bool looping)
+void Animator::PlayComplexAnimation(ComplexAmination* animation, AnimatableObject* animationObjectsArray[], bool looping)
 {
 	complexAnimationCounter = 0;
 	currentComplexAnimation = animation;
 	loopAnimation = looping;
 	complexAnimationRunning = true;
+	animationObjects = animationObjectsArray;
 	if(animation->animations == nullptr)
 	{
 		Serial.println("[E] animation chain was null pointer!");
+		return;
+	}
+	if(animationObjectsArray == nullptr)
+	{
+		Serial.println("[E] animation objects was null pointer!");
+		return;
+	}
+	if(animation->animations->size() >= 1)
+	{
+		startAnimationStep(0);
 	}
 	else
 	{
-		if(animation->animations->size() >= 1)
-		{
-			startAnimationStep(0);
-		}
-		else
-		{
-			Serial.println("[E] animation chain size was zero this Should not be the case!");
-		}
+		Serial.println("[E] animation chain size was zero this Should not be the case!");
 	}
 }
 

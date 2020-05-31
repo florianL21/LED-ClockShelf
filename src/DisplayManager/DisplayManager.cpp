@@ -134,7 +134,6 @@ void DisplayManager::InitSegments(uint16_t indexOfFirstLed, uint8_t ledsPerSegme
 		animationManagers[diplayIndex[i]]->add(allSegments[i]);
 		currentLEDIndex += ledsPerSegment;
 	}
-	InitLoadingAnimation(NUM_SEGMENTS_PROGRESS);
 }
 
 
@@ -272,7 +271,7 @@ void DisplayManager::restoreAnimationManagers()
 void DisplayManager::showLoadingAnimation()
 {	
 	// AnimationManagersTemporaryOverride(&animationManager);
-	animationManager.PlayComplexAnimation(&LoadingAnimation, true);
+	animationManager.PlayComplexAnimation(LoadingAnimation, (AnimatableObject**)allSegments, true);
 }
 
 void DisplayManager::stopLoadingAnimation()

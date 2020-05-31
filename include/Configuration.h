@@ -202,9 +202,9 @@ enum DisplayIDs {LOWER_DIGIT_MINUTE_DISPLAY = 6, HIGHER_DIGIT_MINUTE_DISPLAY = 4
 #define NUM_SEGMENTS_PROGRESS		16
 
 /**
- * @brief The number of LEDs that shall be used for one iteration of the loading animation
+ * @brief The time is shall take for one iteration of the loading animation
  */
-#define NUM_SEGMENTS_PROGRESS		3000
+#define LOADING_ANIMATION_DURATION		3000
 
 /**
  * @brief How fast the brightness interpolation shall react to brightness changes

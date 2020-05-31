@@ -72,7 +72,7 @@ void setup()
 	timeM = TimeManager::getInstance();
 	timeM->setTimerTickCallback(TimerTick);
 	timeM->setTimerDoneCallback(TimerDone);
-	
+
 	//TODO: This would be the place to call a cool startup animation
 
 	//Setup the loop task on the second core
@@ -153,8 +153,8 @@ void core0LoopCode(void* pvParameters)
 				}
 				else
 				{
-					TimeManager::TimeInfo currentTimerValue = timeM->getCurrentTime();
-					int time = currentTimerValue.hours * 3600 + currentTimerValue.minutes * 60 + currentTimerValue.seconds;
+					// TimeManager::TimeInfo currentTimerValue = timeM->getCurrentTime();
+					// int time = currentTimerValue.hours * 3600 + currentTimerValue.minutes * 60 + currentTimerValue.seconds;
 					// Blynk.virtualWrite(V4, time, 0);
 				}
 			}

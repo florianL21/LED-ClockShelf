@@ -54,35 +54,6 @@ bool SevenSegment::isConfigComplete()
 	return false;
 }
 
-void SevenSegment::initAnimations()
-{
-	//make sure to only ever initialize the animations once otherwise we have a HUGE memory leak.
-	//TODO: maybe add a cleanup routine if dynamic changing of segments is required
-	if(isAnimationInitialized == false)
-	{
-		isAnimationInitialized = true;
-		InitAnimate0to1(DIGIT_ANIMATION_SPEED);
-		InitAnimate1to2(DIGIT_ANIMATION_SPEED);
-		InitAnimate2to3(DIGIT_ANIMATION_SPEED);
-		InitAnimate2to0(DIGIT_ANIMATION_SPEED);
-		InitAnimate2to1(DIGIT_ANIMATION_SPEED);
-		InitAnimate3to4(DIGIT_ANIMATION_SPEED);
-		InitAnimate4to5(DIGIT_ANIMATION_SPEED);
-		InitAnimate5to6(DIGIT_ANIMATION_SPEED);
-		InitAnimate5to0(DIGIT_ANIMATION_SPEED);
-		InitAnimate6to7(DIGIT_ANIMATION_SPEED);
-		InitAnimate7to8(DIGIT_ANIMATION_SPEED);
-		InitAnimate8to9(DIGIT_ANIMATION_SPEED);
-		InitAnimate9to0(DIGIT_ANIMATION_SPEED);
-		InitAnimateOFFto1(DIGIT_ANIMATION_SPEED);
-		InitAnimate1toOFF(DIGIT_ANIMATION_SPEED);
-	}
-	else
-	{
-		Serial.println("[W] Animations were not initialized again. This should not happen! Check your seven segment init routines!");
-	}
-}
-
 uint8_t SevenSegment::getIndexOfSegment(SegmentPosition positionInDisplay)
 {
 	uint8_t segID = 0;
@@ -102,10 +73,6 @@ void SevenSegment::add(Segment* segmentToAdd, SegmentPosition positionInDisplay)
 {
 	Segments[getIndexOfSegment(positionInDisplay)] = segmentToAdd;
 	AnimationHandler->add(segmentToAdd);
-	if(isConfigComplete() == true)
-	{
-		initAnimations();
-	}
 }
 
 void SevenSegment::DisplayNumberWithoutAnim(uint8_t value)
@@ -171,10 +138,10 @@ void SevenSegment::DisplayNumber(uint8_t value)
 	{
 		if(currentValue != 1 && value == 1)
 		{
-			AnimationHandler->PlayComplexAnimation(&AnimateOFFto1);
+			AnimationHandler->PlayComplexAnimation(AnimateOFFto1, (AnimatableObject**)Segments);
 		}else if(currentValue == 1 && value != 1)
 		{
-			AnimationHandler->PlayComplexAnimation(&Animate1toOFF);
+			AnimationHandler->PlayComplexAnimation(Animate1toOFF, (AnimatableObject**)Segments);
 		} else
 		{
 			DisplayNumberWithoutAnim(value);
@@ -185,55 +152,55 @@ void SevenSegment::DisplayNumber(uint8_t value)
 	{
 		if(currentValue == 0 && value == 1)
 		{
-			AnimationHandler->PlayComplexAnimation(&Animate0to1);
+			AnimationHandler->PlayComplexAnimation(Animate0to1, (AnimatableObject**)Segments);
 		}
 		else if(currentValue == 1 && value == 2)
 		{
-			AnimationHandler->PlayComplexAnimation(&Animate1to2);
+			AnimationHandler->PlayComplexAnimation(Animate1to2, (AnimatableObject**)Segments);
 		}
 		else if(currentValue == 2 && value == 3)
 		{
-			AnimationHandler->PlayComplexAnimation(&Animate2to3);
+			AnimationHandler->PlayComplexAnimation(Animate2to3, (AnimatableObject**)Segments);
 		}
 		else if(currentValue == 2 && value == 0)
 		{
-			AnimationHandler->PlayComplexAnimation(&Animate2to0);
+			AnimationHandler->PlayComplexAnimation(Animate2to0, (AnimatableObject**)Segments);
 		}
 		else if(currentValue == 2 && value == 1)
 		{
-			AnimationHandler->PlayComplexAnimation(&Animate2to1);
+			AnimationHandler->PlayComplexAnimation(Animate2to1, (AnimatableObject**)Segments);
 		}
 		else if(currentValue == 3 && value == 4)
 		{
-			AnimationHandler->PlayComplexAnimation(&Animate3to4);
+			AnimationHandler->PlayComplexAnimation(Animate3to4, (AnimatableObject**)Segments);
 		}
 		else if(currentValue == 4 && value == 5)
 		{
-			AnimationHandler->PlayComplexAnimation(&Animate4to5);
+			AnimationHandler->PlayComplexAnimation(Animate4to5, (AnimatableObject**)Segments);
 		}
 		else if(currentValue == 5 && value == 6)
 		{
-			AnimationHandler->PlayComplexAnimation(&Animate5to6);
+			AnimationHandler->PlayComplexAnimation(Animate5to6, (AnimatableObject**)Segments);
 		}
 		else if(currentValue == 5 && value == 0)
 		{
-			AnimationHandler->PlayComplexAnimation(&Animate5to0);
+			AnimationHandler->PlayComplexAnimation(Animate5to0, (AnimatableObject**)Segments);
 		}
 		else if(currentValue == 6 && value == 7)
 		{
-			AnimationHandler->PlayComplexAnimation(&Animate6to7);
+			AnimationHandler->PlayComplexAnimation(Animate6to7, (AnimatableObject**)Segments);
 		}
 		else if(currentValue == 7 && value == 8)
 		{
-			AnimationHandler->PlayComplexAnimation(&Animate7to8);
+			AnimationHandler->PlayComplexAnimation(Animate7to8, (AnimatableObject**)Segments);
 		}
 		else if(currentValue == 8 && value == 9)
 		{
-			AnimationHandler->PlayComplexAnimation(&Animate8to9);
+			AnimationHandler->PlayComplexAnimation(Animate8to9, (AnimatableObject**)Segments);
 		}
 		else if(currentValue == 9 && value == 0)
 		{
-			AnimationHandler->PlayComplexAnimation(&Animate9to0);
+			AnimationHandler->PlayComplexAnimation(Animate9to0, (AnimatableObject**)Segments);
 		} else
 		{
 			DisplayNumberWithoutAnim(value);

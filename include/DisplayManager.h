@@ -11,6 +11,7 @@
 #include "Configuration.h"
 #include "LinkedList.h"
 #include "misc.h"
+#include "Animations.h"
 
 class DisplayManager
 {
@@ -44,10 +45,6 @@ private:
 
 	void AnimationManagersTemporaryOverride(Animator* OverrideanimationManager);
 	void restoreAnimationManagers();
-
-	//Animations
-	Animator::ComplexAmination LoadingAnimation;
-	void InitLoadingAnimation(uint16_t totalAnimationLength);
 
 	CRGB leds[NUM_LEDS];
 	#if APPEND_DOWN_LIGHTERS == false

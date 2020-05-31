@@ -22,7 +22,7 @@ public:
 	 * @param animationEffects array of animation effects that shall be played back
 	 */
 	typedef struct {
-		AnimatableObject** objects;
+		int16_t* arrayIndex;
 		uint8_t* animationEffects;
 	} animationStep;
 
@@ -49,6 +49,8 @@ private:
 	bool loopAnimation;
 	uint16_t complexAnimationCounter;
 	bool complexAnimationRunning;
+
+	AnimatableObject** animationObjects;
 
 	int16_t getIndexInList(AnimatableObject* object);
 	void animationIterationStartCallback(AnimatableObject* sourceObject);
@@ -82,7 +84,7 @@ public:
 	 * @param objects 2D array of objects that shall be animated.
 	 * @param animationEffects 2D array of animation effects that shall be played back
 	 */
-	void PlayComplexAnimation(ComplexAmination* animation, bool looping = false);
+	void PlayComplexAnimation(ComplexAmination* animation, AnimatableObject* animationObjectsArray[], bool looping = false);
 	void ComplexAnimationStopLooping();
 	void WaitForComplexAnimationCompletion();
 

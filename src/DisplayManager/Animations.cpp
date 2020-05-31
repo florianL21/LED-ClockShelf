@@ -1,57 +1,60 @@
-#include "DisplayManager.h"
+#include "Animations.h"
 
-void DisplayManager::InitLoadingAnimation(uint16_t totalAnimationLength)
+Animator::ComplexAmination* InitLoadingAnimation(uint16_t totalAnimationLength);
+Animator::ComplexAmination* LoadingAnimation = InitLoadingAnimation(LOADING_ANIMATION_DURATION);
+
+Animator::ComplexAmination* InitLoadingAnimation(uint16_t totalAnimationLength)
 {
 	Animator::animationStep* preStep = new Animator::animationStep;
-	preStep->objects = new AnimatableObject*[2] {allSegments[0], nullptr};
+	preStep->arrayIndex = new int16_t[2] {0, -1};
 	preStep->animationEffects = new uint8_t[2] {Segment::ANIMATE_IN_TO_RIGHT, 0};
 	Animator::animationStep* step0 = new Animator::animationStep;
-	step0->objects = new AnimatableObject*[2] {allSegments[0], allSegments[1]};
+	step0->arrayIndex = new int16_t[2] {0, 1};
 	step0->animationEffects = new uint8_t[2] {Segment::ANIMATE_OUT_TO_RIGHT, Segment::ANIMATE_IN_TO_RIGHT};
 	Animator::animationStep* step1 = new Animator::animationStep;
-	step1->objects = new AnimatableObject*[2] {allSegments[1], allSegments[2]};
+	step1->arrayIndex = new int16_t[2] {1, 2};
 	step1->animationEffects = new uint8_t[2] {Segment::ANIMATE_OUT_TO_RIGHT, Segment::ANIMATE_IN_TO_RIGHT};
 	Animator::animationStep* step2 = new Animator::animationStep;
-	step2->objects = new AnimatableObject*[2] {allSegments[2], allSegments[3]};
+	step2->arrayIndex = new int16_t[2] {2, 3};
 	step2->animationEffects = new uint8_t[2] {Segment::ANIMATE_OUT_TO_RIGHT, Segment::ANIMATE_IN_TO_RIGHT};
 	Animator::animationStep* step3 = new Animator::animationStep;
-	step3->objects = new AnimatableObject*[2] {allSegments[3], allSegments[4]};
+	step3->arrayIndex = new int16_t[2] {3, 4};
 	step3->animationEffects = new uint8_t[2] {Segment::ANIMATE_OUT_TO_RIGHT, Segment::ANIMATE_IN_TO_RIGHT};
 	Animator::animationStep* step4 = new Animator::animationStep;
-	step4->objects = new AnimatableObject*[2] {allSegments[4], allSegments[5]};
+	step4->arrayIndex = new int16_t[2] {4, 5};
 	step4->animationEffects = new uint8_t[2] {Segment::ANIMATE_OUT_TO_RIGHT, Segment::ANIMATE_IN_TO_RIGHT};
 	Animator::animationStep* step5 = new Animator::animationStep;
-	step5->objects = new AnimatableObject*[2] {allSegments[5], allSegments[6]};
+	step5->arrayIndex = new int16_t[2] {5, 6};
 	step5->animationEffects = new uint8_t[2] {Segment::ANIMATE_OUT_TO_RIGHT, Segment::ANIMATE_IN_TO_TOP};
 	Animator::animationStep* step6 = new Animator::animationStep;
-	step6->objects = new AnimatableObject*[2] {allSegments[6], allSegments[7]};
+	step6->arrayIndex = new int16_t[2] {6, 7};
 	step6->animationEffects = new uint8_t[2] {Segment::ANIMATE_OUT_TO_TOP, Segment::ANIMATE_IN_TO_TOP};
 	Animator::animationStep* step7 = new Animator::animationStep;
-	step7->objects = new AnimatableObject*[2] {allSegments[7], allSegments[8]};
+	step7->arrayIndex = new int16_t[2] {7, 8};
 	step7->animationEffects = new uint8_t[2] {Segment::ANIMATE_OUT_TO_TOP, Segment::ANIMATE_IN_TO_TOP};
 	Animator::animationStep* step8 = new Animator::animationStep;
-	step8->objects = new AnimatableObject*[2] {allSegments[8], allSegments[9]};
+	step8->arrayIndex = new int16_t[2] {8, 9};
 	step8->animationEffects = new uint8_t[2] {Segment::ANIMATE_OUT_TO_TOP, Segment::ANIMATE_IN_TO_LEFT};
 	Animator::animationStep* step9 = new Animator::animationStep;
-	step9->objects = new AnimatableObject*[2] {allSegments[9], allSegments[10]};
+	step9->arrayIndex = new int16_t[2] {9, 10};
 	step9->animationEffects = new uint8_t[2] {Segment::ANIMATE_OUT_TO_LEFT, Segment::ANIMATE_IN_TO_LEFT};
 	Animator::animationStep* step10 = new Animator::animationStep;
-	step10->objects = new AnimatableObject*[2] {allSegments[10], allSegments[11]};
+	step10->arrayIndex = new int16_t[2] {10, 11};
 	step10->animationEffects = new uint8_t[2] {Segment::ANIMATE_OUT_TO_LEFT, Segment::ANIMATE_IN_TO_LEFT};
 	Animator::animationStep* step11 = new Animator::animationStep;
-	step11->objects = new AnimatableObject*[2] {allSegments[11], allSegments[12]};
+	step11->arrayIndex = new int16_t[2] {11, 12};
 	step11->animationEffects = new uint8_t[2] {Segment::ANIMATE_OUT_TO_LEFT, Segment::ANIMATE_IN_TO_LEFT};
 	Animator::animationStep* step12 = new Animator::animationStep;
-	step12->objects = new AnimatableObject*[2] {allSegments[12], allSegments[13]};
+	step12->arrayIndex = new int16_t[2] {12, 13};
 	step12->animationEffects = new uint8_t[2] {Segment::ANIMATE_OUT_TO_LEFT, Segment::ANIMATE_IN_TO_LEFT};
 	Animator::animationStep* step13 = new Animator::animationStep;
-	step13->objects = new AnimatableObject*[2] {allSegments[13], allSegments[14]};
+	step13->arrayIndex = new int16_t[2] {13, 14};
 	step13->animationEffects = new uint8_t[2] {Segment::ANIMATE_OUT_TO_LEFT, Segment::ANIMATE_IN_TO_BOTTOM};
 	Animator::animationStep* step14 = new Animator::animationStep;
-	step14->objects = new AnimatableObject*[2] {allSegments[14], allSegments[15]};
+	step14->arrayIndex = new int16_t[2] {14, 15};
 	step14->animationEffects = new uint8_t[2] {Segment::ANIMATE_OUT_TO_RIGHT, Segment::ANIMATE_IN_TO_RIGHT};
 	Animator::animationStep* step15 = new Animator::animationStep;
-	step15->objects = new AnimatableObject*[2] {allSegments[15], nullptr};
+	step15->arrayIndex = new int16_t[2] {15, -1};
 	step15->animationEffects = new uint8_t[2] {Segment::ANIMATE_OUT_TO_RIGHT, 0};
 
 	LinkedList<Animator::animationStep*>* allSteps = new LinkedList<Animator::animationStep*>();
@@ -73,7 +76,9 @@ void DisplayManager::InitLoadingAnimation(uint16_t totalAnimationLength)
 	allSteps->add(step14);
 	allSteps->add(step15);
 
-	LoadingAnimation.animationComplexity = 2;
-	LoadingAnimation.LengthPerAnimation = totalAnimationLength / allSteps->size();
-	LoadingAnimation.animations = allSteps;
+	Animator::ComplexAmination* animation = new Animator::ComplexAmination();
+	animation->animationComplexity = 2;
+	animation->LengthPerAnimation = totalAnimationLength / allSteps->size();
+	animation->animations = allSteps;
+	return animation;
 }

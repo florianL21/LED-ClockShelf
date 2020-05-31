@@ -6,6 +6,7 @@
 #include "AnimatableObject.h"
 #include "Animator.h"
 #include "Configuration.h"
+#include "SegmentTransitions.h"
 
 class SevenSegment : AnimatableObject
 {
@@ -38,40 +39,6 @@ private:
 	bool isConfigComplete();
 	void DisplayNumberWithoutAnim(uint8_t value);
 
-	//animation inits
-	void initAnimations();
-
-	Animator::ComplexAmination Animate0to1;
-	void InitAnimate0to1(uint16_t totalAnimationLength);
-	Animator::ComplexAmination Animate1to2;
-	void InitAnimate1to2(uint16_t totalAnimationLength);
-	Animator::ComplexAmination Animate2to3;
-	void InitAnimate2to3(uint16_t totalAnimationLength);
-	Animator::ComplexAmination Animate3to4;
-	void InitAnimate2to0(uint16_t totalAnimationLength);
-	Animator::ComplexAmination Animate2to0;
-	void InitAnimate2to1(uint16_t totalAnimationLength);
-	Animator::ComplexAmination Animate2to1;
-	void InitAnimate3to4(uint16_t totalAnimationLength);
-	Animator::ComplexAmination Animate4to5;
-	void InitAnimate4to5(uint16_t totalAnimationLength);
-	Animator::ComplexAmination Animate5to6;
-	void InitAnimate5to6(uint16_t totalAnimationLength);
-	Animator::ComplexAmination Animate5to0;
-	void InitAnimate5to0(uint16_t totalAnimationLength);
-	Animator::ComplexAmination Animate6to7;
-	void InitAnimate6to7(uint16_t totalAnimationLength);
-	Animator::ComplexAmination Animate7to8;
-	void InitAnimate7to8(uint16_t totalAnimationLength);
-	Animator::ComplexAmination Animate8to9;
-	void InitAnimate8to9(uint16_t totalAnimationLength);
-	Animator::ComplexAmination Animate9to0;
-	void InitAnimate9to0(uint16_t totalAnimationLength);
-	Animator::ComplexAmination AnimateOFFto1;
-	void InitAnimateOFFto1(uint16_t totalAnimationLength);
-	Animator::ComplexAmination Animate1toOFF;
-	void InitAnimate1toOFF(uint16_t totalAnimationLength);
-	
 public:
 
 	Animator* AnimationHandler;
