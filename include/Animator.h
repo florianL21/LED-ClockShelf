@@ -18,7 +18,7 @@ public:
 	 * 
 	 * @note Both lists have to have the same length. The length also must be consistent across all animation steps.
 	 * 
-	 * @param objects array of objects that shall be animated.
+	 * @param arrayIndex index of the array position where the objects that shall be animated is located.
 	 * @param animationEffects array of animation effects that shall be played back
 	 */
 	typedef struct {
@@ -78,11 +78,9 @@ public:
 	 * 
 	 * @note The first set of animations always have the trigger STARTS_WITH the configured trigger is ignored
 	 * 
-	 * @param NumAnimations number of animations in a row
-	 * @param animationComplexity Maximum of how many animations can be triggered at the same time
-	 * @param LengthPerAnimation How long one of the animations in the chain should last for
-	 * @param objects 2D array of objects that shall be animated.
-	 * @param animationEffects 2D array of animation effects that shall be played back
+	 * @param animation pointer to the animation that shall be played
+	 * @param animationObjectsArray Array of the objects that shall be animated. The indexies for the array are defined in the animation itself
+	 * @param looping Whether the animation shall be looped or not
 	 */
 	void PlayComplexAnimation(ComplexAmination* animation, AnimatableObject* animationObjectsArray[], bool looping = false);
 	void ComplexAnimationStopLooping();
