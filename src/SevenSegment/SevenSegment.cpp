@@ -128,7 +128,14 @@ void SevenSegment::DisplayNumberWithoutAnim(uint8_t value)
 
 Animator::ComplexAmination* SevenSegment::getTransition(uint8_t from, uint8_t to)
 {
-	return TransformationLookupTable[from][to];
+	if(from <= 10 && to <= 10)
+	{
+		return TransformationLookupTable[from][to];
+	}
+	else
+	{
+		return nullptr;
+	}
 }
 
 void SevenSegment::DisplayNumber(uint8_t value)
