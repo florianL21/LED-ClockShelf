@@ -63,7 +63,6 @@ void startupAnimation()
 	targetHourL = currentTime.hours % 10;
 	targetMinH = currentTime.minutes / 10;
 	targetMinL = currentTime.minutes % 10;
-	Serial.printf("%d%d:%d%d\n\r", targetHourH, targetHourL, targetMinH, targetMinL);
 
 	ShelfDisplays.displayTime(0, 0);
 	ShelfDisplays.delay(DIGIT_ANIMATION_SPEED + 10);
