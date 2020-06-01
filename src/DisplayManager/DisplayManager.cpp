@@ -25,9 +25,9 @@ DisplayManager::DisplayManager()
 		animationManagers[i] = new Animator();
 	}
 
-	LEDBrightnessCurrent = 0;
-	LEDBrightnessSmoothingStartPoint = 0;
-	setGlobalBrightness(0, false);
+	LEDBrightnessCurrent = 128;
+	LEDBrightnessSmoothingStartPoint = 128;
+	setGlobalBrightness(128, false);
 
 	#if ENABLE_LIGHT_SENSOR == true
 		lastSensorMeasurement = 0;
