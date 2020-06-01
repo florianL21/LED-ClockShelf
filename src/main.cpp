@@ -26,6 +26,12 @@ ClockStates MainState = CLOCK_MODE;
 uint8_t clockBrightness = 128;
 bool currentAlarmSignalState = false;
 uint16_t arlarmToogleCount = 0;
+enum ColorSelector {CHANGE_INTERRIOR_COLOR, CHANGE_HOURS_COLOR, CHANGE_MINUTES_COLOR};
+ColorSelector ColorSelection = CHANGE_HOURS_COLOR;
+CRGB InternalColor;
+CRGB HourColor;
+CRGB MinuteColor;
+
 
 TaskHandle_t core0Loop;
 
@@ -114,21 +120,25 @@ void setup()
 		Blynk.config(BLYNK_AUTH_TOKEN, BLYNK_SERVER, 80);
 	#endif
 
+	Serial.println("Fetching time from NTP server...");
 	timeM = TimeManager::getInstance();
 	timeM->setTimerTickCallback(TimerTick);
 	timeM->setTimerDoneCallback(TimerDone);
 
+	Serial.println("Starting blynk on core 0...");
 	//Setup the loop task on the second core
 	xTaskCreatePinnedToCore(
-	core0LoopCode,	// Task function. 
-	"core0Loop",	// name of task. 
-	10000,			// Stack size of task 
-	NULL,			// parameter of the task 
-	1,				// priority of the task 
-	&core0Loop,		// Task handle to keep track of created task 
+	core0LoopCode,	// Task function.
+	"core0Loop",	// name of task.
+	10000,			// Stack size of task
+	NULL,			// parameter of the task
+	1,				// priority of the task
+	&core0Loop,		// Task handle to keep track of created task
 	0);				// pin task to core 0
 
+	Serial.println("Displaying startup animation...");
 	startupAnimation();
+	Serial.println("Setup done. Main Loop starting...");
 }
 
 void loop()
@@ -166,10 +176,11 @@ void loop()
 			#else
 				ShelfDisplays.displayTime(0, 0);
 			#endif
-			if(arlarmToogleCount >= ALARM_FLASH_COUNT)
+			if(arlarmToogleCount >= ALARM_FLASH_COUNT * 2)
 			{
 				ShelfDisplays.setGlobalBrightness(clockBrightness);
 				ShelfDisplays.displayTime(currentTime.hours, currentTime.minutes);
+				arlarmToogleCount = 0;
 				MainState = CLOCK_MODE;
 			}
 		break;
@@ -192,9 +203,9 @@ void core0LoopCode(void* pvParameters)
 			if(blynkUIUpdateRequired == true)
 			{
 				blynkUIUpdateRequired = false;
-				if(MainState != TIMER_MODE)
+				if(MainState == CLOCK_MODE)
 				{
-					Blynk.virtualWrite(V5, 0);
+					Blynk.virtualWrite(V4, 0);
 				}
 				else
 				{
@@ -223,14 +234,15 @@ void TimerDone()
 	BLYNK_CONNECTED()
 	{
 		Blynk.syncVirtual(V0);
-		Blynk.syncVirtual(V1);
-		Blynk.syncVirtual(V2);
 		#if BLYNK_SEPERATE_COLOR_CONTROL == true
-			Blynk.syncVirtual(V3);
+			Blynk.syncVirtual(V1);
 		#endif
-		Blynk.syncVirtual(V4);
-		Blynk.virtualWrite(V5, 0);
+		Blynk.syncVirtual(V2);
+		Blynk.syncVirtual(V3);
+		Blynk.virtualWrite(V4, 0);
 	}
+
+
 
 	BLYNK_WRITE(V0) 
 	{
@@ -238,14 +250,26 @@ void TimerDone()
 		ShelfDisplays.setGlobalBrightness(clockBrightness);
 	}
 
-	BLYNK_WRITE(V1) 
-	{
-		CRGB currentColor;
-		currentColor.r  = param[0].asInt();
-		currentColor.g  = param[1].asInt();
-		currentColor.b  = param[2].asInt();
-		ShelfDisplays.setInternalLEDColor(currentColor);
-	}
+	#if BLYNK_SEPERATE_COLOR_CONTROL == true
+		BLYNK_WRITE(V1) 
+		{
+			switch (param.asInt())
+			{
+			case 1:
+				ColorSelection = CHANGE_HOURS_COLOR;
+				Blynk.virtualWrite(V2, HourColor.r, HourColor.g, HourColor.b);
+				break;
+			case 2:
+				ColorSelection = CHANGE_MINUTES_COLOR;
+				Blynk.virtualWrite(V2, MinuteColor.r, MinuteColor.g, MinuteColor.b);
+				break;
+			case 3:
+				ColorSelection = CHANGE_INTERRIOR_COLOR;
+				Blynk.virtualWrite(V2, InternalColor.r, InternalColor.g, InternalColor.b);
+				break;
+			}
+		}
+	#endif
 
 	BLYNK_WRITE(V2) 
 	{
@@ -254,30 +278,27 @@ void TimerDone()
 		currentColor.g  = param[1].asInt();
 		currentColor.b  = param[2].asInt();
 		#if BLYNK_SEPERATE_COLOR_CONTROL == true
-			ShelfDisplays.setHourSegmentColors(currentColor);
+			switch (ColorSelection)
+			{
+			case CHANGE_HOURS_COLOR:
+				ShelfDisplays.setHourSegmentColors(currentColor);
+				HourColor = currentColor;
+				break;
+			case CHANGE_MINUTES_COLOR:
+				ShelfDisplays.setMinuteSegmentColors(currentColor);
+				MinuteColor = currentColor;
+				break;
+			case CHANGE_INTERRIOR_COLOR:
+				ShelfDisplays.setInternalLEDColor(currentColor);
+				InternalColor = currentColor;
+				break;
+			}
 		#else
 			ShelfDisplays.setAllSegmentColors(currentColor);
 		#endif
-		TimeManager::TimeInfo currentTime;
-		currentTime = timeM->getCurrentTime();
-		// ShelfDisplays.displayTime(currentTime.hours, currentTime.minutes);
 	}
 
-	#if BLYNK_SEPERATE_COLOR_CONTROL == true
-		BLYNK_WRITE(V3) 
-		{
-			CRGB currentColor;
-			currentColor.r  = param[0].asInt();
-			currentColor.g  = param[1].asInt();
-			currentColor.b  = param[2].asInt();
-			ShelfDisplays.setMinuteSegmentColors(currentColor);
-			TimeManager::TimeInfo currentTime;
-			currentTime = timeM->getCurrentTime();
-			// ShelfDisplays.displayTime(currentTime.hours, currentTime.minutes);
-		}
-	#endif
-
-	BLYNK_WRITE(V4)
+	BLYNK_WRITE(V3) 
 	{
 		TimeManager::TimeInfo TimerDuration;
 		TimeInputParam t(param);
@@ -289,18 +310,21 @@ void TimerDone()
 		timeM->setTimerDuration(TimerDuration);
 	}
 
-	BLYNK_WRITE(V5) 
+	BLYNK_WRITE(V4)
 	{
 		if(param[0].asInt() == 1)
 		{
 			timeM->startTimer();
-			Serial.println("TimerStarted");
+			Serial.println("Timer Started");
 			MainState = TIMER_MODE;
 		}
 		else
 		{
 			timeM->stopTimer();
 			Serial.println("Timer Stopped");
+			Blynk.syncVirtual(V3);
+			arlarmToogleCount = 0;
+			ShelfDisplays.setGlobalBrightness(clockBrightness);
 			MainState = CLOCK_MODE;
 		}
 	}
@@ -339,10 +363,10 @@ void TimerDone()
 			#if USE_ESPTOUCH_SMART_CONFIG == true
 				Serial.println("Reconnect failed. starting smart config");
 				WiFi.mode(WIFI_AP_STA);
-				/* start SmartConfig */
+				// start SmartConfig
 				WiFi.beginSmartConfig();
 
-				/* Wait for SmartConfig packet from mobile */
+				// Wait for SmartConfig packet from mobile
 				Serial.println("Waiting for SmartConfig.");
 				ShelfDisplays.setAllSegmentColors(CRGB::Red);
 				while (!WiFi.smartConfigDone()) 
@@ -354,7 +378,7 @@ void TimerDone()
 				Serial.println("");
 				Serial.println("SmartConfig done.");
 
-				/* Wait for WiFi to connect to AP */
+				// Wait for WiFi to connect to AP
 				Serial.println("Waiting for WiFi");
 				while (WiFi.status() != WL_CONNECTED) 
 				{
