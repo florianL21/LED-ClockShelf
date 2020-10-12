@@ -1,7 +1,7 @@
 # LED-ClockShelf
 
 This is the software of a variation of the LED clock from [here.](https://www.instructables.com/id/How-to-Build-a-Giant-Hidden-Shelf-Edge-Clock/)
-With some reconfiguration it should be possible to use this code also for the original version.
+I have a seperate branch with a ready to use configuration which works on the original version of this clock out of the box [here](https://github.com/florianL21/LED-ClockShelf/tree/diy-machines-version)
 
 I decided to code it completley from scratch at I wanted to use a ESP32 instead of the Arduino nano and RTC that is used in the original project.
 This enables some cool features like smartphone app control, OTA updates and fetching of the time using the internet.
