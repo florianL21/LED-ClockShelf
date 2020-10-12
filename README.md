@@ -9,7 +9,7 @@ This enables some cool features like smartphone app control, OTA updates and fet
 Additionally this has full support for animations. By default I provide all needed anmiations for a 12h clock to morph one digit into another soothly.
 Further animations can be easily added and existing animation can be adjusted to your liking.
 
-The whole codebase is highly modular and configurable and can be tweaked exactly to your liking.
+The whole codebase is highly modular and configurable and can be tweaked exactly to your preferences.
 
 Detailed documentation is avaliable on the [Wiki.](https://github.com/florianL21/LED-ClockShelf/wiki)
 
@@ -21,7 +21,7 @@ I am using VScode with PlatformIO.
 VSCode can be downloaded from [here.](https://code.visualstudio.com/)
 And PlatformIO is an extention that can easily be installed from inside of VSCode.
 
-Via the platformio home the following libraries have to be installed:
+Via the PlatformIO home the following libraries have to be installed:
  * "Blynk" by Volodymyr Shymanskyy
  * "FastLED" by Daniel Garcia
  * "LinkedList" by Ivan Seidel
@@ -29,6 +29,6 @@ Via the platformio home the following libraries have to be installed:
 # Important files for configuration:
 Files that are important for configuration (sorted by importance):
  1. At the top of /include/Configuration.h -> Contains almost all important settings, like WIFI config, pin configurations etc.
- 2. /src/DisplayManager/DisplayConfiguration.cpp -> Configuration of which leds belong to which segments and whioch segments belong to which display, the order of the segments and their animation directions *It is really important to get this one right!*
+ 2. /src/DisplayManager/DisplayConfiguration.cpp -> Configuration of which leds belong to which segments and which segments belong to which display, the order of the segments and their animation directions *It is really important to get this one right!*
  3. /src/SevenSegment/SegmentTransitions.cpp -> Configuring the animations between the digits
  4. /src/DisplayManager/Animations.cpp -> configuration of anmimations like the loading animation
