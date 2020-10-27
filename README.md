@@ -1,4 +1,7 @@
 # LED-ClockShelf
+<p align="center">
+  <img src="https://github.com/florianL21/LED-ClockShelf/blob/master/doc/images/Animation.gif?raw=true" alt="Animation example"/>
+</p>
 
 This is the software of a variation of the LED clock from [here.](https://www.instructables.com/id/How-to-Build-a-Giant-Hidden-Shelf-Edge-Clock/)
 I have a seperate branch with a ready to use configuration which works on the original version of this clock out of the box [here](https://github.com/florianL21/LED-ClockShelf/tree/diy-machines-version)
