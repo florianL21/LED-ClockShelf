@@ -7,7 +7,7 @@ void IRAM_ATTR onTimer();
 TimeManager::TimeManager()
 {
 	#if TIME_MANAGER_DEMO_MODE == false
-		configTime(TIMEZONE_OFFSET, DAYLIGHT_SAVING, NTP_SERVER);
+		configTzTime(TIMEZONE_INFO, NTP_SERVER);
 	#endif
 	currentTime.hours = 0;
 	currentTime.minutes = 0;
