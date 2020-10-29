@@ -170,6 +170,15 @@ void SevenSegment::DisplayNumber(uint8_t value)
 	currentValue = value;
 }
 
+void SevenSegment::FlashMiddleDot()
+{
+	if(DsiplayMode != HALF_SEGMENT) // do nothing if we are only dealing with a half segment
+	{
+		return;
+	}
+	AnimationHandler->startAnimation(Segments[1], Segment::ANIMATE_MIDDLE_DOT_FLASH);
+}
+
 void SevenSegment::setColor(CRGB color)
 {
 	for (uint8_t i = 0; i < 7; i++)

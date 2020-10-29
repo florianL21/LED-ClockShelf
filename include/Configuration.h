@@ -206,6 +206,11 @@ enum DisplayIDs {LOWER_DIGIT_MINUTE_DISPLAY = 6, HIGHER_DIGIT_MINUTE_DISPLAY = 4
  */
 #define BRIGHTNESS_INTERPOLATION	3000
 
+/**
+ * @brief If set to -1 the flashing middle dot is disabled, otherwise this is the index of the Display segment that should display the dot.
+ */
+#define DISPLAY_FOR_SEPERATION_DOT -1
+
 
 /***************************
 *

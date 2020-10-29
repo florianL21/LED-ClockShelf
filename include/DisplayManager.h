@@ -149,8 +149,10 @@ public:
 	 */
 	void setGlobalBrightness(uint8_t brightness, bool enableSmoothTransition = true);
 
-
-	
+	/**
+	 * @brief Briefley Flash the dot in the middle of the clock face
+	 */
+	void flashSeperationDot();
 };
 
 

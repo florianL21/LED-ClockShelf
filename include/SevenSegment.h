@@ -49,6 +49,7 @@ public:
 	void add(Segment* segmentToAdd, SegmentPosition positionInDisplay);
 	void DisplayNumber(uint8_t value);
 	void DisplayChar(char value);
+	void FlashMiddleDot();
 	bool canDisplay(char charToCheck);
 	void setColor(CRGB color);
 	void updateColor(CRGB color);

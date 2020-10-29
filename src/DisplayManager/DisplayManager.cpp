@@ -308,3 +308,10 @@ void DisplayManager::setGlobalBrightness(uint8_t brightness, bool enableSmoothTr
 		FastLED.setBrightness(LEDBrightnessCurrent);
 	}
 }
+
+void DisplayManager::flashSeperationDot()
+{
+	#if DISPLAY_FOR_SEPERATION_DOT > -1
+		Displays[DISPLAY_FOR_SEPERATION_DOT]->FlashMiddleDot();
+	#endif
+}

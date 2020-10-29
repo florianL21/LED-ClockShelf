@@ -13,6 +13,23 @@
 	 * @note if you use a different controller make sure to change the include here
 	 */
 	#include <BlynkSimpleEsp32.h>
+
+	/**
+	 * @brief These are the channel definitions for Blynk
+	 */
+	#define BLYNK_CHANNEL_BRIGHTNESS_SLIDER		V0
+	#define BLYNK_CHANNEL_LIGHT_GROUP_SELECTOR	V1
+	#define BLYNK_CHANNEL_CURRENT_COLOR_PICKER	V2
+	#define BLYNK_CHANNEL_TIMER_TIME_INPUT 		V3
+	#define BLYNK_CHANNEL_TIMER_START_BUTTON 	V4
+	#define BLYNK_CHANNEL_ALARM_TIME_INPUT 		V5
+	#define BLYNK_CHANNEL_ALARM_START_BUTTON 	V6
+	#define BLYNK_CHANNEL_NIGHT_MODE_TIME_INPUT	V7
+	#define BLYNK_CHANNEL_NIGHT_MODE_BRIGHTNESS	V8
+
+	#define BLYNK_CHANNEL_HOUR_COLOR_SAVE		V10
+	#define BLYNK_CHANNEL_MINUTE_COLOR_SAVE		V11
+	#define BLYNK_CHANNEL_INTERNAL_COLOR_SAVE	V12
 #endif
 
 #define TIME_UPDATE_INTERVALL	500
@@ -140,6 +157,8 @@ void setup()
 	Serial.println("Setup done. Main Loop starting...");
 }
 
+bool flashMiddleDot = false;
+
 void loop()
 {
 	#if ENABLE_OTA_UPLOAD == true
@@ -154,6 +173,13 @@ void loop()
 		{
 		case CLOCK_MODE:
 			ShelfDisplays.displayTime(currentTime.hours, currentTime.minutes);
+			#if DISPLAY_FOR_SEPERATION_DOT > -1
+				if(flashMiddleDot == true)
+				{
+					ShelfDisplays.flashSeperationDot(); //this will always flash at half the update speed
+				}
+				flashMiddleDot = !flashMiddleDot;
+			#endif
 		break;
 		case TIMER_MODE:
 			//timers only support up to one hour durations, but really only 19 minutes if the first segment can only display a one
@@ -204,13 +230,13 @@ void core0LoopCode(void* pvParameters)
 				blynkUIUpdateRequired = false;
 				if(MainState == CLOCK_MODE)
 				{
-					Blynk.virtualWrite(V4, 0);
+					Blynk.virtualWrite(BLYNK_CHANNEL_TIMER_START_BUTTON, 0);
 				}
 				else
 				{
 					// TimeManager::TimeInfo currentTimerValue = timeM->getCurrentTime();
 					// int time = currentTimerValue.hours * 3600 + currentTimerValue.minutes * 60 + currentTimerValue.seconds;
-					// Blynk.virtualWrite(V4, time, 0);
+					// Blynk.virtualWrite(BLYNK_CHANNEL_TIMER_START_BUTTON, time, 0);
 				}
 			}
 		#endif
@@ -230,47 +256,51 @@ void TimerDone()
 }
 
 #if IS_BLYNK_ACTIVE == true
+
 	BLYNK_CONNECTED()
 	{
-		Blynk.syncVirtual(V0);
+		Blynk.syncVirtual(BLYNK_CHANNEL_BRIGHTNESS_SLIDER);
 		#if BLYNK_SEPERATE_COLOR_CONTROL == true
-			Blynk.syncVirtual(V1);
+			Blynk.syncVirtual(BLYNK_CHANNEL_LIGHT_GROUP_SELECTOR);
 		#endif
-		Blynk.syncVirtual(V2);
-		Blynk.syncVirtual(V3);
-		Blynk.virtualWrite(V4, 0);
+		Blynk.syncVirtual(BLYNK_CHANNEL_CURRENT_COLOR_PICKER);
+		Blynk.syncVirtual(BLYNK_CHANNEL_TIMER_TIME_INPUT);
+		Blynk.syncVirtual(BLYNK_CHANNEL_HOUR_COLOR_SAVE);
+		Blynk.syncVirtual(BLYNK_CHANNEL_MINUTE_COLOR_SAVE);
+		Blynk.syncVirtual(BLYNK_CHANNEL_INTERNAL_COLOR_SAVE);
+		Blynk.virtualWrite(BLYNK_CHANNEL_TIMER_START_BUTTON, 0);
 	}
 
 
 
-	BLYNK_WRITE(V0) 
+	BLYNK_WRITE(BLYNK_CHANNEL_BRIGHTNESS_SLIDER) 
 	{
 		clockBrightness = param[0].asInt();
 		ShelfDisplays.setGlobalBrightness(clockBrightness);
 	}
 
 	#if BLYNK_SEPERATE_COLOR_CONTROL == true
-		BLYNK_WRITE(V1) 
+		BLYNK_WRITE(BLYNK_CHANNEL_LIGHT_GROUP_SELECTOR) 
 		{
 			switch (param.asInt())
 			{
 			case 1:
 				ColorSelection = CHANGE_HOURS_COLOR;
-				Blynk.virtualWrite(V2, HourColor.r, HourColor.g, HourColor.b);
+				Blynk.virtualWrite(BLYNK_CHANNEL_CURRENT_COLOR_PICKER, HourColor.r, HourColor.g, HourColor.b);
 				break;
 			case 2:
 				ColorSelection = CHANGE_MINUTES_COLOR;
-				Blynk.virtualWrite(V2, MinuteColor.r, MinuteColor.g, MinuteColor.b);
+				Blynk.virtualWrite(BLYNK_CHANNEL_CURRENT_COLOR_PICKER, MinuteColor.r, MinuteColor.g, MinuteColor.b);
 				break;
 			case 3:
 				ColorSelection = CHANGE_INTERRIOR_COLOR;
-				Blynk.virtualWrite(V2, InternalColor.r, InternalColor.g, InternalColor.b);
+				Blynk.virtualWrite(BLYNK_CHANNEL_CURRENT_COLOR_PICKER, InternalColor.r, InternalColor.g, InternalColor.b);
 				break;
 			}
 		}
 	#endif
 
-	BLYNK_WRITE(V2) 
+	BLYNK_WRITE(BLYNK_CHANNEL_CURRENT_COLOR_PICKER) 
 	{
 		CRGB currentColor;
 		currentColor.r  = param[0].asInt();
@@ -281,14 +311,17 @@ void TimerDone()
 			{
 			case CHANGE_HOURS_COLOR:
 				ShelfDisplays.setHourSegmentColors(currentColor);
+				Blynk.virtualWrite(BLYNK_CHANNEL_HOUR_COLOR_SAVE, currentColor.r, currentColor.g, currentColor.b);
 				HourColor = currentColor;
 				break;
 			case CHANGE_MINUTES_COLOR:
 				ShelfDisplays.setMinuteSegmentColors(currentColor);
+				Blynk.virtualWrite(BLYNK_CHANNEL_MINUTE_COLOR_SAVE, currentColor.r, currentColor.g, currentColor.b);
 				MinuteColor = currentColor;
 				break;
 			case CHANGE_INTERRIOR_COLOR:
 				ShelfDisplays.setInternalLEDColor(currentColor);
+				Blynk.virtualWrite(BLYNK_CHANNEL_INTERNAL_COLOR_SAVE, currentColor.r, currentColor.g, currentColor.b);
 				InternalColor = currentColor;
 				break;
 			}
@@ -297,7 +330,37 @@ void TimerDone()
 		#endif
 	}
 
-	BLYNK_WRITE(V3) 
+	BLYNK_WRITE(BLYNK_CHANNEL_HOUR_COLOR_SAVE)
+	{
+		CRGB SavedColor;
+		SavedColor.r  = param[0].asInt();
+		SavedColor.g  = param[1].asInt();
+		SavedColor.b  = param[2].asInt();
+		ShelfDisplays.setHourSegmentColors(SavedColor);
+		HourColor = SavedColor;
+	}
+
+	BLYNK_WRITE(BLYNK_CHANNEL_MINUTE_COLOR_SAVE) 
+	{
+		CRGB SavedColor;
+		SavedColor.r  = param[0].asInt();
+		SavedColor.g  = param[1].asInt();
+		SavedColor.b  = param[2].asInt();
+		ShelfDisplays.setMinuteSegmentColors(SavedColor);
+		MinuteColor = SavedColor;
+	}
+
+	BLYNK_WRITE(BLYNK_CHANNEL_INTERNAL_COLOR_SAVE) 
+	{
+		CRGB SavedColor;
+		SavedColor.r  = param[0].asInt();
+		SavedColor.g  = param[1].asInt();
+		SavedColor.b  = param[2].asInt();
+		ShelfDisplays.setInternalLEDColor(SavedColor);
+		InternalColor = SavedColor;
+	}
+
+	BLYNK_WRITE(BLYNK_CHANNEL_TIMER_TIME_INPUT) 
 	{
 		TimeManager::TimeInfo TimerDuration;
 		TimeInputParam t(param);
@@ -309,7 +372,7 @@ void TimerDone()
 		timeM->setTimerDuration(TimerDuration);
 	}
 
-	BLYNK_WRITE(V4)
+	BLYNK_WRITE(BLYNK_CHANNEL_TIMER_START_BUTTON)
 	{
 		if(param[0].asInt() == 1)
 		{
@@ -321,7 +384,7 @@ void TimerDone()
 		{
 			timeM->stopTimer();
 			Serial.println("Timer Stopped");
-			Blynk.syncVirtual(V3);
+			Blynk.syncVirtual(BLYNK_CHANNEL_TIMER_TIME_INPUT);
 			arlarmToogleCount = 0;
 			ShelfDisplays.setGlobalBrightness(clockBrightness);
 			MainState = CLOCK_MODE;

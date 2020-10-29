@@ -70,6 +70,7 @@ void Segment::tick()
 		{
 			leds[index + 1] = CRGB::Black;
 		}
+		leds[index] = AnimationColor;
 	}
 	else if(effect == ANIMATE_OUT_TO_RIGHT || effect == ANIMATE_IN_TO_RIGHT || effect == AMINATE_SINGLE_LED_TO_RIGHT) // also ANIMATE_IN_TO_TOP and ANIMATE_IN_TO_BOTTTOM also AMINATE_SINGLE_LED_TO_TOP
 	{
@@ -78,8 +79,12 @@ void Segment::tick()
 		{
 			leds[index - 1] = CRGB::Black;
 		}
+		leds[index] = AnimationColor;
 	}
-	leds[index] = AnimationColor;
+	else if(effect == ANIMATE_MIDDLE_DOT_FLASH)
+	{
+		writeToLEDs(CRGB::Black);
+	}
 }
 
 void Segment::updateAnimationColor(CRGB newColor)
@@ -100,6 +105,7 @@ void Segment::onAnimationStart()
 	//setting the color 
 	if(effect == ANIMATE_OUT_TO_LEFT || effect == ANIMATE_OUT_TO_RIGHT) // also ANIMATE_OUT_TO_TOP and ANIMATE_OUT_TO_BOTTTOM
 	{
+		setAnimationSteps(length);
 		AnimationColor = CRGB::Black;
 		if(getState() == 0)//set initial state
 		{
@@ -113,6 +119,7 @@ void Segment::onAnimationStart()
 		|| effect == AMINATE_SINGLE_LED_TO_LEFT // also AMINATE_SINGLE_LED_TO_BOTTOM
 		) 
 	{
+		setAnimationSteps(length);
 		AnimationColor = color;
 		if(getState() == 0)//set initial state
 		{
@@ -127,11 +134,30 @@ void Segment::onAnimationStart()
 			leds[startIndex + length - 1] = AnimationColor;
 		}
 	}
+	else if(effect == ANIMATE_MIDDLE_DOT_FLASH)
+	{
+		setAnimationSteps(2);
+		AnimationColor = color;
+		if(getState() == 0)//set initial state
+		{
+			writeToLEDs(CRGB::Black);
+		}
+		//if segment length is uneven take the middle LED, if even take the middle 2
+		if((length % 2) == 1)
+		{
+			leds[length / 2 + 1] = CRGB::White;
+		}
+		else
+		{
+			leds[length / 2] = CRGB::White;
+			leds[length / 2 - 1] = CRGB::White;
+		}
+	}
 }
 
 void Segment::setAnimationEffect(uint8_t newEffect)
 {
-	if(invertDirection == true)
+	if(invertDirection == true && newEffect < __LAST_DIRECTIONAL_EFFECT)
 	{
 		if(newEffect == ANIMATE_OUT_TO_RIGHT
 			|| newEffect == ANIMATE_IN_TO_RIGHT
