@@ -100,14 +100,9 @@
 #define NTP_SERVER "pool.ntp.org"
 
 /**
- * @brief Timezone offset in seconds
+ * @brief Enter the string for your timezone according to this webpage: https://remotemonitoringsystems.ca/time-zone-abbreviations.php
  */
-#define TIMEZONE_OFFSET		3600
-
-/**
- * @brief Set to 3600 if you have daylight saving hour otherwise set to 0
- */
-#define DAYLIGHT_SAVING 3600
+#define TIMEZONE_INFO "CET-1CEST-2,M3.5.0/02:00:00,M10.5.0/03:00:00"
 
 /**
  * @brief Time in seconds for the intervall in which the time should be synchronized with the time server
