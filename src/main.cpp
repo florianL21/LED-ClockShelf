@@ -175,7 +175,7 @@ void loop()
 			#else
 				ShelfDisplays.displayTime(0, 0);
 			#endif
-			if(arlarmToogleCount >= ALARM_FLASH_COUNT * 2)
+			if(arlarmToogleCount >= ALARM_FLASH_COUNT)
 			{
 				ShelfDisplays.setGlobalBrightness(clockBrightness);
 				ShelfDisplays.displayTime(currentTime.hours, currentTime.minutes);
