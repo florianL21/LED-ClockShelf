@@ -53,9 +53,14 @@ public:
 	bool synchronize();
 
 	/**
-	 * @brief get the current time in a struct
+	 * @brief get the current time in a struct for displaying it on the clock
 	 */
 	TimeInfo getCurrentTime();
+
+	/**
+	 * @brief get the real raw current time in a struct without any precalculations
+	 */
+	TimeInfo getRealCurrentTime();
 
 	/**
 	 * @brief get the current time as a string
@@ -76,6 +81,8 @@ public:
 	 * @brief Stop the timer
 	 */
 	void stopTimer();
+
+	bool isInBetween(TimeInfo time1, TimeInfo time2);
 
 	void setTimerTickCallback(TimerCallBack callback);
 

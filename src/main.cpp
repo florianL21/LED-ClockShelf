@@ -48,7 +48,10 @@ ColorSelector ColorSelection = CHANGE_HOURS_COLOR;
 CRGB InternalColor;
 CRGB HourColor;
 CRGB MinuteColor;
-
+TimeManager::TimeInfo NightModeStartTime;
+TimeManager::TimeInfo NightModeStopTime;
+uint8_t nightModeBrightness = 0;
+bool isinNightMode = false;
 
 TaskHandle_t core0Loop;
 
@@ -172,6 +175,22 @@ void loop()
 		switch (MainState)
 		{
 		case CLOCK_MODE:
+			if(timeM->isInBetween(NightModeStartTime, NightModeStopTime))
+			{
+				if(isinNightMode == false)
+				{
+					isinNightMode = true;
+					ShelfDisplays.setGlobalBrightness(nightModeBrightness);
+				}
+			}
+			else
+			{
+				if(isinNightMode == true)
+				{
+					isinNightMode = false;
+					ShelfDisplays.setGlobalBrightness(clockBrightness);
+				}
+			}
 			ShelfDisplays.displayTime(currentTime.hours, currentTime.minutes);
 			#if DISPLAY_FOR_SEPERATION_DOT > -1
 				if(flashMiddleDot == true)
@@ -268,10 +287,10 @@ void TimerDone()
 		Blynk.syncVirtual(BLYNK_CHANNEL_HOUR_COLOR_SAVE);
 		Blynk.syncVirtual(BLYNK_CHANNEL_MINUTE_COLOR_SAVE);
 		Blynk.syncVirtual(BLYNK_CHANNEL_INTERNAL_COLOR_SAVE);
+		Blynk.syncVirtual(BLYNK_CHANNEL_NIGHT_MODE_BRIGHTNESS);
+		Blynk.syncVirtual(BLYNK_CHANNEL_NIGHT_MODE_TIME_INPUT);
 		Blynk.virtualWrite(BLYNK_CHANNEL_TIMER_START_BUTTON, 0);
 	}
-
-
 
 	BLYNK_WRITE(BLYNK_CHANNEL_BRIGHTNESS_SLIDER) 
 	{
@@ -388,6 +407,27 @@ void TimerDone()
 			arlarmToogleCount = 0;
 			ShelfDisplays.setGlobalBrightness(clockBrightness);
 			MainState = CLOCK_MODE;
+		}
+	}
+
+	BLYNK_WRITE(BLYNK_CHANNEL_NIGHT_MODE_TIME_INPUT) 
+	{
+		TimeInputParam t(param);
+		//Timers do not support values larger than 24 minutes, This is a bit of a hack but there is no other way around it :/
+		NightModeStartTime.hours = t.getStartHour();
+		NightModeStartTime.minutes = t.getStartMinute();
+		NightModeStartTime.seconds = t.getStartSecond();
+		NightModeStopTime.hours = t.getStopHour();
+		NightModeStopTime.minutes = t.getStopMinute();
+		NightModeStopTime.seconds = t.getStopSecond();
+	}
+
+	BLYNK_WRITE(BLYNK_CHANNEL_NIGHT_MODE_BRIGHTNESS) 
+	{
+		nightModeBrightness = param[0].asInt();
+		if(timeM->isInBetween(NightModeStartTime, NightModeStopTime))
+		{
+			ShelfDisplays.setGlobalBrightness(nightModeBrightness);
 		}
 	}
 #endif
