@@ -1,6 +1,7 @@
 #include "Configuration.h"
 #include <Arduino.h>
 #include "DisplayManager.h"
+#include "ClockState.h"
 
 #if RUN_WITHOUT_WIFI == false
 	#include "WiFi.h"
@@ -9,51 +10,13 @@
 	#include <ArduinoOTA.h>
 #endif
 #if IS_BLYNK_ACTIVE == true
-	/**
-	 * @note if you use a different controller make sure to change the include here
-	 */
-	#include <BlynkSimpleEsp32.h>
-
-	/**
-	 * @brief These are the channel definitions for Blynk
-	 */
-	#define BLYNK_CHANNEL_BRIGHTNESS_SLIDER		V0
-	#define BLYNK_CHANNEL_LIGHT_GROUP_SELECTOR	V1
-	#define BLYNK_CHANNEL_CURRENT_COLOR_PICKER	V2
-	#define BLYNK_CHANNEL_TIMER_TIME_INPUT 		V3
-	#define BLYNK_CHANNEL_TIMER_START_BUTTON 	V4
-	#define BLYNK_CHANNEL_ALARM_TIME_INPUT 		V5
-	#define BLYNK_CHANNEL_ALARM_START_BUTTON 	V6
-	#define BLYNK_CHANNEL_NIGHT_MODE_TIME_INPUT	V7
-	#define BLYNK_CHANNEL_NIGHT_MODE_BRIGHTNESS	V8
-
-	#define BLYNK_CHANNEL_HOUR_COLOR_SAVE		V10
-	#define BLYNK_CHANNEL_MINUTE_COLOR_SAVE		V11
-	#define BLYNK_CHANNEL_INTERNAL_COLOR_SAVE	V12
+	#include "BlynkConfig.h"
 #endif
 
-#define TIME_UPDATE_INTERVALL	500
-
-DisplayManager ShelfDisplays;
-TimeManager* timeM = nullptr;
-unsigned long lastMillis = millis();
-bool blynkUIUpdateRequired = false;
-enum ClockStates {CLOCK_MODE, TIMER_MODE, ALARM_MODE};
-ClockStates MainState = CLOCK_MODE;
-uint8_t clockBrightness = 128;
-bool currentAlarmSignalState = false;
-uint16_t arlarmToogleCount = 0;
-enum ColorSelector {CHANGE_INTERRIOR_COLOR, CHANGE_HOURS_COLOR, CHANGE_MINUTES_COLOR};
-ColorSelector ColorSelection = CHANGE_HOURS_COLOR;
-CRGB InternalColor;
-CRGB HourColor;
-CRGB MinuteColor;
-TimeManager::TimeInfo NightModeStartTime;
-TimeManager::TimeInfo NightModeStopTime;
-uint8_t nightModeBrightness = 0;
-bool isinNightMode = false;
-
-TaskHandle_t core0Loop;
+DisplayManager* ShelfDisplays = DisplayManager::getInstance();
+BlynkConfig* BlynkConfiguration = BlynkConfig::getInstance();
+TimeManager* timeM = TimeManager::getInstance();
+ClockState* states = ClockState::getInstance();
 
 #if ENABLE_OTA_UPLOAD == true
 	void setupOTA();
@@ -62,7 +25,6 @@ TaskHandle_t core0Loop;
 	void wifiSetup();
 #endif
 
-void core0LoopCode( void * pvParameters );
 void TimerTick();
 void TimerDone();
 
@@ -84,8 +46,8 @@ void startupAnimation()
 	targetMinH = currentTime.minutes / 10;
 	targetMinL = currentTime.minutes % 10;
 
-	ShelfDisplays.displayTime(0, 0);
-	ShelfDisplays.delay(DIGIT_ANIMATION_SPEED + 10);
+	ShelfDisplays->displayTime(0, 0);
+	ShelfDisplays->delay(DIGIT_ANIMATION_SPEED + 10);
 
 	while (currHourH != targetHourH || currHourL != targetHourL || currMinH != targetMinH || currMinL != targetMinL)
 	{
@@ -105,21 +67,21 @@ void startupAnimation()
 		{
 			currMinL++;
 		}
-		ShelfDisplays.displayTime(currHourH * 10 + currHourL, currMinH * 10 + currMinL);
-		ShelfDisplays.delay(DIGIT_ANIMATION_SPEED + 10);
+		ShelfDisplays->displayTime(currHourH * 10 + currHourL, currMinH * 10 + currMinL);
+		ShelfDisplays->delay(DIGIT_ANIMATION_SPEED + 10);
 	}
 }
 
 void setup()
 {
 	Serial.begin(115200);
-	
-	ShelfDisplays.InitSegments(0, NUM_LEDS_PER_SEGMENT, CRGB::Blue);
 
-	ShelfDisplays.setHourSegmentColors(HOUR_COLOR);
-	ShelfDisplays.setMinuteSegmentColors(MINUTE_COLOR);
-	ShelfDisplays.setInternalLEDColor(INTERNAL_COLOR);
-	ShelfDisplays.setGlobalBrightness(128);
+	ShelfDisplays->InitSegments(0, NUM_LEDS_PER_SEGMENT, CRGB::Blue);
+
+	ShelfDisplays->setHourSegmentColors(HOUR_COLOR);
+	ShelfDisplays->setMinuteSegmentColors(MINUTE_COLOR);
+	ShelfDisplays->setInternalLEDColor(INTERNAL_COLOR);
+	ShelfDisplays->setGlobalBrightness(128);
 
 	#if RUN_WITHOUT_WIFI == false
 		wifiSetup();
@@ -128,7 +90,7 @@ void setup()
 		setupOTA();
 	#endif
 	#if RUN_WITHOUT_WIFI == false
-		ShelfDisplays.waitForLoadingAnimationFinish();
+		ShelfDisplays->waitForLoadingAnimationFinish();
 	#endif
 
 	#if ENABLE_OTA_UPLOAD == true
@@ -136,24 +98,16 @@ void setup()
 	#endif
 
 	#if IS_BLYNK_ACTIVE == true
-		Blynk.config(BLYNK_AUTH_TOKEN, BLYNK_SERVER, 80);
+		BlynkConfiguration->setup();
 	#endif
 
 	Serial.println("Fetching time from NTP server...");
-	timeM = TimeManager::getInstance();
+	if(timeM->init() == false)
+	{
+		Serial.printf("[E]: TimeManager failed to synchronize for the first time with the NTP server. Retrying in %d seconds", TIME_SYNC_INTERVALL);
+	}
 	timeM->setTimerTickCallback(TimerTick);
 	timeM->setTimerDoneCallback(TimerDone);
-
-	Serial.println("Starting blynk on core 0...");
-	//Setup the loop task on the second core
-	xTaskCreatePinnedToCore(
-	core0LoopCode,	// Task function.
-	"core0Loop",	// name of task.
-	10000,			// Stack size of task
-	NULL,			// parameter of the task
-	1,				// priority of the task
-	&core0Loop,		// Task handle to keep track of created task
-	0);				// pin task to core 0
 
 	Serial.println("Displaying startup animation...");
 	startupAnimation();
@@ -167,271 +121,23 @@ void loop()
 	#if ENABLE_OTA_UPLOAD == true
 		ArduinoOTA.handle();
 	#endif
-	if(lastMillis + TIME_UPDATE_INTERVALL <= millis()) // update the display only in a certain intervall
-	{
-		lastMillis = millis();
-		TimeManager::TimeInfo currentTime;
-		currentTime = timeM->getCurrentTime();
-		switch (MainState)
-		{
-		case CLOCK_MODE:
-			if(timeM->isInBetween(NightModeStartTime, NightModeStopTime))
-			{
-				if(isinNightMode == false)
-				{
-					isinNightMode = true;
-					ShelfDisplays.setGlobalBrightness(nightModeBrightness);
-				}
-			}
-			else
-			{
-				if(isinNightMode == true)
-				{
-					isinNightMode = false;
-					ShelfDisplays.setGlobalBrightness(clockBrightness);
-				}
-			}
-			ShelfDisplays.displayTime(currentTime.hours, currentTime.minutes);
-			#if DISPLAY_FOR_SEPERATION_DOT > -1
-				if(flashMiddleDot == true)
-				{
-					ShelfDisplays.flashSeperationDot(); //this will always flash at half the update speed
-				}
-				flashMiddleDot = !flashMiddleDot;
-			#endif
-		break;
-		case TIMER_MODE:
-			//timers only support up to one hour durations, but really only 19 minutes if the first segment can only display a one
-			ShelfDisplays.displayTime(currentTime.minutes, currentTime.seconds);
-		break;
-		case ALARM_MODE:
-			if(currentAlarmSignalState == true)
-			{
-				ShelfDisplays.setGlobalBrightness(255, false);
-			}
-			else
-			{
-				ShelfDisplays.setGlobalBrightness(0, false);
-			}
-			currentAlarmSignalState = !currentAlarmSignalState;
-			arlarmToogleCount++;
-			#if ALARM_FLASH_TIME == true
-				ShelfDisplays.displayTime(currentTime.hours, currentTime.minutes);
-			#else
-				ShelfDisplays.displayTime(0, 0);
-			#endif
-			if(arlarmToogleCount >= ALARM_FLASH_COUNT)
-			{
-				ShelfDisplays.setGlobalBrightness(clockBrightness);
-				ShelfDisplays.displayTime(currentTime.hours, currentTime.minutes);
-				arlarmToogleCount = 0;
-				MainState = CLOCK_MODE;
-			}
-		break;
-		
-		default:
-			break;
-		}
-	}
-	ShelfDisplays.handle();
-}
-
-void core0LoopCode(void* pvParameters)
-{
-	Serial.printf("Loop task running on core %d\n\r", xPortGetCoreID());
-
-	for(;;)
-	{
-		#if IS_BLYNK_ACTIVE == true
-			Blynk.run();
-			if(blynkUIUpdateRequired == true)
-			{
-				blynkUIUpdateRequired = false;
-				if(MainState == CLOCK_MODE)
-				{
-					Blynk.virtualWrite(BLYNK_CHANNEL_TIMER_START_BUTTON, 0);
-				}
-				else
-				{
-					// TimeManager::TimeInfo currentTimerValue = timeM->getCurrentTime();
-					// int time = currentTimerValue.hours * 3600 + currentTimerValue.minutes * 60 + currentTimerValue.seconds;
-					// Blynk.virtualWrite(BLYNK_CHANNEL_TIMER_START_BUTTON, time, 0);
-				}
-			}
-		#endif
-		delay(1); //needed to serve the wdg
-	} 
+	states->handleStates(); //updates displays, switches between modes etc.
 }
 
 void TimerTick()
 {
-	blynkUIUpdateRequired = true;
+	#if IS_BLYNK_ACTIVE == true
+		BlynkConfiguration->updateUI();
+	#endif
 }
 
 void TimerDone()
 {
-	MainState = ALARM_MODE;
-	blynkUIUpdateRequired = true;
-}
-
-#if IS_BLYNK_ACTIVE == true
-
-	BLYNK_CONNECTED()
-	{
-		Blynk.syncVirtual(BLYNK_CHANNEL_BRIGHTNESS_SLIDER);
-		#if BLYNK_SEPERATE_COLOR_CONTROL == true
-			Blynk.syncVirtual(BLYNK_CHANNEL_LIGHT_GROUP_SELECTOR);
-		#endif
-		Blynk.syncVirtual(BLYNK_CHANNEL_CURRENT_COLOR_PICKER);
-		Blynk.syncVirtual(BLYNK_CHANNEL_TIMER_TIME_INPUT);
-		Blynk.syncVirtual(BLYNK_CHANNEL_HOUR_COLOR_SAVE);
-		Blynk.syncVirtual(BLYNK_CHANNEL_MINUTE_COLOR_SAVE);
-		Blynk.syncVirtual(BLYNK_CHANNEL_INTERNAL_COLOR_SAVE);
-		Blynk.syncVirtual(BLYNK_CHANNEL_NIGHT_MODE_BRIGHTNESS);
-		Blynk.syncVirtual(BLYNK_CHANNEL_NIGHT_MODE_TIME_INPUT);
-		Blynk.virtualWrite(BLYNK_CHANNEL_TIMER_START_BUTTON, 0);
-	}
-
-	BLYNK_WRITE(BLYNK_CHANNEL_BRIGHTNESS_SLIDER) 
-	{
-		clockBrightness = param[0].asInt();
-		ShelfDisplays.setGlobalBrightness(clockBrightness);
-	}
-
-	#if BLYNK_SEPERATE_COLOR_CONTROL == true
-		BLYNK_WRITE(BLYNK_CHANNEL_LIGHT_GROUP_SELECTOR) 
-		{
-			switch (param.asInt())
-			{
-			case 1:
-				ColorSelection = CHANGE_HOURS_COLOR;
-				Blynk.virtualWrite(BLYNK_CHANNEL_CURRENT_COLOR_PICKER, HourColor.r, HourColor.g, HourColor.b);
-				break;
-			case 2:
-				ColorSelection = CHANGE_MINUTES_COLOR;
-				Blynk.virtualWrite(BLYNK_CHANNEL_CURRENT_COLOR_PICKER, MinuteColor.r, MinuteColor.g, MinuteColor.b);
-				break;
-			case 3:
-				ColorSelection = CHANGE_INTERRIOR_COLOR;
-				Blynk.virtualWrite(BLYNK_CHANNEL_CURRENT_COLOR_PICKER, InternalColor.r, InternalColor.g, InternalColor.b);
-				break;
-			}
-		}
+	states->MainState = ClockState::ALARM_MODE;
+	#if IS_BLYNK_ACTIVE == true
+		BlynkConfiguration->updateUI();
 	#endif
-
-	BLYNK_WRITE(BLYNK_CHANNEL_CURRENT_COLOR_PICKER) 
-	{
-		CRGB currentColor;
-		currentColor.r  = param[0].asInt();
-		currentColor.g  = param[1].asInt();
-		currentColor.b  = param[2].asInt();
-		#if BLYNK_SEPERATE_COLOR_CONTROL == true
-			switch (ColorSelection)
-			{
-			case CHANGE_HOURS_COLOR:
-				ShelfDisplays.setHourSegmentColors(currentColor);
-				Blynk.virtualWrite(BLYNK_CHANNEL_HOUR_COLOR_SAVE, currentColor.r, currentColor.g, currentColor.b);
-				HourColor = currentColor;
-				break;
-			case CHANGE_MINUTES_COLOR:
-				ShelfDisplays.setMinuteSegmentColors(currentColor);
-				Blynk.virtualWrite(BLYNK_CHANNEL_MINUTE_COLOR_SAVE, currentColor.r, currentColor.g, currentColor.b);
-				MinuteColor = currentColor;
-				break;
-			case CHANGE_INTERRIOR_COLOR:
-				ShelfDisplays.setInternalLEDColor(currentColor);
-				Blynk.virtualWrite(BLYNK_CHANNEL_INTERNAL_COLOR_SAVE, currentColor.r, currentColor.g, currentColor.b);
-				InternalColor = currentColor;
-				break;
-			}
-		#else
-			ShelfDisplays.setAllSegmentColors(currentColor);
-		#endif
-	}
-
-	BLYNK_WRITE(BLYNK_CHANNEL_HOUR_COLOR_SAVE)
-	{
-		CRGB SavedColor;
-		SavedColor.r  = param[0].asInt();
-		SavedColor.g  = param[1].asInt();
-		SavedColor.b  = param[2].asInt();
-		ShelfDisplays.setHourSegmentColors(SavedColor);
-		HourColor = SavedColor;
-	}
-
-	BLYNK_WRITE(BLYNK_CHANNEL_MINUTE_COLOR_SAVE) 
-	{
-		CRGB SavedColor;
-		SavedColor.r  = param[0].asInt();
-		SavedColor.g  = param[1].asInt();
-		SavedColor.b  = param[2].asInt();
-		ShelfDisplays.setMinuteSegmentColors(SavedColor);
-		MinuteColor = SavedColor;
-	}
-
-	BLYNK_WRITE(BLYNK_CHANNEL_INTERNAL_COLOR_SAVE) 
-	{
-		CRGB SavedColor;
-		SavedColor.r  = param[0].asInt();
-		SavedColor.g  = param[1].asInt();
-		SavedColor.b  = param[2].asInt();
-		ShelfDisplays.setInternalLEDColor(SavedColor);
-		InternalColor = SavedColor;
-	}
-
-	BLYNK_WRITE(BLYNK_CHANNEL_TIMER_TIME_INPUT) 
-	{
-		TimeManager::TimeInfo TimerDuration;
-		TimeInputParam t(param);
-		//Timers do not support values larger than 24 minutes, This is a bit of a hack but there is no other way around it :/
-		TimerDuration.hours = 0; //t.getStartHour();
-		TimerDuration.minutes = t.getStartHour();
-		TimerDuration.seconds = t.getStartMinute();
-		//Serial.printf("StartTime: %d:%d:%d\n\r", TimerDuration.hours, TimerDuration.minutes, TimerDuration.seconds);
-		timeM->setTimerDuration(TimerDuration);
-	}
-
-	BLYNK_WRITE(BLYNK_CHANNEL_TIMER_START_BUTTON)
-	{
-		if(param[0].asInt() == 1)
-		{
-			timeM->startTimer();
-			Serial.println("Timer Started");
-			MainState = TIMER_MODE;
-		}
-		else
-		{
-			timeM->stopTimer();
-			Serial.println("Timer Stopped");
-			Blynk.syncVirtual(BLYNK_CHANNEL_TIMER_TIME_INPUT);
-			arlarmToogleCount = 0;
-			ShelfDisplays.setGlobalBrightness(clockBrightness);
-			MainState = CLOCK_MODE;
-		}
-	}
-
-	BLYNK_WRITE(BLYNK_CHANNEL_NIGHT_MODE_TIME_INPUT) 
-	{
-		TimeInputParam t(param);
-		//Timers do not support values larger than 24 minutes, This is a bit of a hack but there is no other way around it :/
-		NightModeStartTime.hours = t.getStartHour();
-		NightModeStartTime.minutes = t.getStartMinute();
-		NightModeStartTime.seconds = t.getStartSecond();
-		NightModeStopTime.hours = t.getStopHour();
-		NightModeStopTime.minutes = t.getStopMinute();
-		NightModeStopTime.seconds = t.getStopSecond();
-	}
-
-	BLYNK_WRITE(BLYNK_CHANNEL_NIGHT_MODE_BRIGHTNESS) 
-	{
-		nightModeBrightness = param[0].asInt();
-		if(timeM->isInBetween(NightModeStartTime, NightModeStopTime))
-		{
-			ShelfDisplays.setGlobalBrightness(nightModeBrightness);
-		}
-	}
-#endif
-
+}
 
 #if RUN_WITHOUT_WIFI == false
 	void wifiSetup()
@@ -442,8 +148,8 @@ void TimerDone()
 		#else
 			WiFi.begin(WIFI_SSID, WIFI_PW);
 		#endif
-		ShelfDisplays.setAllSegmentColors(CRGB::Blue);
-		ShelfDisplays.showLoadingAnimation();
+		ShelfDisplays->setAllSegmentColors(CRGB::Blue);
+		ShelfDisplays->showLoadingAnimation();
 		for (int i = 0; i < NUM_RETRIES; i++)
 		{
 			Serial.print(".");
@@ -454,12 +160,12 @@ void TimerDone()
 			#endif
 			{
 				Serial.println("Reconnect successful");
-				ShelfDisplays.setAllSegmentColors(CRGB::Green);
+				ShelfDisplays->setAllSegmentColors(CRGB::Green);
 				break;
 			}
-			ShelfDisplays.delay(500);
+			ShelfDisplays->delay(500);
 		}
-		
+
 		if(WiFi.status() != WL_CONNECTED)
 		{
 			#if USE_ESPTOUCH_SMART_CONFIG == true
@@ -470,37 +176,37 @@ void TimerDone()
 
 				// Wait for SmartConfig packet from mobile
 				Serial.println("Waiting for SmartConfig.");
-				ShelfDisplays.setAllSegmentColors(CRGB::Red);
-				while (!WiFi.smartConfigDone()) 
+				ShelfDisplays->setAllSegmentColors(CRGB::Red);
+				while (!WiFi.smartConfigDone())
 				{
 					Serial.print(".");
-					ShelfDisplays.delay(500);
+					ShelfDisplays->delay(500);
 				}
-				ShelfDisplays.setAllSegmentColors(CRGB::Blue);
+				ShelfDisplays->setAllSegmentColors(CRGB::Blue);
 				Serial.println("");
 				Serial.println("SmartConfig done.");
 
 				// Wait for WiFi to connect to AP
 				Serial.println("Waiting for WiFi");
-				while (WiFi.status() != WL_CONNECTED) 
+				while (WiFi.status() != WL_CONNECTED)
 				{
 					Serial.print(".");
-					ShelfDisplays.setAllSegmentColors(CRGB::Green);
-					ShelfDisplays.delay(500);
+					ShelfDisplays->setAllSegmentColors(CRGB::Green);
+					ShelfDisplays->delay(500);
 				}
 				Serial.println("WiFi Connected.");
 				Serial.print("IP Address: ");
 				Serial.println(WiFi.localIP());
 			#else
 				Serial.println("WIFI connection failed");
-				ShelfDisplays.setAllSegmentColors(CRGB::Red);
+				ShelfDisplays->setAllSegmentColors(CRGB::Red);
 			#endif
 			if(WiFi.status() != WL_CONNECTED)
 			{
 				while(1); //Never return from here since running the main loop without wifi connection will crash the controller
 			}
 		}
-		ShelfDisplays.stopLoadingAnimation();
+		ShelfDisplays->stopLoadingAnimation();
 	}
 #endif
 
@@ -533,43 +239,45 @@ void TimerDone()
 			// NOTE: if updating SPIFFS this would be the place to unmount SPIFFS using SPIFFS.end()
 			Serial.println("Start updating " + type);
 			timeM->disableTimer();
-			vTaskDelete(core0Loop);
-			ShelfDisplays.setAllSegmentColors(CRGB::Orange);
-			ShelfDisplays.turnAllSegmentsOff(); //instead of the loading animation show a progress bar
+			#if IS_BLYNK_ACTIVE == true
+				BlynkConfiguration->stop();
+			#endif
+			ShelfDisplays->setAllSegmentColors(CRGB::Orange);
+			ShelfDisplays->turnAllSegmentsOff(); //instead of the loading animation show a progress bar
 		})
-		.onEnd([]() 
+		.onEnd([]()
 		{
 			Serial.println("\nOTA End");
 		})
-		.onProgress([](unsigned int progress, unsigned int total) 
+		.onProgress([](unsigned int progress, unsigned int total)
 		{
 			Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
-			ShelfDisplays.showProgress(progress, total);
+			ShelfDisplays->showProgress(progress, total);
 		})
-		.onError([](ota_error_t error) 
+		.onError([](ota_error_t error)
 		{
 			Serial.printf("Error[%u]: ", error);
-			if (error == OTA_AUTH_ERROR) 
+			if (error == OTA_AUTH_ERROR)
 			{
 				Serial.println("Auth Failed");
 			}
-			else if (error == OTA_BEGIN_ERROR) 
+			else if (error == OTA_BEGIN_ERROR)
 			{
 				Serial.println("Begin Failed");
 			}
-			else if (error == OTA_CONNECT_ERROR) 
+			else if (error == OTA_CONNECT_ERROR)
 			{
 				Serial.println("Connect Failed");
 			}
-			else if (error == OTA_RECEIVE_ERROR) 
+			else if (error == OTA_RECEIVE_ERROR)
 			{
 				Serial.println("Receive Failed");
 			}
-			else if (error == OTA_END_ERROR) 
+			else if (error == OTA_END_ERROR)
 			{
 				Serial.println("End Failed");
 			}
-			ShelfDisplays.setAllSegmentColors(CRGB::Red);
+			ShelfDisplays->setAllSegmentColors(CRGB::Red);
 		});
 
 		ArduinoOTA.begin();

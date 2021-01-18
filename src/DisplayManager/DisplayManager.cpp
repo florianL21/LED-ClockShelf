@@ -1,5 +1,7 @@
 #include "DisplayManager.h"
 
+DisplayManager* DisplayManager::instance = nullptr;
+
 DisplayManager::DisplayManager()
 {
 	FastLED.addLeds<WS2812B, LED_DATA_PIN, GRB>(leds, NUM_LEDS);  // GRB ordering is typical
@@ -12,17 +14,18 @@ DisplayManager::DisplayManager()
 	{
 		leds[i] = CRGB::Black;
 	}
-	
+
 	#if APPEND_DOWN_LIGHTERS == false
 		for (uint16_t i = 0; i < ADDITIONAL_LEDS; i++)
 		{
 			DownlightLeds[i] = CRGB::Black;
 		}
 	#endif
-	
+
 	for (uint8_t i = 0; i < NUM_DISPLAYS; i++)
 	{
 		animationManagers[i] = new Animator();
+		Displays[i] = nullptr;
 	}
 
 	LEDBrightnessCurrent = 128;
@@ -37,6 +40,20 @@ DisplayManager::DisplayManager()
 
 DisplayManager::~DisplayManager()
 {
+	if(instance != nullptr)
+	{
+		delete instance;
+		instance = nullptr;
+	}
+}
+
+DisplayManager* DisplayManager::getInstance()
+{
+	if(instance == nullptr)
+	{
+		instance = new DisplayManager();
+	}
+	return instance;
 }
 
 void DisplayManager::setAllSegmentColors(CRGB color)

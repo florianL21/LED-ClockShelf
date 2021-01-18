@@ -16,7 +16,6 @@
 class DisplayManager
 {
 public:
-	
 
 private:
 	//segment configurations
@@ -24,6 +23,7 @@ private:
 	static Segment::direction SegmentDirections[NUM_SEGMENTS];
 	static SevenSegment::SevenSegmentMode SegmentDisplayModes[NUM_DISPLAYS];
 	static uint8_t diplayIndex[NUM_SEGMENTS];
+	static DisplayManager* instance;
 
 	Animator animationManager;
 	Animator* animationManagers[NUM_DISPLAYS];
@@ -36,30 +36,26 @@ private:
 	uint8_t LEDBrightnessCurrent;
 	uint64_t lastBrightnessChange;
 
-
-	#if ENABLE_LIGHT_SENSOR == true
-		LinkedList<uint16_t> lightSensorMeasurements;
-		uint64_t lastSensorMeasurement;
-		uint8_t lightSensorBrightness;
-	#endif
-
-	void AnimationManagersTemporaryOverride(Animator* OverrideanimationManager);
-	void restoreAnimationManagers();
-
 	CRGB leds[NUM_LEDS];
 	#if APPEND_DOWN_LIGHTERS == false
 		CRGB DownlightLeds[ADDITIONAL_LEDS];
 	#endif
 
 	#if ENABLE_LIGHT_SENSOR == true
+		LinkedList<uint16_t> lightSensorMeasurements;
+		uint64_t lastSensorMeasurement;
+		uint8_t lightSensorBrightness;
 		void takeBrightnessMeasurement();
 	#endif
 
-public:
-	
+	void AnimationManagersTemporaryOverride(Animator* OverrideanimationManager);
+	void restoreAnimationManagers();
 
 	DisplayManager();
+public:
 	~DisplayManager();
+
+	static DisplayManager* getInstance();
 
 	/**
 	 * @brief Initialize all the segment using the configutration from DisplayConfiguration.cpp

@@ -43,6 +43,13 @@ public:
 	static TimeManager* getInstance();
 
 	/**
+	 * @brief Initialize the time manager and synchronize to ntp for the first time
+	 * @pre prerequisite is that WIFI is already up and running
+	 * @returns true if init was successful
+	 */
+	bool init();
+
+	/**
 	 * @brief Disable the timer and deactivate the interrupt
 	 */
 	void disableTimer();

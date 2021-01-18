@@ -8,7 +8,7 @@
 **********************************/
 
 /**
- * @brief If you want to run the system in a minimal mode to test some basic functionality or 
+ * @brief If you want to run the system in a minimal mode to test some basic functionality or
  * 		  debug something it could be useful to disable wifi functionality completley.s
  */
 #define RUN_WITHOUT_WIFI 		false
@@ -47,7 +47,7 @@
 	/**
 	 * @brief If you ant to use OTA upload instead or in addition to the normal cable upload set this option to true.
 	 * To actuall flash something via OTA you have to uncomment the OTA flash lines in the platformio.ini file
-	 * This is a nice addition to cable upload but it doesn't replace it completely. 
+	 * This is a nice addition to cable upload but it doesn't replace it completely.
 	 * If the microcontroller crashes because of bad software you still have to use a cable
 	 */
 	#define ENABLE_OTA_UPLOAD			true
@@ -118,6 +118,11 @@
  * @brief Number of flashes until an alarm is considered complete and the system goes back to normal
  */
 #define ALARM_FLASH_COUNT 10
+
+/**
+ * @brief How often the time is checked and the displays are updated
+ */
+#define TIME_UPDATE_INTERVALL	500
 
 
 /***************************

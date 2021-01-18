@@ -6,9 +6,6 @@ void IRAM_ATTR onTimer();
 
 TimeManager::TimeManager()
 {
-	#if TIME_MANAGER_DEMO_MODE == false
-		configTzTime(TIMEZONE_INFO, NTP_SERVER);
-	#endif
 	currentTime.hours = 0;
 	currentTime.minutes = 0;
 	currentTime.seconds = 0;
@@ -22,7 +19,27 @@ TimeManager::TimeManager()
 	TimerTickCallback = nullptr;
 	TimerDoneCallback = nullptr;
 	TimerModeActive = false;
+}
 
+TimeManager::~TimeManager()
+{
+	disableTimer();
+}
+
+TimeManager* TimeManager::getInstance()
+{
+	if(TimeManagerSingelton == nullptr)
+	{
+		TimeManagerSingelton = new TimeManager();
+	}
+	return TimeManagerSingelton;
+}
+
+bool TimeManager::init()
+{
+	#if TIME_MANAGER_DEMO_MODE == false
+		configTzTime(TIMEZONE_INFO, NTP_SERVER);
+	#endif
 	// timer 0 divider 80 because 80Mhz and count up
 	timer = timerBegin(0, 80, true);
 
@@ -42,23 +59,10 @@ TimeManager::TimeManager()
 	}
 	if(fistSyncSuccess == false)
 	{
-		Serial.printf("[E]: TimeManager failed to synchronize for the first time with the NTP server. Retrying in %d seconds", TIME_SYNC_INTERVALL);
+		return false;
 	}
 	timerAlarmEnable(timer);
-}
-
-TimeManager::~TimeManager()
-{
-	disableTimer();
-}
-
-TimeManager* TimeManager::getInstance()
-{
-	if(TimeManagerSingelton == nullptr)
-	{
-		TimeManagerSingelton = new TimeManager();
-	}
-	return TimeManagerSingelton;
+	return true;
 }
 
 String TimeManager::getCurrentTimeString()
