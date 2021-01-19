@@ -65,8 +65,8 @@ public:
 	void remove(AnimatableObject* animationToRemove);
 	void handle();
 
-	void setAnimation(AnimatableObject* object, uint8_t animationEffect, uint16_t duration, uint8_t smoothness = 0);
-	void startAnimation(AnimatableObject* object, uint8_t animationEffect, uint16_t duration, uint8_t smoothness = 0);
+	void setAnimation(AnimatableObject* object, uint8_t animationEffect, uint16_t duration, uint8_t fps = ANIMATION_TARGET_FPS);
+	void startAnimation(AnimatableObject* object, uint8_t animationEffect, uint16_t duration, uint8_t fps = ANIMATION_TARGET_FPS);
 	void startAnimation(AnimatableObject* object, uint8_t animationEffect);
 	void setAnimationDuration(AnimatableObject* object, uint16_t duration);
 	void startAnimation(AnimatableObject* object);
@@ -87,6 +87,8 @@ public:
 	void WaitForComplexAnimationCompletion();
 
 	void delay(uint32_t delayInMs);
+
+    void startAnimation_new(AnimatableObject* object, AnimatableObject::AnimationFunction animationEffect);
 };
 
 #endif

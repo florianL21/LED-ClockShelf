@@ -12,13 +12,14 @@ AnimatableObject::AnimatableObject(uint16_t OverallDuration, uint16_t steps)
 	tickLength = 20;
 	animationStarted = false;
 	tickState = 0;
-	smoothness = 0;
+	fps = 0;
 	setAnimationSteps(steps);
 	finishedCallback = nullptr;
 	startCallback = nullptr;
 	ComplexAnimStartCallback = nullptr;
 	ComplexAnimDoneCallback = nullptr;
 	ComplexAnimationManager = nullptr;
+    effectFunction = nullptr;
 }
 
 AnimatableObject::~AnimatableObject()
@@ -37,12 +38,19 @@ void AnimatableObject::setAnimationDuration(uint16_t duration)
 void AnimatableObject::setAnimationSteps(uint16_t numSteps)
 {
 	numUnsmoothedStep = numSteps;
-	setAnimationSmothing(smoothness);
+	setAnimationFps(fps);
 }
 
-void AnimatableObject::setAnimationSmothing(uint16_t smoothness)
+void AnimatableObject::setAnimationFps(uint16_t FramesPerSecond)
 {
-	numStates = numUnsmoothedStep * (smoothness + 1);
+	if(FramesPerSecond < 0)
+	{
+		fps = 1;
+	} else
+	{
+		fps = FramesPerSecond;
+	}
+	numStates = fps * (getAnimationDuration() / 1000.0);
 	if(numStates != 0)
 	{
 		tickLength = AnimationDuration / numStates;
@@ -133,4 +141,9 @@ void AnimatableObject::onAnimationDone()
 void AnimatableObject::setAnimationEffect(uint8_t newEffect)
 {
 	effect = newEffect;
+}
+
+void AnimatableObject::setAnimationEffect_new(AnimatableObject::AnimationFunction newEffect)
+{
+    effectFunction = newEffect;
 }

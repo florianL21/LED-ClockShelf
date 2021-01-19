@@ -62,8 +62,9 @@ public:
 	 * @param indexOfFirstLed 	Index of the first led in the string that is part of a segment (usually 0)
 	 * @param ledsPerSegment 	Sets the number of LEDs that are in one segment. this will be the same for all segments
 	 * @param initialColor 		Sets the initial color of all the segments. This does not switch any segments on by it's own
+	 * @param initBrightness	Sets the initial brightness of all the segments to avoid brigness jumps during startup
 	 */
-	void InitSegments(uint16_t indexOfFirstLed, uint8_t ledsPerSegment, CRGB initialColor);
+	void InitSegments(uint16_t indexOfFirstLed, uint8_t ledsPerSegment, CRGB initialColor, uint8_t initBrightness = 128);
 
 	/**
 	 * @brief Sets the color of all segments and updates it immediatley for all segments that are currently switched on
@@ -149,6 +150,8 @@ public:
 	 * @brief Briefley Flash the dot in the middle of the clock face
 	 */
 	void flashSeperationDot();
+
+    void test();
 };
 
 

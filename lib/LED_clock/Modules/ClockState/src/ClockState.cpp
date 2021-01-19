@@ -101,5 +101,4 @@ void ClockState::handleStates()
 			break;
 		}
 	}
-	ShelfDisplays->handle();
 }

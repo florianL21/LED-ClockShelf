@@ -2,6 +2,8 @@
 #define __ANIMATABLE_OBJECT_H_
 
 #include <Arduino.h>
+#define FASTLED_INTERNAL
+#include "FastLED.h"
 
 #define CALL_MEMBER_FN(object,ptrToMember)  ((object).*(ptrToMember))
 
@@ -10,22 +12,25 @@ class Segment;
 
 class AnimatableObject
 {
-friend class Animator;
-friend class Segment;
 public:
 	typedef void AnimationCallBack(void);
 	typedef void (Animator::*ComplexAnimationCallBack)(AnimatableObject * sourceObject);
-	uint8_t effect;
+    typedef void (*AnimationFunction)(CRGB* leds, uint16_t length, CRGB animationColor, uint16_t totalSteps, uint16_t currentStep, bool invert);
 private:
+    friend class Animator;
+    friend class Segment;
+
+    uint8_t effect;
 	uint16_t AnimationDuration;
 	uint64_t timeSinceLastTick;
 	uint16_t tickLength;
 	uint16_t tickState;
 	uint16_t numStates;
-	uint16_t smoothness;
+	uint16_t fps;
 	uint16_t numUnsmoothedStep;
 	bool animationStarted;
-	
+    AnimationFunction effectFunction;
+
 	AnimationCallBack* finishedCallback;
 	AnimationCallBack* startCallback;
 	Animator* ComplexAnimationManager;
@@ -39,7 +44,7 @@ protected:
 
 	void setAnimationDuration(uint16_t duration);
 	void setAnimationSteps(uint16_t numSteps);
-	void setAnimationSmothing(uint16_t smoothness);
+	void setAnimationFps(uint16_t setAnimationFps);
 	uint16_t getAnimationDuration();
 	void start();
 	void reset();
@@ -49,6 +54,7 @@ protected:
 	virtual void onAnimationStart();
 	virtual void onAnimationDone();
 	virtual void setAnimationEffect(uint8_t newEffect);
+    virtual void setAnimationEffect_new(AnimatableObject::AnimationFunction newEffect);
 public:
 	virtual void tick();
 	void setAnimationDoneCallback(AnimationCallBack* callback);

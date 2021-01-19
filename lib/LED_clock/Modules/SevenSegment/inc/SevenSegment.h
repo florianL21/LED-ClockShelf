@@ -7,6 +7,7 @@
 #include "Animator.h"
 #include "Configuration.h"
 #include "SegmentTransitions.h"
+#include "AnimationEffects.h"
 
 class SevenSegment : AnimatableObject
 {
@@ -56,6 +57,7 @@ public:
 	void displayColor(CRGB color);
 	void off();
 	void addAnimator(Animator* AnimationManager);
+    void test();
 };
 
 

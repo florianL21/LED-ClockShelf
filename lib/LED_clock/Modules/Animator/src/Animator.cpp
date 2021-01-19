@@ -76,10 +76,10 @@ void Animator::handle()
 	}
 }
 
-void Animator::setAnimation(AnimatableObject* object, uint8_t animationEffect, uint16_t duration, uint8_t smoothness)
+void Animator::setAnimation(AnimatableObject* object, uint8_t animationEffect, uint16_t duration, uint8_t fps)
 {
 	object->setAnimationDuration(duration);
-	object->setAnimationSmothing(smoothness);
+	object->setAnimationFps(fps);
 	object->setAnimationEffect(animationEffect);
 }
 
@@ -88,15 +88,22 @@ void Animator::setAnimationDuration(AnimatableObject* object, uint16_t duration)
 	object->setAnimationDuration(duration);
 }
 
-void Animator::startAnimation(AnimatableObject* object, uint8_t animationEffect, uint16_t duration, uint8_t smoothness)
+void Animator::startAnimation(AnimatableObject* object, uint8_t animationEffect, uint16_t duration, uint8_t fps)
 {
-	setAnimation(object, animationEffect, duration, smoothness);
+	setAnimation(object, animationEffect, duration, fps);
 	startAnimation(object);
 }
 
 void Animator::startAnimation(AnimatableObject* object, uint8_t animationEffect)
 {
 	startAnimation(object, animationEffect, object->getAnimationDuration());
+}
+
+void Animator::startAnimation_new(AnimatableObject* object, AnimatableObject::AnimationFunction animationEffect)
+{
+	object->setAnimationFps(ANIMATION_TARGET_FPS);
+	object->setAnimationEffect_new(animationEffect);
+	object->start();
 }
 
 void Animator::startAnimation(AnimatableObject* object)
@@ -140,7 +147,7 @@ void Animator::animationIterationDoneCallback(AnimatableObject* sourceObject)
 	{
 		startAnimationStep(complexAnimationCounter);
 	}
-	else 
+	else
 	{
 		if(loopAnimation == true)
 		{
@@ -161,7 +168,7 @@ void Animator::startAnimationStep(uint16_t stepindex)
 	complexAnimationRunning = true;
 	for (int j = 0; j < currentComplexAnimation->animationComplexity; j++)
 	{
-		
+
 		if(StepToStart->arrayIndex[j] != -1)
 		{
 			setAnimationDuration(animationObjects[StepToStart->arrayIndex[j]], currentComplexAnimation->LengthPerAnimation);

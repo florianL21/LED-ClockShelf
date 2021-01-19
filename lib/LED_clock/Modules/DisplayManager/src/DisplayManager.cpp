@@ -127,7 +127,7 @@ void DisplayManager::setMinuteSegmentColors(CRGB color)
 	Displays[HIGHER_DIGIT_MINUTE_DISPLAY]->updateColor(color);
 }
 
-void DisplayManager::InitSegments(uint16_t indexOfFirstLed, uint8_t ledsPerSegment, CRGB initialColor)
+void DisplayManager::InitSegments(uint16_t indexOfFirstLed, uint8_t ledsPerSegment, CRGB initialColor, uint8_t initBrightness)
 {
 	for (uint8_t i = 0; i < NUM_DISPLAYS; i++)
 	{
@@ -147,9 +147,13 @@ void DisplayManager::InitSegments(uint16_t indexOfFirstLed, uint8_t ledsPerSegme
 		}
 		Displays[diplayIndex[i]]->add(allSegments[i], SegmentPositions[i]);
 		animationManager.add(allSegments[i]);
-		animationManagers[diplayIndex[i]]->add(allSegments[i]);
+		animationManagers[diplayIndex[i]]->add(allSegments[i]); //TODO: check if even needed, might be duplicate
 		currentLEDIndex += ledsPerSegment;
 	}
+	//set the initial brightness to avoid jumps
+	LEDBrightnessCurrent = initBrightness;
+	LEDBrightnessSmoothingStartPoint = initBrightness;
+	setGlobalBrightness(initBrightness, false);
 }
 
 
@@ -267,7 +271,7 @@ void DisplayManager::restoreAnimationManagers()
 }
 
 void DisplayManager::showLoadingAnimation()
-{	
+{
 	// AnimationManagersTemporaryOverride(&animationManager);
 	animationManager.PlayComplexAnimation(LoadingAnimation, (AnimatableObject**)allSegments, true);
 }
@@ -291,7 +295,7 @@ void DisplayManager::turnAllSegmentsOff()
 	}
 }
 
-void DisplayManager::showProgress(uint32_t progress, uint32_t total)
+void DisplayManager::showProgress(uint32_t progress, uint32_t total) // TODO: make crash proof, currently crashing with divide by zero
 {
 	for (int i = 0; i < (progress / (total / (NUM_LEDS_PER_SEGMENT * NUM_SEGMENTS_PROGRESS))); i++)
 	{
@@ -331,4 +335,9 @@ void DisplayManager::flashSeperationDot()
 	#if DISPLAY_FOR_SEPERATION_DOT > -1
 		Displays[DISPLAY_FOR_SEPERATION_DOT]->FlashMiddleDot();
 	#endif
+}
+
+void DisplayManager::test()
+{
+    Displays[1]->test();
 }

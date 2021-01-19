@@ -216,6 +216,11 @@ enum DisplayIDs {LOWER_DIGIT_MINUTE_DISPLAY = 6, HIGHER_DIGIT_MINUTE_DISPLAY = 4
  */
 #define DISPLAY_FOR_SEPERATION_DOT -1
 
+/**
+ * @brief Target Frames per second for the smoothness of animations
+ */
+#define ANIMATION_TARGET_FPS		30
+
 
 /***************************
 *

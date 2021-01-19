@@ -6,11 +6,13 @@
 #define FASTLED_INTERNAL
 #include "FastLED.h"
 
+
+class AnimationEffects;
 class Segment: public AnimatableObject
 {
 public:
 	//for directional animations it is iportant that right animations are always first and their left counterpart is always one ID higer
-	enum animation 
+	enum animation
 	{
 		ANIMATE_OUT_TO_RIGHT = 0,
 		ANIMATE_OUT_TO_BOTTOM = 0,
@@ -30,14 +32,14 @@ public:
 	enum direction {LEFT_TO_RIGHT = false, RIGHT_TO_LEFT = true, TOP_TO_BOTTTOM = false, BOTTOM_TO_TOP = true};
 
 private:
-	uint16_t startIndex;
+    friend class AnimationEffects;
+
 	uint8_t length;
 	bool invertDirection;
 	CRGB color;
 	CRGB AnimationColor;
 	CRGB* leds;
 	bool isOn;
-
 	
 	void writeToLEDs(CRGB colorToSet);
 	void onAnimationStart();
