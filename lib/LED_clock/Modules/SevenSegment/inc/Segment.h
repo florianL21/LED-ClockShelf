@@ -11,24 +11,6 @@ class AnimationEffects;
 class Segment: public AnimatableObject
 {
 public:
-	//for directional animations it is iportant that right animations are always first and their left counterpart is always one ID higer
-	enum animation
-	{
-		ANIMATE_OUT_TO_RIGHT = 0,
-		ANIMATE_OUT_TO_BOTTOM = 0,
-		ANIMATE_OUT_TO_LEFT = 1,
-		ANIMATE_OUT_TO_TOP = 1,
-		ANIMATE_IN_TO_RIGHT = 2,
-		ANIMATE_IN_TO_BOTTOM = 2,
-		ANIMATE_IN_TO_LEFT = 3,
-		ANIMATE_IN_TO_TOP = 3,
-		AMINATE_SINGLE_LED_TO_RIGHT = 4,
-		AMINATE_SINGLE_LED_TO_BOTTOM = 4,
-		AMINATE_SINGLE_LED_TO_LEFT = 5,
-		AMINATE_SINGLE_LED_TO_TOP = 5,
-		__LAST_DIRECTIONAL_EFFECT = 6, //Internal value used to determine if an animation has a direction
-		ANIMATE_MIDDLE_DOT_FLASH = 6
-	};
 	enum direction {LEFT_TO_RIGHT = false, RIGHT_TO_LEFT = true, TOP_TO_BOTTTOM = false, BOTTOM_TO_TOP = true};
 
 private:

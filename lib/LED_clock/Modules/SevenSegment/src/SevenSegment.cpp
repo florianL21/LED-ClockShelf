@@ -153,7 +153,7 @@ void SevenSegment::DisplayNumber(uint8_t value)
 		}else if(currentValue == 1 && value != 1)
 		{
 			anim = getTransition(1, SEGMENT_OFF);
-		}	
+		}
 	}
 	else
 	{
@@ -176,7 +176,8 @@ void SevenSegment::FlashMiddleDot()
 	{
 		return;
 	}
-	AnimationHandler->startAnimation(Segments[1], Segment::ANIMATE_MIDDLE_DOT_FLASH);
+	//TODO: implement dot flashing animation
+	// AnimationHandler->startAnimation(Segments[1], Segment::ANIMATE_MIDDLE_DOT_FLASH);
 }
 
 void SevenSegment::setColor(CRGB color)
@@ -259,5 +260,5 @@ void SevenSegment::DisplayChar(char value)
 void SevenSegment::test()
 {
     AnimationHandler->setAnimationDuration(Segments[getIndexOfSegment(MiddleBottomSegment)], 10000); //in ms
-    AnimationHandler->startAnimation_new(Segments[getIndexOfSegment(MiddleBottomSegment)], AnimationEffects::AnimateOutToRight);
+    AnimationHandler->startAnimation(Segments[getIndexOfSegment(MiddleBottomSegment)], AnimationEffects::AnimateOutToRight);
 }

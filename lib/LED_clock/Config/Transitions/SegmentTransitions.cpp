@@ -70,10 +70,10 @@ Animator::ComplexAmination* InitAnimate0to1(uint16_t totalAnimationLength)
 {
 	Animator::animationStep* step0 = new Animator::animationStep;
 	step0->arrayIndex = new int16_t[2] {0, 4};
-	step0->animationEffects = new uint8_t[2] {Segment::ANIMATE_OUT_TO_TOP, Segment::ANIMATE_OUT_TO_BOTTOM};
+	step0->animationEffects = new AnimatableObject::AnimationFunction[2] {AnimationEffects::AnimateOutToTop, AnimationEffects::AnimateOutToBottom};
 	Animator::animationStep* step1 = new Animator::animationStep;
 	step1->arrayIndex = new int16_t[2] {1, 5};
-	step1->animationEffects = new uint8_t[2] {Segment::ANIMATE_OUT_TO_RIGHT, Segment::ANIMATE_OUT_TO_RIGHT};
+	step1->animationEffects = new AnimatableObject::AnimationFunction[2] {AnimationEffects::AnimateOutToRight, AnimationEffects::AnimateOutToRight};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
@@ -90,13 +90,13 @@ Animator::ComplexAmination* InitAnimate1to2(uint16_t totalAnimationLength)
 {
 	Animator::animationStep* step0 = new Animator::animationStep;
 	step0->arrayIndex = new int16_t[3] {1, 6, 3};
-	step0->animationEffects = new uint8_t[3] {Segment::ANIMATE_IN_TO_LEFT, Segment::ANIMATE_OUT_TO_TOP, Segment::ANIMATE_IN_TO_LEFT};
+	step0->animationEffects = new AnimatableObject::AnimationFunction[3] {AnimationEffects::AnimateInToLeft, AnimationEffects::AnimateOutToTop, AnimationEffects::AnimateInToLeft};
 	Animator::animationStep* step1 = new Animator::animationStep;
 	step1->arrayIndex = new int16_t[3] {4, -1, -1};
-	step1->animationEffects = new uint8_t[3] {Segment::ANIMATE_IN_TO_BOTTOM, 0, 0};
+	step1->animationEffects = new AnimatableObject::AnimationFunction[3] {AnimationEffects::AnimateInToBottom, 0, 0};
 	Animator::animationStep* step2 = new Animator::animationStep;
 	step2->arrayIndex = new int16_t[3] {5, -1, -1};
-	step2->animationEffects = new uint8_t[3] {Segment::ANIMATE_IN_TO_RIGHT, 0, 0};
+	step2->animationEffects = new AnimatableObject::AnimationFunction[3] {AnimationEffects::AnimateInToRight, 0, 0};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
@@ -115,7 +115,7 @@ Animator::ComplexAmination* InitAnimate2to3(uint16_t totalAnimationLength)
 {
 	Animator::animationStep* step0 = new Animator::animationStep;
 	step0->arrayIndex = new int16_t[2] {4, 6};
-	step0->animationEffects = new uint8_t[2] {Segment::ANIMATE_OUT_TO_BOTTOM, Segment::ANIMATE_IN_TO_TOP};
+	step0->animationEffects = new AnimatableObject::AnimationFunction[2] {AnimationEffects::AnimateOutToBottom, AnimationEffects::AnimateInToTop};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
@@ -131,7 +131,7 @@ Animator::ComplexAmination* InitAnimate2to0(uint16_t totalAnimationLength)
 {
 	Animator::animationStep* step0 = new Animator::animationStep;
 	step0->arrayIndex = new int16_t[3] {0, 3, 6};
-	step0->animationEffects = new uint8_t[3] {Segment::ANIMATE_IN_TO_BOTTOM, Segment::ANIMATE_OUT_TO_RIGHT, Segment::ANIMATE_IN_TO_BOTTOM};
+	step0->animationEffects = new AnimatableObject::AnimationFunction[3] {AnimationEffects::AnimateInToBottom, AnimationEffects::AnimateOutToRight, AnimationEffects::AnimateInToBottom};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
@@ -147,7 +147,7 @@ Animator::ComplexAmination* InitAnimate3to4(uint16_t totalAnimationLength)
 {
 	Animator::animationStep* step0 = new Animator::animationStep;
 	step0->arrayIndex = new int16_t[3] {5, 0, 1};
-	step0->animationEffects = new uint8_t[3] {Segment::ANIMATE_OUT_TO_RIGHT, Segment::ANIMATE_IN_TO_BOTTOM, Segment::ANIMATE_OUT_TO_LEFT};
+	step0->animationEffects = new AnimatableObject::AnimationFunction[3] {AnimationEffects::AnimateOutToRight, AnimationEffects::AnimateInToBottom, AnimationEffects::AnimateOutToLeft};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
@@ -163,7 +163,7 @@ Animator::ComplexAmination* InitAnimate4to5(uint16_t totalAnimationLength)
 {
 	Animator::animationStep* step0 = new Animator::animationStep;
 	step0->arrayIndex = new int16_t[3] {2, 1, 5};
-	step0->animationEffects = new uint8_t[3] {Segment::ANIMATE_OUT_TO_TOP, Segment::ANIMATE_IN_TO_LEFT, Segment::ANIMATE_IN_TO_LEFT};
+	step0->animationEffects = new AnimatableObject::AnimationFunction[3] {AnimationEffects::AnimateOutToTop, AnimationEffects::AnimateInToLeft, AnimationEffects::AnimateInToLeft};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
@@ -179,7 +179,7 @@ Animator::ComplexAmination* InitAnimate5to6(uint16_t totalAnimationLength)
 {
 	Animator::animationStep* step0 = new Animator::animationStep;
 	step0->arrayIndex = new int16_t[1] {4};
-	step0->animationEffects = new uint8_t[1] {Segment::ANIMATE_IN_TO_TOP};
+	step0->animationEffects = new AnimatableObject::AnimationFunction[1] {AnimationEffects::AnimateInToTop};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
@@ -195,7 +195,7 @@ Animator::ComplexAmination* InitAnimate5to0(uint16_t totalAnimationLength)
 {
 	Animator::animationStep* step0 = new Animator::animationStep;
 	step0->arrayIndex = new int16_t[3] {3, 4, 2};
-	step0->animationEffects = new uint8_t[3] {Segment::ANIMATE_OUT_TO_RIGHT, Segment::ANIMATE_IN_TO_TOP, Segment::ANIMATE_IN_TO_TOP};
+	step0->animationEffects = new AnimatableObject::AnimationFunction[3] {AnimationEffects::AnimateOutToRight, AnimationEffects::AnimateInToTop, AnimationEffects::AnimateInToTop};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
@@ -211,10 +211,10 @@ Animator::ComplexAmination* InitAnimate6to7(uint16_t totalAnimationLength)
 {
 	Animator::animationStep* step0 = new Animator::animationStep;
 	step0->arrayIndex = new int16_t[4] {0, 3, 2, 4};
-	step0->animationEffects = new uint8_t[4] {Segment::ANIMATE_OUT_TO_TOP, Segment::ANIMATE_OUT_TO_RIGHT, Segment::ANIMATE_IN_TO_TOP, Segment::ANIMATE_OUT_TO_BOTTOM};
+	step0->animationEffects = new AnimatableObject::AnimationFunction[4] {AnimationEffects::AnimateOutToTop, AnimationEffects::AnimateOutToRight, AnimationEffects::AnimateInToTop, AnimationEffects::AnimateOutToBottom};
 	Animator::animationStep* step1 = new Animator::animationStep;
 	step1->arrayIndex = new int16_t[4] {5, -1, -1, -1};
-	step1->animationEffects = new uint8_t[4] {Segment::ANIMATE_OUT_TO_RIGHT, 0, 0, 0};
+	step1->animationEffects = new AnimatableObject::AnimationFunction[4] {AnimationEffects::AnimateOutToRight, 0, 0, 0};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
@@ -231,10 +231,10 @@ Animator::ComplexAmination* InitAnimate7to8(uint16_t totalAnimationLength)
 {
 	Animator::animationStep* step0 = new Animator::animationStep;
 	step0->arrayIndex = new int16_t[2] {0, 5};
-	step0->animationEffects = new uint8_t[2] {Segment::ANIMATE_IN_TO_BOTTOM, Segment::ANIMATE_IN_TO_LEFT};
+	step0->animationEffects = new AnimatableObject::AnimationFunction[2] {AnimationEffects::AnimateInToBottom, AnimationEffects::AnimateInToLeft};
 	Animator::animationStep* step1 = new Animator::animationStep;
 	step1->arrayIndex = new int16_t[2] {4, 3};
-	step1->animationEffects = new uint8_t[2] {Segment::ANIMATE_IN_TO_TOP, Segment::ANIMATE_IN_TO_RIGHT};
+	step1->animationEffects = new AnimatableObject::AnimationFunction[2] {AnimationEffects::AnimateInToTop, AnimationEffects::AnimateInToRight};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
@@ -251,7 +251,7 @@ Animator::ComplexAmination* InitAnimate8to9(uint16_t totalAnimationLength)
 {
 	Animator::animationStep* step0 = new Animator::animationStep;
 	step0->arrayIndex = new int16_t[1] {4};
-	step0->animationEffects = new uint8_t[1] {Segment::ANIMATE_OUT_TO_BOTTOM};
+	step0->animationEffects = new AnimatableObject::AnimationFunction[1] {AnimationEffects::AnimateOutToBottom};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
@@ -267,7 +267,7 @@ Animator::ComplexAmination* InitAnimate9to0(uint16_t totalAnimationLength)
 {
 	Animator::animationStep* step0 = new Animator::animationStep;
 	step0->arrayIndex = new int16_t[2] {3, 4};
-	step0->animationEffects = new uint8_t[2] {Segment::ANIMATE_OUT_TO_LEFT, Segment::ANIMATE_IN_TO_BOTTOM};
+	step0->animationEffects = new AnimatableObject::AnimationFunction[2] {AnimationEffects::AnimateOutToLeft, AnimationEffects::AnimateInToBottom};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
@@ -283,7 +283,7 @@ Animator::ComplexAmination* InitAnimate1toOFF(uint16_t totalAnimationLength)
 {
 	Animator::animationStep* step0 = new Animator::animationStep;
 	step0->arrayIndex = new int16_t[2] {6, 2};
-	step0->animationEffects = new uint8_t[2] {Segment::ANIMATE_OUT_TO_BOTTOM, Segment::ANIMATE_OUT_TO_TOP};
+	step0->animationEffects = new AnimatableObject::AnimationFunction[2] {AnimationEffects::AnimateOutToBottom, AnimationEffects::AnimateOutToTop};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
@@ -299,7 +299,7 @@ Animator::ComplexAmination* InitAnimateOFFto1(uint16_t totalAnimationLength)
 {
 	Animator::animationStep* step0 = new Animator::animationStep;
 	step0->arrayIndex = new int16_t[2] {2, 6};
-	step0->animationEffects = new uint8_t[2] {Segment::ANIMATE_IN_TO_TOP, Segment::ANIMATE_IN_TO_BOTTOM};
+	step0->animationEffects = new AnimatableObject::AnimationFunction[2] {AnimationEffects::AnimateInToTop, AnimationEffects::AnimateInToBottom};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
@@ -317,7 +317,7 @@ Animator::ComplexAmination* InitAnimate9to8(uint16_t totalAnimationLength)
 	#define ANIMATION_COMPLEXITY 1
 	Animator::animationStep* step0 = new Animator::animationStep;
 	step0->arrayIndex = new int16_t[ANIMATION_COMPLEXITY] {4};
-	step0->animationEffects = new uint8_t[ANIMATION_COMPLEXITY] {Segment::ANIMATE_IN_TO_TOP};
+	step0->animationEffects = new AnimatableObject::AnimationFunction[ANIMATION_COMPLEXITY] {AnimationEffects::AnimateInToTop};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
@@ -335,10 +335,10 @@ Animator::ComplexAmination* InitAnimate8to7(uint16_t totalAnimationLength)
 	#define ANIMATION_COMPLEXITY 3
 	Animator::animationStep* step0 = new Animator::animationStep;
 	step0->arrayIndex = new int16_t[ANIMATION_COMPLEXITY] {0, 3, 4};
-	step0->animationEffects = new uint8_t[ANIMATION_COMPLEXITY] {Segment::ANIMATE_OUT_TO_TOP, Segment::ANIMATE_OUT_TO_RIGHT, Segment::ANIMATE_OUT_TO_BOTTOM};
+	step0->animationEffects = new AnimatableObject::AnimationFunction[ANIMATION_COMPLEXITY] {AnimationEffects::AnimateOutToTop, AnimationEffects::AnimateOutToRight, AnimationEffects::AnimateOutToBottom};
 	Animator::animationStep* step1 = new Animator::animationStep;
 	step1->arrayIndex = new int16_t[ANIMATION_COMPLEXITY] {5, -1, -1};
-	step1->animationEffects = new uint8_t[ANIMATION_COMPLEXITY] {Segment::ANIMATE_OUT_TO_RIGHT, 0, 0};
+	step1->animationEffects = new AnimatableObject::AnimationFunction[ANIMATION_COMPLEXITY] {AnimationEffects::AnimateOutToRight, 0, 0};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
@@ -357,10 +357,10 @@ Animator::ComplexAmination* InitAnimate7to6(uint16_t totalAnimationLength)
 	#define ANIMATION_COMPLEXITY 3
 	Animator::animationStep* step0 = new Animator::animationStep;
 	step0->arrayIndex = new int16_t[ANIMATION_COMPLEXITY] {2, 0, 5};
-	step0->animationEffects = new uint8_t[ANIMATION_COMPLEXITY] {Segment::ANIMATE_OUT_TO_TOP, Segment::ANIMATE_IN_TO_BOTTOM, Segment::ANIMATE_IN_TO_LEFT};
+	step0->animationEffects = new AnimatableObject::AnimationFunction[ANIMATION_COMPLEXITY] {AnimationEffects::AnimateOutToTop, AnimationEffects::AnimateInToBottom, AnimationEffects::AnimateInToLeft};
 	Animator::animationStep* step1 = new Animator::animationStep;
 	step1->arrayIndex = new int16_t[ANIMATION_COMPLEXITY] {3, 4, -1};
-	step1->animationEffects = new uint8_t[ANIMATION_COMPLEXITY] {Segment::ANIMATE_IN_TO_RIGHT, Segment::ANIMATE_IN_TO_TOP, 0};
+	step1->animationEffects = new AnimatableObject::AnimationFunction[ANIMATION_COMPLEXITY] {AnimationEffects::AnimateInToRight, AnimationEffects::AnimateInToTop, 0};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
@@ -379,7 +379,7 @@ Animator::ComplexAmination* InitAnimate6to5(uint16_t totalAnimationLength)
 	#define ANIMATION_COMPLEXITY 1
 	Animator::animationStep* step0 = new Animator::animationStep;
 	step0->arrayIndex = new int16_t[ANIMATION_COMPLEXITY] {4};
-	step0->animationEffects = new uint8_t[ANIMATION_COMPLEXITY] {Segment::ANIMATE_OUT_TO_BOTTOM};
+	step0->animationEffects = new AnimatableObject::AnimationFunction[ANIMATION_COMPLEXITY] {AnimationEffects::AnimateOutToBottom};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
@@ -397,7 +397,7 @@ Animator::ComplexAmination* InitAnimate5to4(uint16_t totalAnimationLength)
 	#define ANIMATION_COMPLEXITY 3
 	Animator::animationStep* step0 = new Animator::animationStep;
 	step0->arrayIndex = new int16_t[ANIMATION_COMPLEXITY] {1, 2, 5};
-	step0->animationEffects = new uint8_t[ANIMATION_COMPLEXITY] {Segment::ANIMATE_OUT_TO_LEFT, Segment::ANIMATE_IN_TO_TOP, Segment::ANIMATE_OUT_TO_RIGHT};
+	step0->animationEffects = new AnimatableObject::AnimationFunction[ANIMATION_COMPLEXITY] {AnimationEffects::AnimateOutToLeft, AnimationEffects::AnimateInToTop, AnimationEffects::AnimateOutToRight};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
@@ -415,7 +415,7 @@ Animator::ComplexAmination* InitAnimate4to3(uint16_t totalAnimationLength)
 	#define ANIMATION_COMPLEXITY 3
 	Animator::animationStep* step0 = new Animator::animationStep;
 	step0->arrayIndex = new int16_t[ANIMATION_COMPLEXITY] {0, 1, 5};
-	step0->animationEffects = new uint8_t[ANIMATION_COMPLEXITY] {Segment::ANIMATE_OUT_TO_BOTTOM, Segment::ANIMATE_IN_TO_LEFT, Segment::ANIMATE_IN_TO_LEFT};
+	step0->animationEffects = new AnimatableObject::AnimationFunction[ANIMATION_COMPLEXITY] {AnimationEffects::AnimateOutToBottom, AnimationEffects::AnimateInToLeft, AnimationEffects::AnimateInToLeft};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
@@ -433,7 +433,7 @@ Animator::ComplexAmination* InitAnimate3to2(uint16_t totalAnimationLength)
 	#define ANIMATION_COMPLEXITY 2
 	Animator::animationStep* step0 = new Animator::animationStep;
 	step0->arrayIndex = new int16_t[ANIMATION_COMPLEXITY] {6, 4};
-	step0->animationEffects = new uint8_t[ANIMATION_COMPLEXITY] {Segment::ANIMATE_OUT_TO_BOTTOM, Segment::ANIMATE_IN_TO_TOP};
+	step0->animationEffects = new AnimatableObject::AnimationFunction[ANIMATION_COMPLEXITY] {AnimationEffects::AnimateOutToBottom, AnimationEffects::AnimateInToTop};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
@@ -451,10 +451,10 @@ Animator::ComplexAmination* InitAnimate2to1(uint16_t totalAnimationLength)
 	#define ANIMATION_COMPLEXITY 4
 	Animator::animationStep* step0 = new Animator::animationStep;
 	step0->arrayIndex = new int16_t[ANIMATION_COMPLEXITY] {1, 3, 4, 6};
-	step0->animationEffects = new uint8_t[ANIMATION_COMPLEXITY] {Segment::ANIMATE_OUT_TO_RIGHT, Segment::ANIMATE_OUT_TO_RIGHT, Segment::ANIMATE_OUT_TO_BOTTOM, Segment::ANIMATE_IN_TO_TOP};
+	step0->animationEffects = new AnimatableObject::AnimationFunction[ANIMATION_COMPLEXITY] {AnimationEffects::AnimateOutToRight, AnimationEffects::AnimateOutToRight, AnimationEffects::AnimateOutToBottom, AnimationEffects::AnimateInToTop};
 	Animator::animationStep* step1 = new Animator::animationStep;
 	step1->arrayIndex = new int16_t[ANIMATION_COMPLEXITY] {5, -1, -1, -1};
-	step1->animationEffects = new uint8_t[ANIMATION_COMPLEXITY] {Segment::ANIMATE_OUT_TO_RIGHT, 0, 0, 0};
+	step1->animationEffects = new AnimatableObject::AnimationFunction[ANIMATION_COMPLEXITY] {AnimationEffects::AnimateOutToRight, 0, 0, 0};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
@@ -473,10 +473,10 @@ Animator::ComplexAmination* InitAnimate1to0(uint16_t totalAnimationLength)
 	#define ANIMATION_COMPLEXITY 2
 	Animator::animationStep* step0 = new Animator::animationStep;
 	step0->arrayIndex = new int16_t[ANIMATION_COMPLEXITY] {1, 5};
-	step0->animationEffects = new uint8_t[ANIMATION_COMPLEXITY] {Segment::ANIMATE_IN_TO_LEFT, Segment::ANIMATE_IN_TO_LEFT};
+	step0->animationEffects = new AnimatableObject::AnimationFunction[ANIMATION_COMPLEXITY] {AnimationEffects::AnimateInToLeft, AnimationEffects::AnimateInToLeft};
 	Animator::animationStep* step1 = new Animator::animationStep;
 	step1->arrayIndex = new int16_t[ANIMATION_COMPLEXITY] {4, 0};
-	step1->animationEffects = new uint8_t[ANIMATION_COMPLEXITY] {Segment::ANIMATE_IN_TO_TOP, Segment::ANIMATE_IN_TO_BOTTOM};
+	step1->animationEffects = new AnimatableObject::AnimationFunction[ANIMATION_COMPLEXITY] {AnimationEffects::AnimateInToTop, AnimationEffects::AnimateInToBottom};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
@@ -495,7 +495,7 @@ Animator::ComplexAmination* InitAnimate0to9(uint16_t totalAnimationLength)
 	#define ANIMATION_COMPLEXITY 2
 	Animator::animationStep* step0 = new Animator::animationStep;
 	step0->arrayIndex = new int16_t[ANIMATION_COMPLEXITY] {4, 3};
-	step0->animationEffects = new uint8_t[ANIMATION_COMPLEXITY] {Segment::ANIMATE_OUT_TO_TOP, Segment::ANIMATE_IN_TO_RIGHT};
+	step0->animationEffects = new AnimatableObject::AnimationFunction[ANIMATION_COMPLEXITY] {AnimationEffects::AnimateOutToTop, AnimationEffects::AnimateInToRight};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
@@ -513,7 +513,7 @@ Animator::ComplexAmination* InitAnimate0to5(uint16_t totalAnimationLength)
 	#define ANIMATION_COMPLEXITY 3
 	Animator::animationStep* step0 = new Animator::animationStep;
 	step0->arrayIndex = new int16_t[ANIMATION_COMPLEXITY] {2, 3, 4};
-	step0->animationEffects = new uint8_t[ANIMATION_COMPLEXITY] {Segment::ANIMATE_OUT_TO_BOTTOM, Segment::ANIMATE_IN_TO_LEFT, Segment::ANIMATE_OUT_TO_BOTTOM};
+	step0->animationEffects = new AnimatableObject::AnimationFunction[ANIMATION_COMPLEXITY] {AnimationEffects::AnimateOutToBottom, AnimationEffects::AnimateInToLeft, AnimationEffects::AnimateOutToBottom};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);

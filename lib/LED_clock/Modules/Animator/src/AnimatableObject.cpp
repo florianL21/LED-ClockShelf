@@ -19,7 +19,7 @@ AnimatableObject::AnimatableObject(uint16_t OverallDuration, uint16_t steps)
 	ComplexAnimStartCallback = nullptr;
 	ComplexAnimDoneCallback = nullptr;
 	ComplexAnimationManager = nullptr;
-    effectFunction = nullptr;
+    effect = nullptr;
 }
 
 AnimatableObject::~AnimatableObject()
@@ -138,12 +138,7 @@ void AnimatableObject::onAnimationDone()
 	
 }
 
-void AnimatableObject::setAnimationEffect(uint8_t newEffect)
+void AnimatableObject::setAnimationEffect(AnimatableObject::AnimationFunction newEffect)
 {
 	effect = newEffect;
-}
-
-void AnimatableObject::setAnimationEffect_new(AnimatableObject::AnimationFunction newEffect)
-{
-    effectFunction = newEffect;
 }

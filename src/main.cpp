@@ -121,6 +121,7 @@ void setup()
 }
 
 bool flashMiddleDot = false;
+unsigned long last = millis();
 
 void loop()
 {
@@ -128,6 +129,11 @@ void loop()
 	// 	ArduinoOTA.handle();
 	// #endif
 	// states->handleStates(); //updates display states, switches between modes etc.
+	// if((millis()-last)>= 1000)
+	// {
+	// 	ShelfDisplays->test();
+	// 	last = millis();
+	// }
     ShelfDisplays->handle();
 }
 

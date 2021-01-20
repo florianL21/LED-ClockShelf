@@ -76,7 +76,7 @@ void Animator::handle()
 	}
 }
 
-void Animator::setAnimation(AnimatableObject* object, uint8_t animationEffect, uint16_t duration, uint8_t fps)
+void Animator::setAnimation(AnimatableObject* object, AnimatableObject::AnimationFunction animationEffect, uint16_t duration, uint8_t fps)
 {
 	object->setAnimationDuration(duration);
 	object->setAnimationFps(fps);
@@ -88,22 +88,15 @@ void Animator::setAnimationDuration(AnimatableObject* object, uint16_t duration)
 	object->setAnimationDuration(duration);
 }
 
-void Animator::startAnimation(AnimatableObject* object, uint8_t animationEffect, uint16_t duration, uint8_t fps)
+void Animator::startAnimation(AnimatableObject* object, AnimatableObject::AnimationFunction animationEffect, uint16_t duration, uint8_t fps)
 {
 	setAnimation(object, animationEffect, duration, fps);
 	startAnimation(object);
 }
 
-void Animator::startAnimation(AnimatableObject* object, uint8_t animationEffect)
+void Animator::startAnimation(AnimatableObject* object, AnimatableObject::AnimationFunction animationEffect)
 {
 	startAnimation(object, animationEffect, object->getAnimationDuration());
-}
-
-void Animator::startAnimation_new(AnimatableObject* object, AnimatableObject::AnimationFunction animationEffect)
-{
-	object->setAnimationFps(ANIMATION_TARGET_FPS);
-	object->setAnimationEffect_new(animationEffect);
-	object->start();
 }
 
 void Animator::startAnimation(AnimatableObject* object)
@@ -121,7 +114,7 @@ void Animator::resetAnimation(AnimatableObject* object)
 	object->reset();
 }
 
-uint8_t Animator::getAnimationEffect(AnimatableObject* object)
+AnimatableObject::AnimationFunction Animator::getAnimationEffect(AnimatableObject* object)
 {
 	return object->effect;
 }

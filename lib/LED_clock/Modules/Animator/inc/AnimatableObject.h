@@ -20,7 +20,7 @@ private:
     friend class Animator;
     friend class Segment;
 
-    uint8_t effect;
+    AnimationFunction effect;
 	uint16_t AnimationDuration;
 	uint64_t timeSinceLastTick;
 	uint16_t tickLength;
@@ -29,7 +29,6 @@ private:
 	uint16_t fps;
 	uint16_t numUnsmoothedStep;
 	bool animationStarted;
-    AnimationFunction effectFunction;
 
 	AnimationCallBack* finishedCallback;
 	AnimationCallBack* startCallback;
@@ -53,8 +52,7 @@ protected:
 	uint16_t getState();
 	virtual void onAnimationStart();
 	virtual void onAnimationDone();
-	virtual void setAnimationEffect(uint8_t newEffect);
-    virtual void setAnimationEffect_new(AnimatableObject::AnimationFunction newEffect);
+	virtual void setAnimationEffect(AnimatableObject::AnimationFunction newEffect);
 public:
 	virtual void tick();
 	void setAnimationDoneCallback(AnimationCallBack* callback);

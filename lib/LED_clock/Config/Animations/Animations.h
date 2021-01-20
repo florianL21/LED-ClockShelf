@@ -3,6 +3,7 @@
 
 #include "Animator.h"
 #include "Segment.h"
+#include "AnimationEffects.h"
 
 extern Animator::ComplexAmination* LoadingAnimation;
 

@@ -18,12 +18,12 @@ public:
 	 * 
 	 * @note Both lists have to have the same length. The length also must be consistent across all animation steps.
 	 * 
-	 * @param arrayIndex index of the array position where the objects that shall be animated is located.
+	 * @param arrayIndex index of the array position where the objects that shall be animated is located. Set to -1 to ignore
 	 * @param animationEffects array of animation effects that shall be played back
 	 */
 	typedef struct {
 		int16_t* arrayIndex;
-		uint8_t* animationEffects;
+		AnimatableObject::AnimationFunction* animationEffects;
 	} animationStep;
 
 	/**
@@ -65,19 +65,19 @@ public:
 	void remove(AnimatableObject* animationToRemove);
 	void handle();
 
-	void setAnimation(AnimatableObject* object, uint8_t animationEffect, uint16_t duration, uint8_t fps = ANIMATION_TARGET_FPS);
-	void startAnimation(AnimatableObject* object, uint8_t animationEffect, uint16_t duration, uint8_t fps = ANIMATION_TARGET_FPS);
-	void startAnimation(AnimatableObject* object, uint8_t animationEffect);
+	void setAnimation(AnimatableObject* object, AnimatableObject::AnimationFunction animationEffect, uint16_t duration, uint8_t fps = ANIMATION_TARGET_FPS);
+	void startAnimation(AnimatableObject* object, AnimatableObject::AnimationFunction animationEffect, uint16_t duration, uint8_t fps = ANIMATION_TARGET_FPS);
+	void startAnimation(AnimatableObject* object, AnimatableObject::AnimationFunction animationEffect);
 	void setAnimationDuration(AnimatableObject* object, uint16_t duration);
 	void startAnimation(AnimatableObject* object);
 	void stopAnimation(AnimatableObject* object);
 	void resetAnimation(AnimatableObject* object);
-	uint8_t getAnimationEffect(AnimatableObject* object);
+	AnimatableObject::AnimationFunction getAnimationEffect(AnimatableObject* object);
 	/**
 	 * @brief Starts a complex chain of animations
-	 * 
+	 *
 	 * @note The first set of animations always have the trigger STARTS_WITH the configured trigger is ignored
-	 * 
+	 *
 	 * @param animation pointer to the animation that shall be played
 	 * @param animationObjectsArray Array of the objects that shall be animated. The indexies for the array are defined in the animation itself
 	 * @param looping Whether the animation shall be looped or not
@@ -87,8 +87,6 @@ public:
 	void WaitForComplexAnimationCompletion();
 
 	void delay(uint32_t delayInMs);
-
-    void startAnimation_new(AnimatableObject* object, AnimatableObject::AnimationFunction animationEffect);
 };
 
 #endif
