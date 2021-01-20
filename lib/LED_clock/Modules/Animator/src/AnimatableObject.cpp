@@ -28,6 +28,22 @@ AnimatableObject::~AnimatableObject()
 
 void AnimatableObject::tick()
 {
+	//TODO: consider moving logic in here
+	// unsigned long currentMillis = millis();
+	// if(currentMillis - timeSinceLastTick > tickLength)
+	// {
+	// 	//execute all past ticks. this should normally not be more than 1
+	// 	for (int i = 0; i < (currentMillis - timeSinceLastTick) / tickLength; i++)
+	// 	{
+	// 		currentAnimation->tick();
+	// 	}
+	// 	timeSinceLastTick = currentMillis;
+	// 	if(++(tickState) >= numStates)
+	// 	{
+	// 		tickState = numStates;
+	// 		done();
+	// 	}
+	// }
 }
 
 void AnimatableObject::setAnimationDuration(uint16_t duration)

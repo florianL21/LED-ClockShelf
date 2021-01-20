@@ -60,6 +60,8 @@ void Animator::handle()
 				currentAnimation->timeSinceLastTick = currentMillis;
 				if(++(currentAnimation->tickState) >= currentAnimation->numStates)
 				{
+					currentAnimation->tickState = currentAnimation->numStates;
+					currentAnimation->tick();
 					currentAnimation->done();
 				}
 			}

@@ -259,6 +259,6 @@ void SevenSegment::DisplayChar(char value)
 
 void SevenSegment::test()
 {
-    AnimationHandler->setAnimationDuration(Segments[getIndexOfSegment(MiddleBottomSegment)], 10000); //in ms
+    AnimationHandler->setAnimationDuration(Segments[getIndexOfSegment(MiddleBottomSegment)], 400); //in ms
     AnimationHandler->startAnimation(Segments[getIndexOfSegment(MiddleBottomSegment)], AnimationEffects::AnimateOutToRight);
 }

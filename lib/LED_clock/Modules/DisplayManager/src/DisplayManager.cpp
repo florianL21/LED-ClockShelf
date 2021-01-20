@@ -147,7 +147,6 @@ void DisplayManager::InitSegments(uint16_t indexOfFirstLed, uint8_t ledsPerSegme
 		}
 		Displays[diplayIndex[i]]->add(allSegments[i], SegmentPositions[i]);
 		animationManager.add(allSegments[i]);
-		animationManagers[diplayIndex[i]]->add(allSegments[i]); //TODO: check if even needed, might be duplicate
 		currentLEDIndex += ledsPerSegment;
 	}
 	//set the initial brightness to avoid jumps
@@ -339,12 +338,12 @@ void DisplayManager::flashSeperationDot()
 
 void DisplayManager::test()
 {
-	// static uint8_t count = 0;
-	// if(count++ >= 9)
-	// {
-	// 	count = 0;
-	// }
-	// Displays[0]->DisplayNumber(count);
-	Displays[0]->test();
+	static uint8_t count = 0;
+	if(count++ >= 9)
+	{
+		count = 0;
+	}
+	Displays[0]->DisplayNumber(count);
+	// Displays[0]->test();
 
 }
