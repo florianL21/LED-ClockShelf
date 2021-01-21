@@ -24,6 +24,7 @@ public:
 	typedef struct {
 		int16_t* arrayIndex;
 		AnimatableObject::AnimationFunction* animationEffects;
+		EasingBase** easingEffects;
 	} animationStep;
 
 	/**
@@ -65,9 +66,9 @@ public:
 	void remove(AnimatableObject* animationToRemove);
 	void handle();
 
-	void setAnimation(AnimatableObject* object, AnimatableObject::AnimationFunction animationEffect, uint16_t duration, uint8_t fps = ANIMATION_TARGET_FPS);
-	void startAnimation(AnimatableObject* object, AnimatableObject::AnimationFunction animationEffect, uint16_t duration, uint8_t fps = ANIMATION_TARGET_FPS);
-	void startAnimation(AnimatableObject* object, AnimatableObject::AnimationFunction animationEffect);
+	void setAnimation(AnimatableObject* object, AnimatableObject::AnimationFunction animationEffect, uint16_t duration, EasingBase* easing = NO_EASING, uint8_t fps = ANIMATION_TARGET_FPS);
+	void startAnimation(AnimatableObject* object, AnimatableObject::AnimationFunction animationEffect, uint16_t duration, EasingBase* easing = NO_EASING, uint8_t fps = ANIMATION_TARGET_FPS);
+	void startAnimation(AnimatableObject* object, AnimatableObject::AnimationFunction animationEffect, EasingBase* easing = NO_EASING);
 	void setAnimationDuration(AnimatableObject* object, uint16_t duration);
 	void startAnimation(AnimatableObject* object);
 	void stopAnimation(AnimatableObject* object);

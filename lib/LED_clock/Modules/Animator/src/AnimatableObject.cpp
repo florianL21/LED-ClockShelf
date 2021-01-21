@@ -20,30 +20,39 @@ AnimatableObject::AnimatableObject(uint16_t OverallDuration, uint16_t steps)
 	ComplexAnimDoneCallback = nullptr;
 	ComplexAnimationManager = nullptr;
     effect = nullptr;
+	easing = nullptr;
 }
 
 AnimatableObject::~AnimatableObject()
 {
 }
 
+void AnimatableObject::handle()
+{
+	unsigned long currentMillis = millis();
+	if(animationStarted == true)
+	{
+		if(currentMillis - timeSinceLastTick > tickLength)
+		{
+			//execute all past ticks. this should normally not be more than 1
+			tickState += (currentMillis - timeSinceLastTick) / tickLength;
+			timeSinceLastTick = currentMillis;
+			tick();
+			if(tickState >= numStates)
+			{
+				tickState = numStates;
+				done();
+			}
+		}
+	}else
+	{
+		timeSinceLastTick = currentMillis;
+	}
+}
+
 void AnimatableObject::tick()
 {
-	//TODO: consider moving logic in here
-	// unsigned long currentMillis = millis();
-	// if(currentMillis - timeSinceLastTick > tickLength)
-	// {
-	// 	//execute all past ticks. this should normally not be more than 1
-	// 	for (int i = 0; i < (currentMillis - timeSinceLastTick) / tickLength; i++)
-	// 	{
-	// 		currentAnimation->tick();
-	// 	}
-	// 	timeSinceLastTick = currentMillis;
-	// 	if(++(tickState) >= numStates)
-	// 	{
-	// 		tickState = numStates;
-	// 		done();
-	// 	}
-	// }
+
 }
 
 void AnimatableObject::setAnimationDuration(uint16_t duration)
@@ -131,6 +140,10 @@ void AnimatableObject::done()
 
 uint16_t AnimatableObject::getState()
 {
+	if(easing != nullptr)
+	{
+		return easing->ease(tickState * tickLength);
+	}
 	return tickState;
 }
 
@@ -157,4 +170,9 @@ void AnimatableObject::onAnimationDone()
 void AnimatableObject::setAnimationEffect(AnimatableObject::AnimationFunction newEffect)
 {
 	effect = newEffect;
+}
+
+void AnimatableObject::setAnimationEasing(EasingBase* easingEffect)
+{
+	easing = easingEffect;
 }

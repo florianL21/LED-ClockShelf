@@ -11,7 +11,7 @@ double easeInOutCubic(double x)
 	}
 }
 
-double map_float(double x, double in_min, double in_max, double out_min, double out_max) 
+double map_float(double x, double in_min, double in_max, double out_min, double out_max)
 {
     double divisor = (in_max - in_min);
     if(divisor == 0){

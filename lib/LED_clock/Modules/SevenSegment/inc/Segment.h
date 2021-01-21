@@ -5,6 +5,7 @@
 #include "AnimatableObject.h"
 #define FASTLED_INTERNAL
 #include "FastLED.h"
+#include "misc.h"
 
 
 class AnimationEffects;

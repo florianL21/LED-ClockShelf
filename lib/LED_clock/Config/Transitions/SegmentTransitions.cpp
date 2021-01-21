@@ -1,5 +1,11 @@
 #include "SegmentTransitions.h"
 
+// easings have to be setup before any of the initAnimate functions is called
+// it's only possible to reuse an easing if the multiple anstances of
+// it running at the same time have the exat same settings. This includes duration too
+BounceEase* bounceEaseOut 	= new BounceEase(EASE_OUT);
+CubicEase* cubicEaseInOut 	= new CubicEase(EASE_IN_OUT);
+
 Animator::ComplexAmination* InitAnimate0to1(uint16_t totalAnimationLength);
 Animator::ComplexAmination* InitAnimate1to2(uint16_t totalAnimationLength);
 Animator::ComplexAmination* InitAnimate2to3(uint16_t totalAnimationLength);
@@ -66,78 +72,95 @@ Animator::ComplexAmination* TransformationLookupTable[11][11] = {
 /*from OFF	*/{nullptr      , AnimateOFFto1, nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      } 
 };
 
+#define TOP_LEFT_SEGMENT		0
+#define TOP_MIDDLE_SEGMENT		1
+#define TOP_RIGHT_SEGMENT		2
+#define CENTER_SEGMENT			3
+#define BOTTOM_LEFT_SEGMENT		4
+#define BOTTOM_MIDDLE_SEGMENT	5
+#define BOTTOM_RIGHT_SEGMENT	6
+
 Animator::ComplexAmination* InitAnimate0to1(uint16_t totalAnimationLength)
 {
+	#undef LENGTH
+	#define LENGTH	2
 	Animator::animationStep* step0 = new Animator::animationStep;
-	step0->arrayIndex = new int16_t[2] {0, 4};
-	step0->animationEffects = new AnimatableObject::AnimationFunction[2] {AnimationEffects::AnimateOutToTop, AnimationEffects::AnimateOutToBottom};
+	step0->arrayIndex 		= new int16_t[LENGTH]								{TOP_LEFT_SEGMENT, 						BOTTOM_LEFT_SEGMENT};
+	step0->animationEffects = new AnimatableObject::AnimationFunction[LENGTH]	{AnimationEffects::AnimateOutToTop, 	AnimationEffects::AnimateOutToBottom};
+	step0->easingEffects 	= new EasingBase*[LENGTH] 							{cubicEaseInOut, 						cubicEaseInOut};
 	Animator::animationStep* step1 = new Animator::animationStep;
-	step1->arrayIndex = new int16_t[2] {1, 5};
-	step1->animationEffects = new AnimatableObject::AnimationFunction[2] {AnimationEffects::AnimateOutToRight, AnimationEffects::AnimateOutToRight};
+	step1->arrayIndex 		= new int16_t[LENGTH]								{TOP_MIDDLE_SEGMENT, 					BOTTOM_MIDDLE_SEGMENT};
+	step1->animationEffects = new AnimatableObject::AnimationFunction[LENGTH]	{AnimationEffects::AnimateOutToRight, 	AnimationEffects::AnimateOutToRight};
+	step1->easingEffects 	= new EasingBase*[LENGTH]							{bounceEaseOut, 						bounceEaseOut};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
 	AnimationStepSequence->add(step1);
 
-	Animator::ComplexAmination* animation = new Animator::ComplexAmination();
-	animation->animationComplexity = 2;
-	animation->LengthPerAnimation = totalAnimationLength / (AnimationStepSequence->size()+1); //+1 because I have to account for the last animation also taking time.
-	animation->animations = AnimationStepSequence;
+	Animator::ComplexAmination* animation 	= new Animator::ComplexAmination();
+	animation->animationComplexity 			= LENGTH;
+	animation->LengthPerAnimation 			= totalAnimationLength / (AnimationStepSequence->size() + 1); //+1 because I have to account for the last animation also taking time.
+	animation->animations 					= AnimationStepSequence;
 	return animation;
 }
 
 Animator::ComplexAmination* InitAnimate1to2(uint16_t totalAnimationLength)
 {
+	#undef LENGTH
+	#define LENGTH	4
 	Animator::animationStep* step0 = new Animator::animationStep;
-	step0->arrayIndex = new int16_t[3] {1, 6, 3};
-	step0->animationEffects = new AnimatableObject::AnimationFunction[3] {AnimationEffects::AnimateInToLeft, AnimationEffects::AnimateOutToTop, AnimationEffects::AnimateInToLeft};
+	step0->arrayIndex 		= new int16_t[LENGTH]								{TOP_MIDDLE_SEGMENT, 					BOTTOM_RIGHT_SEGMENT, 					BOTTOM_MIDDLE_SEGMENT, 				CENTER_SEGMENT};
+	step0->animationEffects = new AnimatableObject::AnimationFunction[LENGTH]	{AnimationEffects::AnimateInToLeft,		AnimationEffects::AnimateOutToBottom, 	AnimationEffects::AnimateInToLeft,	AnimationEffects::AnimateInToLeft};
+	step0->easingEffects 	= new EasingBase*[LENGTH] 							{bounceEaseOut, 						bounceEaseOut,							bounceEaseOut,						cubicEaseInOut};
 	Animator::animationStep* step1 = new Animator::animationStep;
-	step1->arrayIndex = new int16_t[3] {4, -1, -1};
-	step1->animationEffects = new AnimatableObject::AnimationFunction[3] {AnimationEffects::AnimateInToBottom, 0, 0};
-	Animator::animationStep* step2 = new Animator::animationStep;
-	step2->arrayIndex = new int16_t[3] {5, -1, -1};
-	step2->animationEffects = new AnimatableObject::AnimationFunction[3] {AnimationEffects::AnimateInToRight, 0, 0};
+	step1->arrayIndex 		= new int16_t[LENGTH] 								{BOTTOM_LEFT_SEGMENT, 					NO_SEGMENTS, 							NO_SEGMENTS,						NO_SEGMENTS};
+	step1->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateInToBottom, 	NO_ANIMATION, 							NO_ANIMATION,						NO_ANIMATION};
+	step1->easingEffects 	= new EasingBase*[LENGTH] 							{bounceEaseOut, 						NO_EASING,								NO_EASING,							NO_EASING};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
 	AnimationStepSequence->add(step1);
-	AnimationStepSequence->add(step2);
 
 	Animator::ComplexAmination* animation = new Animator::ComplexAmination();
-	animation->animationComplexity = 3;
-	animation->LengthPerAnimation = totalAnimationLength / (AnimationStepSequence->size()+1); //+1 because I have to account for the last animation also taking time.
-	animation->animations = AnimationStepSequence;
+	animation->animationComplexity 	= LENGTH;
+	animation->LengthPerAnimation 	= totalAnimationLength / (AnimationStepSequence->size() + 1); //+1 because I have to account for the last animation also taking time.
+	animation->animations 			= AnimationStepSequence;
 	return animation;
 }
 
-
 Animator::ComplexAmination* InitAnimate2to3(uint16_t totalAnimationLength)
 {
+	#undef LENGTH
+	#define LENGTH	2
 	Animator::animationStep* step0 = new Animator::animationStep;
-	step0->arrayIndex = new int16_t[2] {4, 6};
-	step0->animationEffects = new AnimatableObject::AnimationFunction[2] {AnimationEffects::AnimateOutToBottom, AnimationEffects::AnimateInToTop};
+	step0->arrayIndex 		= new int16_t[LENGTH] 								{BOTTOM_LEFT_SEGMENT, 					BOTTOM_RIGHT_SEGMENT};
+	step0->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateOutToBottom, 	AnimationEffects::AnimateInToTop};
+	step0->easingEffects 	= new EasingBase*[LENGTH] 							{bounceEaseOut, 						bounceEaseOut};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
 
 	Animator::ComplexAmination* animation = new Animator::ComplexAmination();
-	animation->animationComplexity = 2;
-	animation->LengthPerAnimation = totalAnimationLength / (AnimationStepSequence->size()+1); //+1 because I have to account for the last animation also taking time.
-	animation->animations = AnimationStepSequence;
+	animation->animationComplexity 	= LENGTH;
+	animation->LengthPerAnimation 	= totalAnimationLength / (AnimationStepSequence->size() + 1); //+1 because I have to account for the last animation also taking time.
+	animation->animations 			= AnimationStepSequence;
 	return animation;
 }
 
 Animator::ComplexAmination* InitAnimate2to0(uint16_t totalAnimationLength)
 {
+	#undef LENGTH
+	#define LENGTH	3
 	Animator::animationStep* step0 = new Animator::animationStep;
-	step0->arrayIndex = new int16_t[3] {0, 3, 6};
-	step0->animationEffects = new AnimatableObject::AnimationFunction[3] {AnimationEffects::AnimateInToBottom, AnimationEffects::AnimateOutToRight, AnimationEffects::AnimateInToBottom};
+	step0->arrayIndex 		= new int16_t[LENGTH] 								{TOP_LEFT_SEGMENT, 						CENTER_SEGMENT, 						BOTTOM_RIGHT_SEGMENT};
+	step0->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateInToBottom, 	AnimationEffects::AnimateOutToRight, 	AnimationEffects::AnimateInToBottom};
+	step0->easingEffects 	= new EasingBase*[LENGTH] 							{bounceEaseOut, 						cubicEaseInOut,							bounceEaseOut};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
 
 	Animator::ComplexAmination* animation = new Animator::ComplexAmination();
-	animation->animationComplexity = 3;
+	animation->animationComplexity = LENGTH;
 	animation->LengthPerAnimation = totalAnimationLength / (AnimationStepSequence->size()+1); //+1 because I have to account for the last animation also taking time.
 	animation->animations = AnimationStepSequence;
 	return animation;
@@ -145,382 +168,431 @@ Animator::ComplexAmination* InitAnimate2to0(uint16_t totalAnimationLength)
 
 Animator::ComplexAmination* InitAnimate3to4(uint16_t totalAnimationLength)
 {
+	#undef LENGTH
+	#define LENGTH	3
 	Animator::animationStep* step0 = new Animator::animationStep;
-	step0->arrayIndex = new int16_t[3] {5, 0, 1};
-	step0->animationEffects = new AnimatableObject::AnimationFunction[3] {AnimationEffects::AnimateOutToRight, AnimationEffects::AnimateInToBottom, AnimationEffects::AnimateOutToLeft};
+	step0->arrayIndex = new int16_t[LENGTH] 									{BOTTOM_MIDDLE_SEGMENT, 				TOP_LEFT_SEGMENT, 						TOP_MIDDLE_SEGMENT};
+	step0->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateOutToRight, 	AnimationEffects::AnimateInToBottom, 	AnimationEffects::AnimateOutToLeft};
+	step0->easingEffects 	= new EasingBase*[LENGTH] 							{bounceEaseOut, 						bounceEaseOut,							bounceEaseOut};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
 
 	Animator::ComplexAmination* animation = new Animator::ComplexAmination();
-	animation->animationComplexity = 3;
-	animation->LengthPerAnimation = totalAnimationLength / (AnimationStepSequence->size()+1); //+1 because I have to account for the last animation also taking time.
+	animation->animationComplexity = LENGTH;
+	animation->LengthPerAnimation = totalAnimationLength / (AnimationStepSequence->size() + 1); //+1 because I have to account for the last animation also taking time.
 	animation->animations = AnimationStepSequence;
 	return animation;
 }
 
 Animator::ComplexAmination* InitAnimate4to5(uint16_t totalAnimationLength)
 {
+	#undef LENGTH
+	#define LENGTH	3
 	Animator::animationStep* step0 = new Animator::animationStep;
-	step0->arrayIndex = new int16_t[3] {2, 1, 5};
-	step0->animationEffects = new AnimatableObject::AnimationFunction[3] {AnimationEffects::AnimateOutToTop, AnimationEffects::AnimateInToLeft, AnimationEffects::AnimateInToLeft};
+	step0->arrayIndex 		= new int16_t[LENGTH] 								{TOP_RIGHT_SEGMENT, 					TOP_MIDDLE_SEGMENT, 				BOTTOM_MIDDLE_SEGMENT};
+	step0->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateOutToTop, 	AnimationEffects::AnimateInToLeft, 	AnimationEffects::AnimateInToLeft};
+	step0->easingEffects 	= new EasingBase*[LENGTH] 							{bounceEaseOut, 						bounceEaseOut,						bounceEaseOut};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
 
 	Animator::ComplexAmination* animation = new Animator::ComplexAmination();
-	animation->animationComplexity = 3;
-	animation->LengthPerAnimation = totalAnimationLength / (AnimationStepSequence->size()+1); //+1 because I have to account for the last animation also taking time.
+	animation->animationComplexity = LENGTH;
+	animation->LengthPerAnimation = totalAnimationLength / (AnimationStepSequence->size() + 1); //+1 because I have to account for the last animation also taking time.
 	animation->animations = AnimationStepSequence;
 	return animation;
 }
 
 Animator::ComplexAmination* InitAnimate5to6(uint16_t totalAnimationLength)
 {
+	#undef LENGTH
+	#define LENGTH	1
 	Animator::animationStep* step0 = new Animator::animationStep;
-	step0->arrayIndex = new int16_t[1] {4};
-	step0->animationEffects = new AnimatableObject::AnimationFunction[1] {AnimationEffects::AnimateInToTop};
+	step0->arrayIndex 		= new int16_t[1] 								{BOTTOM_LEFT_SEGMENT};
+	step0->animationEffects = new AnimatableObject::AnimationFunction[1] 	{AnimationEffects::AnimateInToTop};
+	step0->easingEffects 	= new EasingBase*[LENGTH] 						{bounceEaseOut};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
 
 	Animator::ComplexAmination* animation = new Animator::ComplexAmination();
-	animation->animationComplexity = 1;
-	animation->LengthPerAnimation = totalAnimationLength / (AnimationStepSequence->size()+1); //+1 because I have to account for the last animation also taking time.
-	animation->animations = AnimationStepSequence;
+	animation->animationComplexity 	= LENGTH;
+	animation->LengthPerAnimation 	= totalAnimationLength / (AnimationStepSequence->size() + 1); //+1 because I have to account for the last animation also taking time.
+	animation->animations 			= AnimationStepSequence;
 	return animation;
 }
 
 Animator::ComplexAmination* InitAnimate5to0(uint16_t totalAnimationLength)
 {
+	#undef LENGTH
+	#define LENGTH	3
 	Animator::animationStep* step0 = new Animator::animationStep;
-	step0->arrayIndex = new int16_t[3] {3, 4, 2};
-	step0->animationEffects = new AnimatableObject::AnimationFunction[3] {AnimationEffects::AnimateOutToRight, AnimationEffects::AnimateInToTop, AnimationEffects::AnimateInToTop};
+	step0->arrayIndex 		= new int16_t[LENGTH] 								{CENTER_SEGMENT, 						BOTTOM_LEFT_SEGMENT, 					TOP_RIGHT_SEGMENT};
+	step0->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateOutToRight, 	AnimationEffects::AnimateInToBottom, 	AnimationEffects::AnimateInToTop};
+	step0->easingEffects 	= new EasingBase*[LENGTH] 							{bounceEaseOut, 						bounceEaseOut,							bounceEaseOut};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
 
 	Animator::ComplexAmination* animation = new Animator::ComplexAmination();
-	animation->animationComplexity = 3;
-	animation->LengthPerAnimation = totalAnimationLength / (AnimationStepSequence->size()+1); //+1 because I have to account for the last animation also taking time.
-	animation->animations = AnimationStepSequence;
+	animation->animationComplexity 	= LENGTH;
+	animation->LengthPerAnimation 	= totalAnimationLength / (AnimationStepSequence->size() + 1); //+1 because I have to account for the last animation also taking time.
+	animation->animations 			= AnimationStepSequence;
 	return animation;
 }
 
 Animator::ComplexAmination* InitAnimate6to7(uint16_t totalAnimationLength)
 {
-	Animator::animationStep* step0 = new Animator::animationStep;
-	step0->arrayIndex = new int16_t[4] {0, 3, 2, 4};
-	step0->animationEffects = new AnimatableObject::AnimationFunction[4] {AnimationEffects::AnimateOutToTop, AnimationEffects::AnimateOutToRight, AnimationEffects::AnimateInToTop, AnimationEffects::AnimateOutToBottom};
+	#undef LENGTH
+	#define LENGTH	4
+	Animator::animationStep* step0 = new Animator::animationStep;																								//TODO: in from both sides
+	step0->arrayIndex 		= new int16_t[LENGTH] 								{TOP_LEFT_SEGMENT, 						CENTER_SEGMENT, 						TOP_RIGHT_SEGMENT, 						BOTTOM_LEFT_SEGMENT};
+	step0->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateOutToTop, 	AnimationEffects::AnimateOutToRight, 	AnimationEffects::AnimateInToBottom,	AnimationEffects::AnimateOutToBottom};
+	step0->easingEffects 	= new EasingBase*[LENGTH] 							{bounceEaseOut, 						cubicEaseInOut,							bounceEaseOut, 							cubicEaseInOut};
+
 	Animator::animationStep* step1 = new Animator::animationStep;
-	step1->arrayIndex = new int16_t[4] {5, -1, -1, -1};
-	step1->animationEffects = new AnimatableObject::AnimationFunction[4] {AnimationEffects::AnimateOutToRight, 0, 0, 0};
+	step1->arrayIndex 		= new int16_t[LENGTH] 								{BOTTOM_MIDDLE_SEGMENT, 				NO_SEGMENTS, 							NO_SEGMENTS, 							NO_SEGMENTS};
+	step1->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateOutToRight, 	NO_ANIMATION, 							NO_ANIMATION, 							NO_ANIMATION};
+	step1->easingEffects 	= new EasingBase*[LENGTH] 							{cubicEaseInOut, 						NO_EASING,								NO_EASING, 								NO_EASING};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
 	AnimationStepSequence->add(step1);
 
 	Animator::ComplexAmination* animation = new Animator::ComplexAmination();
-	animation->animationComplexity = 4;
-	animation->LengthPerAnimation = totalAnimationLength / (AnimationStepSequence->size()+1); //+1 because I have to account for the last animation also taking time.
-	animation->animations = AnimationStepSequence;
+	animation->animationComplexity 	= LENGTH;
+	animation->LengthPerAnimation 	= totalAnimationLength / (AnimationStepSequence->size() + 1); //+1 because I have to account for the last animation also taking time.
+	animation->animations 			= AnimationStepSequence;
 	return animation;
 }
 
 Animator::ComplexAmination* InitAnimate7to8(uint16_t totalAnimationLength)
 {
+	#undef LENGTH
+	#define LENGTH	2
 	Animator::animationStep* step0 = new Animator::animationStep;
-	step0->arrayIndex = new int16_t[2] {0, 5};
-	step0->animationEffects = new AnimatableObject::AnimationFunction[2] {AnimationEffects::AnimateInToBottom, AnimationEffects::AnimateInToLeft};
+	step0->arrayIndex = new int16_t[LENGTH] 									{TOP_LEFT_SEGMENT, 						BOTTOM_MIDDLE_SEGMENT};
+	step0->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateInToBottom, 	AnimationEffects::AnimateInToLeft};
+	step0->easingEffects 	= new EasingBase*[LENGTH] 							{cubicEaseInOut, 						cubicEaseInOut};
+
 	Animator::animationStep* step1 = new Animator::animationStep;
-	step1->arrayIndex = new int16_t[2] {4, 3};
-	step1->animationEffects = new AnimatableObject::AnimationFunction[2] {AnimationEffects::AnimateInToTop, AnimationEffects::AnimateInToRight};
+	step1->arrayIndex = new int16_t[LENGTH] 									{BOTTOM_LEFT_SEGMENT, 					CENTER_SEGMENT};
+	step1->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateInToTop, 		AnimationEffects::AnimateInToRight};
+	step1->easingEffects 	= new EasingBase*[LENGTH] 							{cubicEaseInOut, 						bounceEaseOut};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
 	AnimationStepSequence->add(step1);
 
 	Animator::ComplexAmination* animation = new Animator::ComplexAmination();
-	animation->animationComplexity = 2;
-	animation->LengthPerAnimation = totalAnimationLength / (AnimationStepSequence->size()+1); //+1 because I have to account for the last animation also taking time.
-	animation->animations = AnimationStepSequence;
+	animation->animationComplexity 	= LENGTH;
+	animation->LengthPerAnimation 	= totalAnimationLength / (AnimationStepSequence->size() + 1); //+1 because I have to account for the last animation also taking time.
+	animation->animations 			= AnimationStepSequence;
 	return animation;
 }
 
 Animator::ComplexAmination* InitAnimate8to9(uint16_t totalAnimationLength)
 {
+	#undef LENGTH
+	#define LENGTH	1
 	Animator::animationStep* step0 = new Animator::animationStep;
-	step0->arrayIndex = new int16_t[1] {4};
-	step0->animationEffects = new AnimatableObject::AnimationFunction[1] {AnimationEffects::AnimateOutToBottom};
+	step0->arrayIndex 		= new int16_t[LENGTH] 								{BOTTOM_LEFT_SEGMENT};
+	step0->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateOutToBottom};
+	step0->easingEffects 	= new EasingBase*[LENGTH] 							{bounceEaseOut};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
 
 	Animator::ComplexAmination* animation = new Animator::ComplexAmination();
-	animation->animationComplexity = 1;
-	animation->LengthPerAnimation = totalAnimationLength / (AnimationStepSequence->size()+1); //+1 because I have to account for the last animation also taking time.
-	animation->animations = AnimationStepSequence;
+	animation->animationComplexity 	= LENGTH;
+	animation->LengthPerAnimation 	= totalAnimationLength / (AnimationStepSequence->size() + 1); //+1 because I have to account for the last animation also taking time.
+	animation->animations 			= AnimationStepSequence;
 	return animation;
 }
 
 Animator::ComplexAmination* InitAnimate9to0(uint16_t totalAnimationLength)
 {
+	#undef LENGTH
+	#define LENGTH	2
 	Animator::animationStep* step0 = new Animator::animationStep;
-	step0->arrayIndex = new int16_t[2] {3, 4};
-	step0->animationEffects = new AnimatableObject::AnimationFunction[2] {AnimationEffects::AnimateOutToLeft, AnimationEffects::AnimateInToBottom};
+	step0->arrayIndex 		= new int16_t[LENGTH] 								{CENTER_SEGMENT, 						BOTTOM_LEFT_SEGMENT};
+	step0->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateOutToLeft, 	AnimationEffects::AnimateInToBottom};
+	step0->easingEffects 	= new EasingBase*[LENGTH] 							{bounceEaseOut, 						bounceEaseOut};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
 
 	Animator::ComplexAmination* animation = new Animator::ComplexAmination();
-	animation->animationComplexity = 2;
-	animation->LengthPerAnimation = totalAnimationLength / (AnimationStepSequence->size()+1); //+1 because I have to account for the last animation also taking time.
-	animation->animations = AnimationStepSequence;
+	animation->animationComplexity 	= LENGTH;
+	animation->LengthPerAnimation 	= totalAnimationLength / (AnimationStepSequence->size() + 1); //+1 because I have to account for the last animation also taking time.
+	animation->animations 			= AnimationStepSequence;
 	return animation;
 }
 
 Animator::ComplexAmination* InitAnimate1toOFF(uint16_t totalAnimationLength)
 {
+	#undef LENGTH
+	#define LENGTH	2
 	Animator::animationStep* step0 = new Animator::animationStep;
-	step0->arrayIndex = new int16_t[2] {6, 2};
-	step0->animationEffects = new AnimatableObject::AnimationFunction[2] {AnimationEffects::AnimateOutToBottom, AnimationEffects::AnimateOutToTop};
+	step0->arrayIndex 		= new int16_t[LENGTH] 								{BOTTOM_RIGHT_SEGMENT, 					TOP_RIGHT_SEGMENT};
+	step0->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateOutToBottom, 	AnimationEffects::AnimateOutToTop};
+	step0->easingEffects 	= new EasingBase*[LENGTH] 							{cubicEaseInOut, 						cubicEaseInOut};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
 
 	Animator::ComplexAmination* animation = new Animator::ComplexAmination();
-	animation->animationComplexity = 2;
-	animation->LengthPerAnimation = totalAnimationLength / (AnimationStepSequence->size()+1); //+1 because I have to account for the last animation also taking time.
-	animation->animations = AnimationStepSequence;
+	animation->animationComplexity 	= LENGTH;
+	animation->LengthPerAnimation 	= totalAnimationLength / (AnimationStepSequence->size() + 1); //+1 because I have to account for the last animation also taking time.
+	animation->animations 			= AnimationStepSequence;
 	return animation;
 }
 
 Animator::ComplexAmination* InitAnimateOFFto1(uint16_t totalAnimationLength)
 {
+	#undef LENGTH
+	#define LENGTH	2
 	Animator::animationStep* step0 = new Animator::animationStep;
-	step0->arrayIndex = new int16_t[2] {2, 6};
-	step0->animationEffects = new AnimatableObject::AnimationFunction[2] {AnimationEffects::AnimateInToTop, AnimationEffects::AnimateInToBottom};
+	step0->arrayIndex 		= new int16_t[LENGTH] 								{TOP_RIGHT_SEGMENT, 				BOTTOM_RIGHT_SEGMENT};
+	step0->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateInToTop, 	AnimationEffects::AnimateInToBottom};
+	step0->easingEffects 	= new EasingBase*[LENGTH] 							{cubicEaseInOut, 					cubicEaseInOut};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
 
 	Animator::ComplexAmination* animation = new Animator::ComplexAmination();
-	animation->animationComplexity = 2;
-	animation->LengthPerAnimation = totalAnimationLength / (AnimationStepSequence->size()+1); //+1 because I have to account for the last animation also taking time.
-	animation->animations = AnimationStepSequence;
+	animation->animationComplexity 	= LENGTH;
+	animation->LengthPerAnimation 	= totalAnimationLength / (AnimationStepSequence->size() + 1); //+1 because I have to account for the last animation also taking time.
+	animation->animations 			= AnimationStepSequence;
 	return animation;
 }
 
 Animator::ComplexAmination* InitAnimate9to8(uint16_t totalAnimationLength)
 {
-	#undef ANIMATION_COMPLEXITY
-	#define ANIMATION_COMPLEXITY 1
+	#undef LENGTH
+	#define LENGTH 1
 	Animator::animationStep* step0 = new Animator::animationStep;
-	step0->arrayIndex = new int16_t[ANIMATION_COMPLEXITY] {4};
-	step0->animationEffects = new AnimatableObject::AnimationFunction[ANIMATION_COMPLEXITY] {AnimationEffects::AnimateInToTop};
+	step0->arrayIndex 		= new int16_t[LENGTH] 								{BOTTOM_LEFT_SEGMENT};
+	step0->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateInToTop};
+	step0->easingEffects 	= new EasingBase*[LENGTH] 							{cubicEaseInOut};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
 
 	Animator::ComplexAmination* animation = new Animator::ComplexAmination();
-	animation->animationComplexity = ANIMATION_COMPLEXITY;
-	animation->LengthPerAnimation = totalAnimationLength / (AnimationStepSequence->size()+1); //+1 because I have to account for the last animation also taking time.
-	animation->animations = AnimationStepSequence;
+	animation->animationComplexity 	= LENGTH;
+	animation->LengthPerAnimation 	= totalAnimationLength / (AnimationStepSequence->size() + 1); //+1 because I have to account for the last animation also taking time.
+	animation->animations 			= AnimationStepSequence;
 	return animation;
 }
 
 Animator::ComplexAmination* InitAnimate8to7(uint16_t totalAnimationLength)
 {
-	#undef ANIMATION_COMPLEXITY
-	#define ANIMATION_COMPLEXITY 3
+	#undef LENGTH
+	#define LENGTH 3
 	Animator::animationStep* step0 = new Animator::animationStep;
-	step0->arrayIndex = new int16_t[ANIMATION_COMPLEXITY] {0, 3, 4};
-	step0->animationEffects = new AnimatableObject::AnimationFunction[ANIMATION_COMPLEXITY] {AnimationEffects::AnimateOutToTop, AnimationEffects::AnimateOutToRight, AnimationEffects::AnimateOutToBottom};
+	step0->arrayIndex 		= new int16_t[LENGTH] 								{TOP_LEFT_SEGMENT, 						CENTER_SEGMENT, 						BOTTOM_LEFT_SEGMENT};
+	step0->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateOutToTop, 	AnimationEffects::AnimateOutToRight, 	AnimationEffects::AnimateOutToBottom};
+	step0->easingEffects 	= new EasingBase*[LENGTH] 							{cubicEaseInOut, 						cubicEaseInOut, 						cubicEaseInOut};
 	Animator::animationStep* step1 = new Animator::animationStep;
-	step1->arrayIndex = new int16_t[ANIMATION_COMPLEXITY] {5, -1, -1};
-	step1->animationEffects = new AnimatableObject::AnimationFunction[ANIMATION_COMPLEXITY] {AnimationEffects::AnimateOutToRight, 0, 0};
+	step1->arrayIndex 		= new int16_t[LENGTH] 								{BOTTOM_MIDDLE_SEGMENT, 				NO_SEGMENTS, 							NO_SEGMENTS};
+	step1->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateOutToRight, 	NO_ANIMATION, 							NO_ANIMATION};
+	step1->easingEffects 	= new EasingBase*[LENGTH] 							{cubicEaseInOut, 						cubicEaseInOut, 						cubicEaseInOut};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
 	AnimationStepSequence->add(step1);
 
 	Animator::ComplexAmination* animation = new Animator::ComplexAmination();
-	animation->animationComplexity = ANIMATION_COMPLEXITY;
-	animation->LengthPerAnimation = totalAnimationLength / (AnimationStepSequence->size()+1); //+1 because I have to account for the last animation also taking time.
-	animation->animations = AnimationStepSequence;
+	animation->animationComplexity 	= LENGTH;
+	animation->LengthPerAnimation 	= totalAnimationLength / (AnimationStepSequence->size() + 1); //+1 because I have to account for the last animation also taking time.
+	animation->animations 			= AnimationStepSequence;
 	return animation;
 }
 
 Animator::ComplexAmination* InitAnimate7to6(uint16_t totalAnimationLength)
 {
-	#undef ANIMATION_COMPLEXITY
-	#define ANIMATION_COMPLEXITY 3
+	#undef LENGTH
+	#define LENGTH 3
 	Animator::animationStep* step0 = new Animator::animationStep;
-	step0->arrayIndex = new int16_t[ANIMATION_COMPLEXITY] {2, 0, 5};
-	step0->animationEffects = new AnimatableObject::AnimationFunction[ANIMATION_COMPLEXITY] {AnimationEffects::AnimateOutToTop, AnimationEffects::AnimateInToBottom, AnimationEffects::AnimateInToLeft};
+	step0->arrayIndex 		= new int16_t[LENGTH] 								{TOP_RIGHT_SEGMENT, 					TOP_LEFT_SEGMENT, 						BOTTOM_MIDDLE_SEGMENT};
+	step0->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateOutToTop, 	AnimationEffects::AnimateInToBottom, 	AnimationEffects::AnimateInToLeft};
+	step0->easingEffects 	= new EasingBase*[LENGTH] 							{cubicEaseInOut, 						cubicEaseInOut, 						cubicEaseInOut};
 	Animator::animationStep* step1 = new Animator::animationStep;
-	step1->arrayIndex = new int16_t[ANIMATION_COMPLEXITY] {3, 4, -1};
-	step1->animationEffects = new AnimatableObject::AnimationFunction[ANIMATION_COMPLEXITY] {AnimationEffects::AnimateInToRight, AnimationEffects::AnimateInToTop, 0};
+	step1->arrayIndex 		= new int16_t[LENGTH] 								{CENTER_SEGMENT, 						BOTTOM_LEFT_SEGMENT, 					NO_SEGMENTS};
+	step1->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateInToRight, 	AnimationEffects::AnimateInToTop, 		NO_ANIMATION};
+	step1->easingEffects 	= new EasingBase*[LENGTH] 							{cubicEaseInOut, 						cubicEaseInOut, 						cubicEaseInOut};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
 	AnimationStepSequence->add(step1);
 
 	Animator::ComplexAmination* animation = new Animator::ComplexAmination();
-	animation->animationComplexity = ANIMATION_COMPLEXITY;
-	animation->LengthPerAnimation = totalAnimationLength / (AnimationStepSequence->size()+1); //+1 because I have to account for the last animation also taking time.
-	animation->animations = AnimationStepSequence;
+	animation->animationComplexity 	= LENGTH;
+	animation->LengthPerAnimation 	= totalAnimationLength / (AnimationStepSequence->size() + 1); //+1 because I have to account for the last animation also taking time.
+	animation->animations 			= AnimationStepSequence;
 	return animation;
 }
 
 Animator::ComplexAmination* InitAnimate6to5(uint16_t totalAnimationLength)
 {
-	#undef ANIMATION_COMPLEXITY
-	#define ANIMATION_COMPLEXITY 1
+	#undef LENGTH
+	#define LENGTH 1
 	Animator::animationStep* step0 = new Animator::animationStep;
-	step0->arrayIndex = new int16_t[ANIMATION_COMPLEXITY] {4};
-	step0->animationEffects = new AnimatableObject::AnimationFunction[ANIMATION_COMPLEXITY] {AnimationEffects::AnimateOutToBottom};
+	step0->arrayIndex 		= new int16_t[LENGTH] 								{BOTTOM_LEFT_SEGMENT};
+	step0->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateOutToBottom};
+	step0->easingEffects 	= new EasingBase*[LENGTH] 							{cubicEaseInOut};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
 
 	Animator::ComplexAmination* animation = new Animator::ComplexAmination();
-	animation->animationComplexity = ANIMATION_COMPLEXITY;
-	animation->LengthPerAnimation = totalAnimationLength / (AnimationStepSequence->size()+1); //+1 because I have to account for the last animation also taking time.
-	animation->animations = AnimationStepSequence;
+	animation->animationComplexity 	= LENGTH;
+	animation->LengthPerAnimation 	= totalAnimationLength / (AnimationStepSequence->size() + 1); //+1 because I have to account for the last animation also taking time.
+	animation->animations 			= AnimationStepSequence;
 	return animation;
 }
 
 Animator::ComplexAmination* InitAnimate5to4(uint16_t totalAnimationLength)
 {
-	#undef ANIMATION_COMPLEXITY
-	#define ANIMATION_COMPLEXITY 3
+	#undef LENGTH
+	#define LENGTH 3
 	Animator::animationStep* step0 = new Animator::animationStep;
-	step0->arrayIndex = new int16_t[ANIMATION_COMPLEXITY] {1, 2, 5};
-	step0->animationEffects = new AnimatableObject::AnimationFunction[ANIMATION_COMPLEXITY] {AnimationEffects::AnimateOutToLeft, AnimationEffects::AnimateInToTop, AnimationEffects::AnimateOutToRight};
+	step0->arrayIndex 		= new int16_t[LENGTH] 								{TOP_MIDDLE_SEGMENT, 					TOP_RIGHT_SEGMENT, 					BOTTOM_MIDDLE_SEGMENT};
+	step0->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateOutToLeft, 	AnimationEffects::AnimateInToTop, 	AnimationEffects::AnimateOutToRight};
+	step0->easingEffects 	= new EasingBase*[LENGTH] 							{cubicEaseInOut, 						cubicEaseInOut, 					cubicEaseInOut};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
 
 	Animator::ComplexAmination* animation = new Animator::ComplexAmination();
-	animation->animationComplexity = ANIMATION_COMPLEXITY;
-	animation->LengthPerAnimation = totalAnimationLength / (AnimationStepSequence->size()+1); //+1 because I have to account for the last animation also taking time.
-	animation->animations = AnimationStepSequence;
+	animation->animationComplexity 	= LENGTH;
+	animation->LengthPerAnimation 	= totalAnimationLength / (AnimationStepSequence->size() + 1); //+1 because I have to account for the last animation also taking time.
+	animation->animations 			= AnimationStepSequence;
 	return animation;
 }
 
 Animator::ComplexAmination* InitAnimate4to3(uint16_t totalAnimationLength)
 {
-	#undef ANIMATION_COMPLEXITY
-	#define ANIMATION_COMPLEXITY 3
+	#undef LENGTH
+	#define LENGTH 3
 	Animator::animationStep* step0 = new Animator::animationStep;
-	step0->arrayIndex = new int16_t[ANIMATION_COMPLEXITY] {0, 1, 5};
-	step0->animationEffects = new AnimatableObject::AnimationFunction[ANIMATION_COMPLEXITY] {AnimationEffects::AnimateOutToBottom, AnimationEffects::AnimateInToLeft, AnimationEffects::AnimateInToLeft};
+	step0->arrayIndex 		= new int16_t[LENGTH] 								{TOP_LEFT_SEGMENT, 						TOP_MIDDLE_SEGMENT, 				BOTTOM_MIDDLE_SEGMENT};
+	step0->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateOutToBottom, 	AnimationEffects::AnimateInToLeft,	AnimationEffects::AnimateInToLeft};
+	step0->easingEffects 	= new EasingBase*[LENGTH] 							{cubicEaseInOut, 						cubicEaseInOut, 					cubicEaseInOut};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
 
 	Animator::ComplexAmination* animation = new Animator::ComplexAmination();
-	animation->animationComplexity = ANIMATION_COMPLEXITY;
-	animation->LengthPerAnimation = totalAnimationLength / (AnimationStepSequence->size()+1); //+1 because I have to account for the last animation also taking time.
-	animation->animations = AnimationStepSequence;
+	animation->animationComplexity 	= LENGTH;
+	animation->LengthPerAnimation 	= totalAnimationLength / (AnimationStepSequence->size() + 1); //+1 because I have to account for the last animation also taking time.
+	animation->animations 			= AnimationStepSequence;
 	return animation;
 }
 
 Animator::ComplexAmination* InitAnimate3to2(uint16_t totalAnimationLength)
 {
-	#undef ANIMATION_COMPLEXITY
-	#define ANIMATION_COMPLEXITY 2
+	#undef LENGTH
+	#define LENGTH 2
 	Animator::animationStep* step0 = new Animator::animationStep;
-	step0->arrayIndex = new int16_t[ANIMATION_COMPLEXITY] {6, 4};
-	step0->animationEffects = new AnimatableObject::AnimationFunction[ANIMATION_COMPLEXITY] {AnimationEffects::AnimateOutToBottom, AnimationEffects::AnimateInToTop};
+	step0->arrayIndex 		= new int16_t[LENGTH] 								{BOTTOM_RIGHT_SEGMENT, 					BOTTOM_LEFT_SEGMENT};
+	step0->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateOutToBottom, 	AnimationEffects::AnimateInToTop};
+	step0->easingEffects 	= new EasingBase*[LENGTH] 							{cubicEaseInOut, 						cubicEaseInOut};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
 
 	Animator::ComplexAmination* animation = new Animator::ComplexAmination();
-	animation->animationComplexity = ANIMATION_COMPLEXITY;
-	animation->LengthPerAnimation = totalAnimationLength / (AnimationStepSequence->size()+1); //+1 because I have to account for the last animation also taking time.
-	animation->animations = AnimationStepSequence;
+	animation->animationComplexity 	= LENGTH;
+	animation->LengthPerAnimation 	= totalAnimationLength / (AnimationStepSequence->size() + 1); //+1 because I have to account for the last animation also taking time.
+	animation->animations 			= AnimationStepSequence;
 	return animation;
 }
 
 Animator::ComplexAmination* InitAnimate2to1(uint16_t totalAnimationLength)
 {
-	#undef ANIMATION_COMPLEXITY
-	#define ANIMATION_COMPLEXITY 4
+	#undef LENGTH
+	#define LENGTH 4
 	Animator::animationStep* step0 = new Animator::animationStep;
-	step0->arrayIndex = new int16_t[ANIMATION_COMPLEXITY] {1, 3, 4, 6};
-	step0->animationEffects = new AnimatableObject::AnimationFunction[ANIMATION_COMPLEXITY] {AnimationEffects::AnimateOutToRight, AnimationEffects::AnimateOutToRight, AnimationEffects::AnimateOutToBottom, AnimationEffects::AnimateInToTop};
+	step0->arrayIndex 		= new int16_t[LENGTH] 								{TOP_MIDDLE_SEGMENT, 					CENTER_SEGMENT, 						BOTTOM_LEFT_SEGMENT, 					BOTTOM_RIGHT_SEGMENT};
+	step0->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateOutToRight, 	AnimationEffects::AnimateOutToRight, 	AnimationEffects::AnimateOutToBottom, 	AnimationEffects::AnimateInToTop};
+	step0->easingEffects 	= new EasingBase*[LENGTH] 							{cubicEaseInOut, 						cubicEaseInOut, 						cubicEaseInOut, 						cubicEaseInOut};
 	Animator::animationStep* step1 = new Animator::animationStep;
-	step1->arrayIndex = new int16_t[ANIMATION_COMPLEXITY] {5, -1, -1, -1};
-	step1->animationEffects = new AnimatableObject::AnimationFunction[ANIMATION_COMPLEXITY] {AnimationEffects::AnimateOutToRight, 0, 0, 0};
+	step1->arrayIndex 		= new int16_t[LENGTH] 								{BOTTOM_MIDDLE_SEGMENT, 				NO_SEGMENTS, 							NO_SEGMENTS, 							NO_SEGMENTS};
+	step1->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateOutToRight, 	NO_ANIMATION, 							NO_ANIMATION, 							NO_ANIMATION};
+	step1->easingEffects 	= new EasingBase*[LENGTH] 							{cubicEaseInOut, 						NO_EASING, 								NO_EASING, 								NO_EASING};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
 	AnimationStepSequence->add(step1);
 
 	Animator::ComplexAmination* animation = new Animator::ComplexAmination();
-	animation->animationComplexity = ANIMATION_COMPLEXITY;
-	animation->LengthPerAnimation = totalAnimationLength / (AnimationStepSequence->size()+1); //+1 because I have to account for the last animation also taking time.
-	animation->animations = AnimationStepSequence;
+	animation->animationComplexity 	= LENGTH;
+	animation->LengthPerAnimation 	= totalAnimationLength / (AnimationStepSequence->size() + 1); //+1 because I have to account for the last animation also taking time.
+	animation->animations 			= AnimationStepSequence;
 	return animation;
 }
 
 Animator::ComplexAmination* InitAnimate1to0(uint16_t totalAnimationLength)
 {
-	#undef ANIMATION_COMPLEXITY
-	#define ANIMATION_COMPLEXITY 2
+	#undef LENGTH
+	#define LENGTH 2
 	Animator::animationStep* step0 = new Animator::animationStep;
-	step0->arrayIndex = new int16_t[ANIMATION_COMPLEXITY] {1, 5};
-	step0->animationEffects = new AnimatableObject::AnimationFunction[ANIMATION_COMPLEXITY] {AnimationEffects::AnimateInToLeft, AnimationEffects::AnimateInToLeft};
+	step0->arrayIndex 		= new int16_t[LENGTH] 								{TOP_MIDDLE_SEGMENT, 					BOTTOM_MIDDLE_SEGMENT};
+	step0->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateInToLeft, 	AnimationEffects::AnimateInToLeft};
+	step0->easingEffects 	= new EasingBase*[LENGTH] 							{cubicEaseInOut, 						cubicEaseInOut};
 	Animator::animationStep* step1 = new Animator::animationStep;
-	step1->arrayIndex = new int16_t[ANIMATION_COMPLEXITY] {4, 0};
-	step1->animationEffects = new AnimatableObject::AnimationFunction[ANIMATION_COMPLEXITY] {AnimationEffects::AnimateInToTop, AnimationEffects::AnimateInToBottom};
+	step1->arrayIndex 		= new int16_t[LENGTH] 								{BOTTOM_LEFT_SEGMENT, 					TOP_LEFT_SEGMENT};
+	step1->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateInToTop, 		AnimationEffects::AnimateInToBottom};
+	step1->easingEffects 	= new EasingBase*[LENGTH] 							{cubicEaseInOut, 						cubicEaseInOut};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
 	AnimationStepSequence->add(step1);
 
 	Animator::ComplexAmination* animation = new Animator::ComplexAmination();
-	animation->animationComplexity = ANIMATION_COMPLEXITY;
-	animation->LengthPerAnimation = totalAnimationLength / (AnimationStepSequence->size()+1); //+1 because I have to account for the last animation also taking time.
-	animation->animations = AnimationStepSequence;
+	animation->animationComplexity 	= LENGTH;
+	animation->LengthPerAnimation 	= totalAnimationLength / (AnimationStepSequence->size() + 1); //+1 because I have to account for the last animation also taking time.
+	animation->animations 			= AnimationStepSequence;
 	return animation;
 }
 
 Animator::ComplexAmination* InitAnimate0to9(uint16_t totalAnimationLength)
 {
-	#undef ANIMATION_COMPLEXITY
-	#define ANIMATION_COMPLEXITY 2
+	#undef LENGTH
+	#define LENGTH 2
 	Animator::animationStep* step0 = new Animator::animationStep;
-	step0->arrayIndex = new int16_t[ANIMATION_COMPLEXITY] {4, 3};
-	step0->animationEffects = new AnimatableObject::AnimationFunction[ANIMATION_COMPLEXITY] {AnimationEffects::AnimateOutToTop, AnimationEffects::AnimateInToRight};
+	step0->arrayIndex 		= new int16_t[LENGTH] 								{BOTTOM_LEFT_SEGMENT, 					CENTER_SEGMENT};
+	step0->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateOutToTop, 	AnimationEffects::AnimateInToRight};
+	step0->easingEffects 	= new EasingBase*[LENGTH] 							{cubicEaseInOut, 						cubicEaseInOut};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
 
 	Animator::ComplexAmination* animation = new Animator::ComplexAmination();
-	animation->animationComplexity = ANIMATION_COMPLEXITY;
-	animation->LengthPerAnimation = totalAnimationLength / (AnimationStepSequence->size()+1); //+1 because I have to account for the last animation also taking time.
-	animation->animations = AnimationStepSequence;
+	animation->animationComplexity 	= LENGTH;
+	animation->LengthPerAnimation 	= totalAnimationLength / (AnimationStepSequence->size() + 1); //+1 because I have to account for the last animation also taking time.
+	animation->animations 			= AnimationStepSequence;
 	return animation;
 }
 
 Animator::ComplexAmination* InitAnimate0to5(uint16_t totalAnimationLength)
 {
-	#undef ANIMATION_COMPLEXITY
-	#define ANIMATION_COMPLEXITY 3
+	#undef LENGTH
+	#define LENGTH 3
 	Animator::animationStep* step0 = new Animator::animationStep;
-	step0->arrayIndex = new int16_t[ANIMATION_COMPLEXITY] {2, 3, 4};
-	step0->animationEffects = new AnimatableObject::AnimationFunction[ANIMATION_COMPLEXITY] {AnimationEffects::AnimateOutToBottom, AnimationEffects::AnimateInToLeft, AnimationEffects::AnimateOutToBottom};
+	step0->arrayIndex 		= new int16_t[LENGTH] 								{TOP_RIGHT_SEGMENT, 					CENTER_SEGMENT, 					BOTTOM_LEFT_SEGMENT};
+	step0->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateOutToBottom, 	AnimationEffects::AnimateInToLeft, 	AnimationEffects::AnimateOutToBottom};
+	step0->easingEffects 	= new EasingBase*[LENGTH] 							{cubicEaseInOut, 						cubicEaseInOut, 					cubicEaseInOut};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
 
 	Animator::ComplexAmination* animation = new Animator::ComplexAmination();
-	animation->animationComplexity = ANIMATION_COMPLEXITY;
-	animation->LengthPerAnimation = totalAnimationLength / (AnimationStepSequence->size()+1); //+1 because I have to account for the last animation also taking time.
-	animation->animations = AnimationStepSequence;
+	animation->animationComplexity 	= LENGTH;
+	animation->LengthPerAnimation 	= totalAnimationLength / (AnimationStepSequence->size() + 1); //+1 because I have to account for the last animation also taking time.
+	animation->animations 			= AnimationStepSequence;
 	return animation;
 }

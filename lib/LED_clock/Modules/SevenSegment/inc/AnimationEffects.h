@@ -5,23 +5,17 @@
 #include "AnimatableObject.h"
 #include "Segment.h"
 
-// ANIMATE_IN_TO_RIGHT = 2,
-// ANIMATE_IN_TO_BOTTOM = 2,
-// ANIMATE_IN_TO_LEFT = 3,
-// ANIMATE_IN_TO_TOP = 3,
-// AMINATE_SINGLE_LED_TO_RIGHT = 4,
-// AMINATE_SINGLE_LED_TO_BOTTOM = 4,
-// AMINATE_SINGLE_LED_TO_LEFT = 5,
-// AMINATE_SINGLE_LED_TO_TOP = 5,
-
-
 class AnimationEffects
 {
 private:
-    static void OutToRight(CRGB* leds, uint16_t length, CRGB animationColor, uint16_t totalSteps, uint16_t currentStep, bool invert);
-    static void OutToLeft(CRGB* leds, uint16_t length, CRGB animationColor, uint16_t totalSteps, uint16_t currentStep, bool invert);
-    static void InToRight(CRGB* leds, uint16_t length, CRGB animationColor, uint16_t totalSteps, uint16_t currentStep, bool invert);
-    static void InToLeft(CRGB* leds, uint16_t length, CRGB animationColor, uint16_t totalSteps, uint16_t currentStep, bool invert);
+    static void OutToRight(CRGB* leds, uint16_t length, CRGB animationColor, uint16_t totalSteps, int32_t currentStep, bool invert);
+    static void OutToLeft(CRGB* leds, uint16_t length, CRGB animationColor, uint16_t totalSteps, int32_t currentStep, bool invert);
+    static void InToRight(CRGB* leds, uint16_t length, CRGB animationColor, uint16_t totalSteps, int32_t currentStep, bool invert);
+    static void InToLeft(CRGB* leds, uint16_t length, CRGB animationColor, uint16_t totalSteps, int32_t currentStep, bool invert);
+	static void InToMiddle(CRGB* leds, uint16_t length, CRGB animationColor, uint16_t totalSteps, int32_t currentStep, bool invert);
+	static void OutToMiddle(CRGB* leds, uint16_t length, CRGB animationColor, uint16_t totalSteps, int32_t currentStep, bool invert);
+	static void OutFromMiddle(CRGB* leds, uint16_t length, CRGB animationColor, uint16_t totalSteps, int32_t currentStep, bool invert);
+	static void InFromMiddle(CRGB* leds, uint16_t length, CRGB animationColor, uint16_t totalSteps, int32_t currentStep, bool invert);
     AnimationEffects();
 public:
     ~AnimationEffects();
@@ -34,8 +28,10 @@ public:
     static AnimatableObject::AnimationFunction AnimateInToBottom;
     static AnimatableObject::AnimationFunction AnimateInToLeft;
     static AnimatableObject::AnimationFunction AnimateInToTop;
-
-    static AnimatableObject::AnimationFunction invert(AnimatableObject::AnimationFunction effectToInvert);
+	static AnimatableObject::AnimationFunction AnimateInToMiddle;
+	static AnimatableObject::AnimationFunction AnimateOutToMiddle;
+	static AnimatableObject::AnimationFunction AnimateOutFromMiddle;
+	static AnimatableObject::AnimationFunction AnimateInFromMiddle;
 };
 
 

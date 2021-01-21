@@ -8,6 +8,10 @@ AnimatableObject::AnimationFunction AnimationEffects::AnimateInToRight = &InToRi
 AnimatableObject::AnimationFunction AnimationEffects::AnimateInToBottom = &InToRight;
 AnimatableObject::AnimationFunction AnimationEffects::AnimateInToLeft = &InToLeft;
 AnimatableObject::AnimationFunction AnimationEffects::AnimateInToTop = &InToLeft;
+AnimatableObject::AnimationFunction AnimationEffects::AnimateInToMiddle = &InToMiddle;
+AnimatableObject::AnimationFunction AnimationEffects::AnimateOutToMiddle = &OutToMiddle;
+AnimatableObject::AnimationFunction AnimationEffects::AnimateOutFromMiddle = &OutFromMiddle;
+AnimatableObject::AnimationFunction AnimationEffects::AnimateInFromMiddle = &InFromMiddle;
 
 #define AFTERGLOW	0.3
 
@@ -21,7 +25,7 @@ AnimationEffects::~AnimationEffects()
 }
 
 
-void AnimationEffects::OutToRight(CRGB* leds, uint16_t length, CRGB animationColor, uint16_t totalSteps, uint16_t currentStep, bool invert)
+void AnimationEffects::OutToRight(CRGB* leds, uint16_t length, CRGB animationColor, uint16_t totalSteps, int32_t currentStep, bool invert)
 {
     if(invert == true)
     {
@@ -41,7 +45,7 @@ void AnimationEffects::OutToRight(CRGB* leds, uint16_t length, CRGB animationCol
     }
 }
 
-void AnimationEffects::OutToLeft(CRGB* leds, uint16_t length, CRGB animationColor, uint16_t totalSteps, uint16_t currentStep, bool invert)
+void AnimationEffects::OutToLeft(CRGB* leds, uint16_t length, CRGB animationColor, uint16_t totalSteps, int32_t currentStep, bool invert)
 {
     if(invert == true)
     {
@@ -61,7 +65,7 @@ void AnimationEffects::OutToLeft(CRGB* leds, uint16_t length, CRGB animationColo
     }
 }
 
-void AnimationEffects::InToRight(CRGB* leds, uint16_t length, CRGB animationColor, uint16_t totalSteps, uint16_t currentStep, bool invert)
+void AnimationEffects::InToRight(CRGB* leds, uint16_t length, CRGB animationColor, uint16_t totalSteps, int32_t currentStep, bool invert)
 {
 	if(invert == true)
     {
@@ -81,7 +85,7 @@ void AnimationEffects::InToRight(CRGB* leds, uint16_t length, CRGB animationColo
     }
 }
 
-void AnimationEffects::InToLeft(CRGB* leds, uint16_t length, CRGB animationColor, uint16_t totalSteps, uint16_t currentStep, bool invert)
+void AnimationEffects::InToLeft(CRGB* leds, uint16_t length, CRGB animationColor, uint16_t totalSteps, int32_t currentStep, bool invert)
 {
     if(invert == true)
     {
@@ -99,4 +103,48 @@ void AnimationEffects::InToLeft(CRGB* leds, uint16_t length, CRGB animationColor
             leds[i] = CRGB::Black;
         }
     }
+}
+
+void AnimationEffects::InToMiddle(CRGB* leds, uint16_t length, CRGB animationColor, uint16_t totalSteps, int32_t currentStep, bool invert)
+{
+    for (uint16_t i = 0; i < length / 2 + 1; i++)
+    {
+        if(map(currentStep, 0, totalSteps, 0, length / 2 + 1) >= i)
+        {
+            leds[i] = animationColor;
+			leds[length - 1 - i] = animationColor;
+        }
+        else
+        {
+            leds[i] = CRGB::Black;
+			leds[length - 1 - i] = CRGB::Black;
+        }
+    }
+}
+
+void AnimationEffects::OutToMiddle(CRGB* leds, uint16_t length, CRGB animationColor, uint16_t totalSteps, int32_t currentStep, bool invert)
+{
+    for (uint16_t i = 0; i < length / 2 + 1; i++)
+    {
+        if(map(currentStep, 0, totalSteps, 0, length / 2 + 1) <= i)
+        {
+            leds[i] = animationColor;
+			leds[length - 1 - i] = animationColor;
+        }
+        else
+        {
+            leds[i] = CRGB::Black;
+			leds[length - 1 - i] = CRGB::Black;
+        }
+    }
+}
+
+void AnimationEffects::OutFromMiddle(CRGB* leds, uint16_t length, CRGB animationColor, uint16_t totalSteps, int32_t currentStep, bool invert)
+{
+    //TBD
+}
+
+void AnimationEffects::InFromMiddle(CRGB* leds, uint16_t length, CRGB animationColor, uint16_t totalSteps, int32_t currentStep, bool invert)
+{
+    //TBD
 }

@@ -44,31 +44,9 @@ void Animator::remove(AnimatableObject* animationToRemove)
 
 void Animator::handle()
 {
-	unsigned long currentMillis = millis();
 	for (int i = 0; i < AnimatableObjects.size(); i++)
 	{
-		AnimatableObject* currentAnimation = AnimatableObjects.get(i);
-		if(currentAnimation->animationStarted == true)
-		{
-			if(currentAnimation->timeSinceLastTick + currentAnimation->tickLength < currentMillis)
-			{
-				//execute all past ticks. this should normally not be more than 1
-				for (int i = 0; i < (currentMillis - currentAnimation->timeSinceLastTick) / currentAnimation->tickLength; i++)
-				{
-					currentAnimation->tick();
-				}
-				currentAnimation->timeSinceLastTick = currentMillis;
-				if(++(currentAnimation->tickState) >= currentAnimation->numStates)
-				{
-					currentAnimation->tickState = currentAnimation->numStates;
-					currentAnimation->tick();
-					currentAnimation->done();
-				}
-			}
-		}else
-		{
-			currentAnimation->timeSinceLastTick = currentMillis;
-		}
+		AnimatableObjects.get(i)->handle();
 	}
 
 	if(lastLEDUpdate + FASTLED_SAFE_DELAY_MS < millis())
@@ -78,11 +56,12 @@ void Animator::handle()
 	}
 }
 
-void Animator::setAnimation(AnimatableObject* object, AnimatableObject::AnimationFunction animationEffect, uint16_t duration, uint8_t fps)
+void Animator::setAnimation(AnimatableObject* object, AnimatableObject::AnimationFunction animationEffect, uint16_t duration, EasingBase* easing, uint8_t fps)
 {
 	object->setAnimationDuration(duration);
 	object->setAnimationFps(fps);
 	object->setAnimationEffect(animationEffect);
+	object->setAnimationEasing(easing);
 }
 
 void Animator::setAnimationDuration(AnimatableObject* object, uint16_t duration)
@@ -90,15 +69,15 @@ void Animator::setAnimationDuration(AnimatableObject* object, uint16_t duration)
 	object->setAnimationDuration(duration);
 }
 
-void Animator::startAnimation(AnimatableObject* object, AnimatableObject::AnimationFunction animationEffect, uint16_t duration, uint8_t fps)
+void Animator::startAnimation(AnimatableObject* object, AnimatableObject::AnimationFunction animationEffect, uint16_t duration, EasingBase* easing, uint8_t fps)
 {
-	setAnimation(object, animationEffect, duration, fps);
+	setAnimation(object, animationEffect, duration, easing, fps);
 	startAnimation(object);
 }
 
-void Animator::startAnimation(AnimatableObject* object, AnimatableObject::AnimationFunction animationEffect)
+void Animator::startAnimation(AnimatableObject* object, AnimatableObject::AnimationFunction animationEffect, EasingBase* easing)
 {
-	startAnimation(object, animationEffect, object->getAnimationDuration());
+	startAnimation(object, animationEffect, object->getAnimationDuration(), easing);
 }
 
 void Animator::startAnimation(AnimatableObject* object)
@@ -163,7 +142,6 @@ void Animator::startAnimationStep(uint16_t stepindex)
 	complexAnimationRunning = true;
 	for (int j = 0; j < currentComplexAnimation->animationComplexity; j++)
 	{
-
 		if(StepToStart->arrayIndex[j] != -1)
 		{
 			setAnimationDuration(animationObjects[StepToStart->arrayIndex[j]], currentComplexAnimation->LengthPerAnimation);
@@ -174,7 +152,7 @@ void Animator::startAnimationStep(uint16_t stepindex)
 				animationObjects[StepToStart->arrayIndex[j]]->ComplexAnimDoneCallback = &Animator::animationIterationDoneCallback;
 				animationObjects[StepToStart->arrayIndex[j]]->ComplexAnimStartCallback = &Animator::animationIterationStartCallback;
 			}
-			startAnimation(animationObjects[StepToStart->arrayIndex[j]], StepToStart->animationEffects[j]);
+			startAnimation(animationObjects[StepToStart->arrayIndex[j]], StepToStart->animationEffects[j], StepToStart->easingEffects[j]);
 		}
 	}
 }

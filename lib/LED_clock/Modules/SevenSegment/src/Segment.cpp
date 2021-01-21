@@ -62,7 +62,7 @@ void Segment::tick()
 {
     if(effect != nullptr)
     {
-        effect(leds, length, AnimationColor, numStates, getState(), invertDirection);
+		effect(leds, length, AnimationColor, numStates, getState(), invertDirection);
     }
 }
 
@@ -73,7 +73,11 @@ void Segment::updateAnimationColor(CRGB newColor)
 
 void Segment::onAnimationStart()
 {
-
+	if(easing != nullptr)
+	{
+		easing->setTotalChangeInPosition(numStates);
+		easing->setDuration(AnimationDuration);
+	}
 }
 
 void Segment::setAnimationEffect(uint8_t newEffect)
