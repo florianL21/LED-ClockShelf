@@ -202,7 +202,7 @@ enum DisplayIDs {
 /**
  * @brief If set to true 24 hour format will be used. For this one additional column is needed in the shelf to display it correctly
  */
-#define USE_24_HOUR_FORMAT			false
+#define USE_24_HOUR_FORMAT			true
 
 /**
  * @brief The number of segments to use for displaying a progress bar for the OTA updates

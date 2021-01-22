@@ -138,7 +138,6 @@ void Animator::animationIterationDoneCallback(AnimatableObject* sourceObject)
 void Animator::startAnimationStep(uint16_t stepindex)
 {
 	animationStep* StepToStart = currentComplexAnimation->animations->get(stepindex);
-	bool wasStarted = false;
 	bool hasCallbacks = false;
 	for (int j = 0; j < currentComplexAnimation->animationComplexity; j++)
 	{

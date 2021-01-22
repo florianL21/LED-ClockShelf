@@ -78,49 +78,49 @@ void setup()
 
 	ShelfDisplays->InitSegments(0, NUM_LEDS_PER_SEGMENT, CRGB::Blue, 50);
 
-	// ShelfDisplays->setHourSegmentColors(HOUR_COLOR);
-	// ShelfDisplays->setMinuteSegmentColors(MINUTE_COLOR);
-	// ShelfDisplays->setInternalLEDColor(INTERNAL_COLOR);
-	Serial.println("Setting up Test...");
+	ShelfDisplays->setHourSegmentColors(HOUR_COLOR);
+	ShelfDisplays->setMinuteSegmentColors(MINUTE_COLOR);
+	ShelfDisplays->setInternalLEDColor(INTERNAL_COLOR);
+	// Serial.println("Setting up Test...");
 
-	ShelfDisplays->showLoadingAnimation();
-	ShelfDisplays->delay(1000);
-	ShelfDisplays->stopLoadingAnimation();
-	ShelfDisplays->waitForLoadingAnimationFinish();
+	// ShelfDisplays->showLoadingAnimation();
+	// ShelfDisplays->delay(1000);
+	// ShelfDisplays->stopLoadingAnimation();
+	// ShelfDisplays->waitForLoadingAnimationFinish();
 
-	ShelfDisplays->test();
+	// ShelfDisplays->test();
 	// ShelfDisplays->showProgress(800, 1000);
-	Serial.println("Executing...");
+	// Serial.println("Executing...");
 
-	// #if RUN_WITHOUT_WIFI == false
-	// 	wifiSetup();
-	// #endif
-	// #if ENABLE_OTA_UPLOAD == true
-	// 	setupOTA();
-	// #endif
-	// #if RUN_WITHOUT_WIFI == false
-	// 	ShelfDisplays->waitForLoadingAnimationFinish();
-	// #endif
+	#if RUN_WITHOUT_WIFI == false
+		wifiSetup();
+	#endif
+	#if ENABLE_OTA_UPLOAD == true
+		setupOTA();
+	#endif
+	#if RUN_WITHOUT_WIFI == false
+		ShelfDisplays->waitForLoadingAnimationFinish();
+	#endif
 
-	// #if ENABLE_OTA_UPLOAD == true
-	// 	ArduinoOTA.handle(); //give ota the opportunity to update before the main loop starts in case we have a crash in there
-	// #endif
+	#if ENABLE_OTA_UPLOAD == true
+		ArduinoOTA.handle(); //give ota the opportunity to update before the main loop starts in case we have a crash in there
+	#endif
 
-	// #if IS_BLYNK_ACTIVE == true
-	// 	BlynkConfiguration->setup();
-	// #endif
+	#if IS_BLYNK_ACTIVE == true
+		BlynkConfiguration->setup();
+	#endif
 
-	// Serial.println("Fetching time from NTP server...");
-	// if(timeM->init() == false)
-	// {
-	// 	Serial.printf("[E]: TimeManager failed to synchronize for the first time with the NTP server. Retrying in %d seconds", TIME_SYNC_INTERVALL);
-	// }
-	// timeM->setTimerTickCallback(TimerTick);
-	// timeM->setTimerDoneCallback(TimerDone);
+	Serial.println("Fetching time from NTP server...");
+	if(timeM->init() == false)
+	{
+		Serial.printf("[E]: TimeManager failed to synchronize for the first time with the NTP server. Retrying in %d seconds", TIME_SYNC_INTERVALL);
+	}
+	timeM->setTimerTickCallback(TimerTick);
+	timeM->setTimerDoneCallback(TimerDone);
 
-	// Serial.println("Displaying startup animation...");
-	// startupAnimation();
-	// Serial.println("Setup done. Main Loop starting...");
+	Serial.println("Displaying startup animation...");
+	startupAnimation();
+	Serial.println("Setup done. Main Loop starting...");
 }
 
 bool flashMiddleDot = false;
@@ -128,15 +128,15 @@ unsigned long last = millis();
 
 void loop()
 {
-	// #if ENABLE_OTA_UPLOAD == true
-	// 	ArduinoOTA.handle();
-	// #endif
-	// states->handleStates(); //updates display states, switches between modes etc.
-	if((millis()-last)>= 1500)
-	{
-		ShelfDisplays->test();
-		last = millis();
-	}
+	#if ENABLE_OTA_UPLOAD == true
+		ArduinoOTA.handle();
+	#endif
+	states->handleStates(); //updates display states, switches between modes etc.
+	// if((millis()-last)>= 1500)
+	// {
+	// 	ShelfDisplays->test();
+	// 	last = millis();
+	// }
     ShelfDisplays->handle();
 }
 
