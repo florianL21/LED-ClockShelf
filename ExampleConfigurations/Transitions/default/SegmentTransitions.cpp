@@ -69,8 +69,16 @@ Animator::ComplexAmination* TransformationLookupTable[11][11] = {
 /*from 7	*/{nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , Animate7to6  , nullptr      , Animate7to8  , nullptr      , nullptr      },
 /*from 8	*/{nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , Animate8to7  , nullptr      , Animate8to9  , nullptr      },
 /*from 9	*/{Animate9to0  , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , Animate9to8  , nullptr      , nullptr      },
-/*from OFF	*/{nullptr      , AnimateOFFto1, nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      } 
+/*from OFF	*/{nullptr      , AnimateOFFto1, nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      }
 };
+
+#define TOP_LEFT_SEGMENT		0
+#define TOP_MIDDLE_SEGMENT		1
+#define TOP_RIGHT_SEGMENT		2
+#define CENTER_SEGMENT			3
+#define BOTTOM_LEFT_SEGMENT		4
+#define BOTTOM_MIDDLE_SEGMENT	5
+#define BOTTOM_RIGHT_SEGMENT	6
 
 Animator::ComplexAmination* InitAnimate0to1(uint16_t totalAnimationLength)
 {

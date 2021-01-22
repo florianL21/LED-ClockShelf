@@ -103,7 +103,7 @@ AnimatableObject::AnimationFunction Animator::getAnimationEffect(AnimatableObjec
 void Animator::delay(uint32_t delayInMs)
 {
 	unsigned long startMillis = millis();
-	while(startMillis + delayInMs > millis())
+	while(millis() - startMillis < delayInMs)
 	{
 		handle();
 	}
@@ -138,8 +138,8 @@ void Animator::animationIterationDoneCallback(AnimatableObject* sourceObject)
 void Animator::startAnimationStep(uint16_t stepindex)
 {
 	animationStep* StepToStart = currentComplexAnimation->animations->get(stepindex);
+	bool wasStarted = false;
 	bool hasCallbacks = false;
-	complexAnimationRunning = true;
 	for (int j = 0; j < currentComplexAnimation->animationComplexity; j++)
 	{
 		if(StepToStart->arrayIndex[j] != -1)
@@ -153,6 +153,7 @@ void Animator::startAnimationStep(uint16_t stepindex)
 				animationObjects[StepToStart->arrayIndex[j]]->ComplexAnimStartCallback = &Animator::animationIterationStartCallback;
 			}
 			startAnimation(animationObjects[StepToStart->arrayIndex[j]], StepToStart->animationEffects[j], StepToStart->easingEffects[j]);
+			complexAnimationRunning = true;
 		}
 	}
 }

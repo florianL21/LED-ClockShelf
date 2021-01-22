@@ -147,6 +147,7 @@ void DisplayManager::InitSegments(uint16_t indexOfFirstLed, uint8_t ledsPerSegme
 		}
 		Displays[diplayIndex[i]]->add(allSegments[i], SegmentPositions[i]);
 		animationManager.add(allSegments[i]);
+		// animationManagers[diplayIndex[i]]->add(allSegments[i]); //TODO: check if even needed, might be duplicate
 		currentLEDIndex += ledsPerSegment;
 	}
 	//set the initial brightness to avoid jumps
@@ -346,4 +347,17 @@ void DisplayManager::test()
 	Displays[0]->DisplayNumber(count);
 	// Displays[0]->test();
 
+}
+
+int16_t DisplayManager::getGlobalSegmentIndex(SegmentPositions_t segmentPosition, DisplayIDs Display)
+{
+	for (uint16_t i = 0; i < NUM_SEGMENTS; i++)
+	{
+		if(diplayIndex[i] == Display && SegmentPositions[i] == (1 << segmentPosition))
+		{
+			return i;
+		}
+	}
+	Serial.printf("[W] Segment not valid; Position: %d; Display: %d", segmentPosition, Display);
+	return NO_SEGMENTS;
 }

@@ -13,6 +13,8 @@
 #include "misc.h"
 #include "Animations.h"
 
+#define SEGMENT(POSITION, DISPLAY)		DisplayManager::getGlobalSegmentIndex(POSITION, DISPLAY)
+
 class DisplayManager
 {
 public:
@@ -152,6 +154,8 @@ public:
 	void flashSeperationDot();
 
     void test();
+
+	static int16_t getGlobalSegmentIndex(SegmentPositions_t segmentPosition, DisplayIDs Display);
 };
 
 

@@ -176,18 +176,10 @@
 #define NUM_DISPLAYS			7
 
 /**
- * @brief These enum definitions are used in the code do address the different Seven segment displays.
+ * @brief These enum definitions are used in the code do address the different Seven segment displays. 
  * 		  The numbers have to match with the place of the display in the SegmentDisplayModes array in the file DisplayConfiguration.cpp
  */
-enum DisplayIDs {
-	HIGHER_DIGIT_HOUR_DISPLAY = 0,
-	FIRST_INTERMEDIATE_DISPLAY = 1,
-	LOWER_DIGIT_HOUR_DISPLAY = 2,
-	SECOND_INTERMEDIATE_DISPLAY = 3,
-	HIGHER_DIGIT_MINUTE_DISPLAY = 4,
-	THIRD_INTERMEDIATE_DISPLAY = 5,
-	LOWER_DIGIT_MINUTE_DISPLAY = 6
-};
+enum DisplayIDs {LOWER_DIGIT_MINUTE_DISPLAY = 6, HIGHER_DIGIT_MINUTE_DISPLAY = 4, LOWER_DIGIT_HOUR_DISPLAY = 2, HIGHER_DIGIT_HOUR_DISPLAY = 0};
 
 /**
  * @brief If set to true the display will show 0 at midnight and 12 otherwise

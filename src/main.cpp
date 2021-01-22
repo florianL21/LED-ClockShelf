@@ -83,9 +83,13 @@ void setup()
 	// ShelfDisplays->setInternalLEDColor(INTERNAL_COLOR);
 	Serial.println("Setting up Test...");
 
+	ShelfDisplays->showLoadingAnimation();
+	ShelfDisplays->delay(1000);
+	ShelfDisplays->stopLoadingAnimation();
+	ShelfDisplays->waitForLoadingAnimationFinish();
+
 	ShelfDisplays->test();
 	// ShelfDisplays->showProgress(800, 1000);
-	Serial.println("Setup Done...");
 	Serial.println("Executing...");
 
 	// #if RUN_WITHOUT_WIFI == false
@@ -117,7 +121,6 @@ void setup()
 	// Serial.println("Displaying startup animation...");
 	// startupAnimation();
 	// Serial.println("Setup done. Main Loop starting...");
-	
 }
 
 bool flashMiddleDot = false;
@@ -129,7 +132,7 @@ void loop()
 	// 	ArduinoOTA.handle();
 	// #endif
 	// states->handleStates(); //updates display states, switches between modes etc.
-	if((millis()-last)>= 1000)
+	if((millis()-last)>= 1500)
 	{
 		ShelfDisplays->test();
 		last = millis();
