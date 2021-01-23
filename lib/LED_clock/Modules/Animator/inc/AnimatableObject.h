@@ -55,7 +55,7 @@ protected:
 	void stop();
 	void done(); //gets called by animationHandler when the animation is finished
 	void handle();
-	uint16_t getState();
+	int32_t getState();
 	virtual void onAnimationStart();
 	virtual void onAnimationDone();
 	virtual void setAnimationEffect(AnimatableObject::AnimationFunction newEffect);

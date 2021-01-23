@@ -138,7 +138,7 @@ void AnimatableObject::done()
 	}
 }
 
-uint16_t AnimatableObject::getState()
+int32_t AnimatableObject::getState()
 {
 	if(easing != nullptr)
 	{
