@@ -13,8 +13,6 @@ AnimatableObject::AnimationFunction AnimationEffects::AnimateOutToMiddle = &OutT
 AnimatableObject::AnimationFunction AnimationEffects::AnimateOutFromMiddle = &OutFromMiddle;
 AnimatableObject::AnimationFunction AnimationEffects::AnimateInFromMiddle = &InFromMiddle;
 
-#define AFTERGLOW	0.4
-
 AnimationEffects::AnimationEffects()
 {
 
@@ -32,36 +30,44 @@ void AnimationEffects::OutToRight(CRGB* leds, uint16_t length, CRGB animationCol
         OutToLeft(leds, length, animationColor, totalSteps, currentStep, false);
         return;
     }
-	uint16_t tailLength = length * AFTERGLOW;
+	uint16_t tailLength = length * ANIMATION_AFTERGLOW;
 	int32_t lastFullyLitLED = map(currentStep, 0, totalSteps, 0, length + tailLength + 1);
-	uint16_t microsteps = totalSteps / (length + tailLength);
-	uint16_t dimmingSteps = microsteps * tailLength;
     for (uint16_t i = 0; i < length; i++)
     {
-        if(lastFullyLitLED <= i && lastFullyLitLED+length > i)
+        if(lastFullyLitLED <= i && lastFullyLitLED + length > i)
         {
             leds[i] = animationColor;
         }
-        else if (i < lastFullyLitLED+length)
-        {
+        else
+		{
+			uint16_t microsteps = totalSteps / (length + tailLength);
+			int32_t dimmingSteps = microsteps * tailLength;
 			CRGB newColor = animationColor;
-
-			uint16_t startToDim = microsteps*i;
-			if(currentStep<startToDim){
-				leds[i] = animationColor;
-			}else{
-				uint8_t dimDegree = constrain((((double)currentStep-startToDim) / ((double)dimmingSteps)) * 255.0, 0, 255);
-				leds[i] = newColor.fadeToBlackBy(dimDegree);
+			if (i < lastFullyLitLED + length)
+			{
+				uint16_t startToDim = microsteps * i;
+				if(currentStep < startToDim)
+				{
+					leds[i] = animationColor;
+				}
+				else
+				{
+					uint8_t dimDegree = constrain((((double)currentStep - startToDim) / ((double)dimmingSteps)) * 255.0, 0, 255);
+					leds[i] = newColor.fadeToBlackBy(dimDegree);
+				}
 			}
-        }else{
-			CRGB newColor = animationColor;
-
-			int32_t startToDim = microsteps*(i-length);
-			if(currentStep>startToDim){
-				leds[i] = animationColor;
-			}else{
-				uint8_t dimDegree = constrain(((((double)(currentStep-startToDim)) / ((double)dimmingSteps)) * -255.0), 0, 255);
-				leds[i] = newColor.fadeToBlackBy(dimDegree);
+			else
+			{
+				int32_t startToDim = microsteps * (i - length);
+				if(currentStep > startToDim)
+				{
+					leds[i] = animationColor;
+				}
+				else
+				{
+					uint8_t dimDegree = constrain(((double)(currentStep - startToDim) / ((double)dimmingSteps) * -255.0), 0, 255);
+					leds[i] = newColor.fadeToBlackBy(dimDegree);
+				}
 			}
 		}
     }
@@ -99,13 +105,14 @@ void AnimationEffects::InToLeft(CRGB* leds, uint16_t length, CRGB animationColor
 
 void AnimationEffects::InToMiddle(CRGB* leds, uint16_t length, CRGB animationColor, uint16_t totalSteps, int32_t currentStep, bool invert)
 {
+	//TBD
     InToRight(leds, length / 2, animationColor, totalSteps, currentStep, invert);
 	InToLeft(&leds[length / 2], length / 2, animationColor, totalSteps, currentStep, invert);
 }
 
 void AnimationEffects::OutToMiddle(CRGB* leds, uint16_t length, CRGB animationColor, uint16_t totalSteps, int32_t currentStep, bool invert)
 {
-    
+    //TBD
 }
 
 void AnimationEffects::OutFromMiddle(CRGB* leds, uint16_t length, CRGB animationColor, uint16_t totalSteps, int32_t currentStep, bool invert)

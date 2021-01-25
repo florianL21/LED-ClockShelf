@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include "AnimatableObject.h"
 #include "Segment.h"
+#include "Configuration.h"
 
 class AnimationEffects
 {

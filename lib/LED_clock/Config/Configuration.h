@@ -229,6 +229,12 @@ enum DisplayIDs {
  */
 #define ANIMATION_TARGET_FPS		60
 
+/**
+ * @brief Length of sooth animation transition from fully on to black and vice versa in percent
+ * 		  NOTE: The higher this number the less obvious easing effects like bounce or elastic will be
+ */
+#define ANIMATION_AFTERGLOW			0.2
+
 
 /***************************
 *
