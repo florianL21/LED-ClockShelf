@@ -340,12 +340,14 @@ void DisplayManager::flashSeperationDot()
 void DisplayManager::test()
 {
 	static uint8_t count = 0;
-	if(count++ >= 9)
+	static int8_t direction = 1;
+
+	count += direction;
+	if(count >= 9 || count == 0)
 	{
-		count = 0;
+		direction *= -1;
 	}
 	Displays[0]->DisplayNumber(count);
-	// Displays[0]->test();
 
 }
 

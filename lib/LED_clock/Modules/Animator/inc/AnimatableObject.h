@@ -27,12 +27,12 @@ private:
     AnimationFunction effect;
 	EasingBase* easing;
 	uint16_t AnimationDuration;
-	uint64_t timeSinceLastTick;
-	uint16_t tickLength;
-	uint16_t tickState;
-	uint16_t numStates;
+	uint64_t AnimationStartTimestamp;
+	uint16_t currentAnimationTime;
+	double tickLength;
 	uint16_t fps;
-	uint16_t numUnsmoothedStep;
+	uint16_t numStates;
+	uint16_t oldState;
 	bool animationStarted;
 
 	AnimationCallBack* finishedCallback;
@@ -47,7 +47,6 @@ protected:
 	~AnimatableObject();
 
 	void setAnimationDuration(uint16_t duration);
-	void setAnimationSteps(uint16_t numSteps);
 	void setAnimationFps(uint16_t setAnimationFps);
 	uint16_t getAnimationDuration();
 	void start();

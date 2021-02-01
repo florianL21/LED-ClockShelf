@@ -302,7 +302,7 @@ enum DisplayIDs {
 /**
  * @brief The time it takes for one digit to morph into another
  */
-#define DIGIT_ANIMATION_SPEED 700
+#define DIGIT_ANIMATION_SPEED 900
 
 /**
  * @brief the minimum delay between calls of FastLED.show()

@@ -8,12 +8,10 @@ AnimatableObject::AnimatableObject()
 AnimatableObject::AnimatableObject(uint16_t OverallDuration, uint16_t steps)
 {
 	AnimationDuration = OverallDuration;
-	timeSinceLastTick = millis();
 	tickLength = 20;
 	animationStarted = false;
-	tickState = 0;
 	fps = 0;
-	setAnimationSteps(steps);
+	numStates = 0;
 	finishedCallback = nullptr;
 	startCallback = nullptr;
 	ComplexAnimStartCallback = nullptr;
@@ -21,6 +19,8 @@ AnimatableObject::AnimatableObject(uint16_t OverallDuration, uint16_t steps)
 	ComplexAnimationManager = nullptr;
     effect = nullptr;
 	easing = nullptr;
+	currentAnimationTime = 0;
+	oldState = UINT16_MAX;
 }
 
 AnimatableObject::~AnimatableObject()
@@ -32,21 +32,17 @@ void AnimatableObject::handle()
 	unsigned long currentMillis = millis();
 	if(animationStarted == true)
 	{
-		if(currentMillis - timeSinceLastTick > tickLength)
+		currentAnimationTime = currentMillis - AnimationStartTimestamp;
+		uint16_t currentState = getState();
+		if(oldState != currentState)
 		{
-			//execute all past ticks. this should normally not be more than 1
-			tickState += (currentMillis - timeSinceLastTick) / tickLength;
-			timeSinceLastTick = currentMillis;
 			tick();
-			if(tickState >= numStates)
-			{
-				tickState = numStates;
-				done();
-			}
+			oldState = currentState;
 		}
-	}else
-	{
-		timeSinceLastTick = currentMillis;
+		if(currentAnimationTime >= AnimationDuration)
+		{
+			done();
+		}
 	}
 }
 
@@ -60,12 +56,6 @@ void AnimatableObject::setAnimationDuration(uint16_t duration)
 	AnimationDuration = duration;
 }
 
-void AnimatableObject::setAnimationSteps(uint16_t numSteps)
-{
-	numUnsmoothedStep = numSteps;
-	setAnimationFps(fps);
-}
-
 void AnimatableObject::setAnimationFps(uint16_t FramesPerSecond)
 {
 	if(FramesPerSecond < 0)
@@ -75,19 +65,7 @@ void AnimatableObject::setAnimationFps(uint16_t FramesPerSecond)
 	{
 		fps = FramesPerSecond;
 	}
-	numStates = fps * (getAnimationDuration() / 1000.0);
-	if(numStates != 0)
-	{
-		tickLength = AnimationDuration / numStates;
-		if(tickLength == 0)
-		{
-			tickLength = 1; // dont set it to zero, it will crash trust me
-		}
-	}
-	else
-	{
-		tickLength = 1; // dont set it to zero, it will crash trust me
-	}
+	numStates = round(fps * ((double)getAnimationDuration() / 1000.0));
 }
 
 uint16_t AnimatableObject::getAnimationDuration()
@@ -97,6 +75,7 @@ uint16_t AnimatableObject::getAnimationDuration()
 
 void AnimatableObject::start()
 {
+	AnimationStartTimestamp = millis();
 	if(animationStarted == true) // only start the animation if it's not already started
 	{
 		reset();
@@ -121,7 +100,8 @@ void AnimatableObject::stop()
 void AnimatableObject::reset()
 {
 	stop();
-	tickState = 0;
+	currentAnimationTime = 0;
+	oldState = UINT16_MAX;
 }
 
 void AnimatableObject::done()
@@ -142,9 +122,9 @@ int32_t AnimatableObject::getState()
 {
 	if(easing != nullptr)
 	{
-		return easing->ease(tickState * tickLength);
+		return easing->ease(currentAnimationTime);
 	}
-	return tickState;
+	return map(currentAnimationTime, 0, AnimationDuration, 0, numStates);
 }
 
 void AnimatableObject::setAnimationDoneCallback(AnimationCallBack* callback)
@@ -159,7 +139,11 @@ void AnimatableObject::setAnimationStartCallback(AnimationCallBack* callback)
 
 void AnimatableObject::onAnimationStart()
 {
-	
+	if(easing != nullptr)
+	{
+		easing->setTotalChangeInPosition(numStates);
+		easing->setDuration(AnimationDuration);
+	}
 }
 
 void AnimatableObject::onAnimationDone()

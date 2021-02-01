@@ -256,9 +256,3 @@ void SevenSegment::DisplayChar(char value)
 		DisplayNumber(value - '0');
 	}
 }
-
-void SevenSegment::test()
-{
-    AnimationHandler->setAnimationDuration(Segments[getIndexOfSegment(MiddleBottomSegment)], 3000); //in ms
-    AnimationHandler->startAnimation(Segments[getIndexOfSegment(MiddleBottomSegment)], AnimationEffects::AnimateOutToMiddle);
-}

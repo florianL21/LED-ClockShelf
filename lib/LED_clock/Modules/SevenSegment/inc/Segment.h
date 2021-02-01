@@ -22,11 +22,10 @@ private:
 	CRGB color;
 	CRGB AnimationColor;
 	CRGB* leds;
-	bool isOn;
-	
+
 	void writeToLEDs(CRGB colorToSet);
-	void onAnimationStart();
-	void setAnimationEffect(uint8_t newEffect);
+
+	bool isOn();
 
 public:
 	Segment(CRGB LEDBuffer[], uint16_t indexOfFirstLEDInSegment, uint8_t segmentLength, direction Direction, CRGB segmentColor = CRGB::Black);

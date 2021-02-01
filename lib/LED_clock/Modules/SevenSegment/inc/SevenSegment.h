@@ -68,7 +68,6 @@ public:
 	void displayColor(CRGB color);
 	void off();
 	void addAnimator(Animator* AnimationManager);
-    void test();
 };
 
 

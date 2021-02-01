@@ -7,8 +7,6 @@ Segment::Segment(CRGB LEDBuffer[], uint16_t indexOfFirstLEDInSegment, uint8_t se
 	length = segmentLength;
 	color = segmentColor;
 	AnimationColor = color;
-	isOn = false;
-	setAnimationSteps(length);
 }
 
 Segment::~Segment()
@@ -18,7 +16,6 @@ Segment::~Segment()
 
 void Segment::display()
 {
-	isOn = true;
 	writeToLEDs(color);
 }
 
@@ -33,8 +30,7 @@ void Segment::writeToLEDs(CRGB colorToSet)
 void Segment::updateColor(CRGB SegmentColor)
 {
 	setColor(SegmentColor);
-	updateAnimationColor(color);
-	if(isOn == true)
+	if(animationStarted == false && isOn() == true)
 	{
 		display();
 	}
@@ -54,8 +50,19 @@ void Segment::displayColor(CRGB SegmentColor)
 
 void Segment::off()
 {
-	isOn = false;
 	writeToLEDs(CRGB::Black);
+}
+
+bool Segment::isOn()
+{
+	for (int i = 0; i < length; i++)
+	{
+		if(leds[i].r != 0 || leds[i].g != 0 || leds[i].b != 0 )
+		{
+			return true;
+		}
+	}
+	return false;
 }
 
 void Segment::tick()
@@ -68,19 +75,5 @@ void Segment::tick()
 
 void Segment::updateAnimationColor(CRGB newColor)
 {
-		AnimationColor = newColor;
-}
-
-void Segment::onAnimationStart()
-{
-	if(easing != nullptr)
-	{
-		easing->setTotalChangeInPosition(numStates);
-		easing->setDuration(AnimationDuration);
-	}
-}
-
-void Segment::setAnimationEffect(uint8_t newEffect)
-{
-
+	AnimationColor = newColor;
 }

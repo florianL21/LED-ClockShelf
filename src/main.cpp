@@ -68,7 +68,7 @@ void startupAnimation()
 			currMinL++;
 		}
 		ShelfDisplays->displayTime(currHourH * 10 + currHourL, currMinH * 10 + currMinL);
-		ShelfDisplays->delay(DIGIT_ANIMATION_SPEED + 10);
+		ShelfDisplays->delay(DIGIT_ANIMATION_SPEED + 100);
 	}
 }
 
@@ -81,16 +81,6 @@ void setup()
 	ShelfDisplays->setHourSegmentColors(HOUR_COLOR);
 	ShelfDisplays->setMinuteSegmentColors(MINUTE_COLOR);
 	ShelfDisplays->setInternalLEDColor(INTERNAL_COLOR);
-	// Serial.println("Setting up Test...");
-
-	// ShelfDisplays->showLoadingAnimation();
-	// ShelfDisplays->delay(1000);
-	// ShelfDisplays->stopLoadingAnimation();
-	// ShelfDisplays->waitForLoadingAnimationFinish();
-
-	// ShelfDisplays->test();
-	// ShelfDisplays->showProgress(800, 1000);
-	// Serial.println("Executing...");
 
 	#if RUN_WITHOUT_WIFI == false
 		wifiSetup();
@@ -132,6 +122,8 @@ void loop()
 		ArduinoOTA.handle();
 	#endif
 	states->handleStates(); //updates display states, switches between modes etc.
+
+	// Test code:
 	// if((millis()-last)>= 1500)
 	// {
 	// 	ShelfDisplays->test();
