@@ -85,7 +85,7 @@ public:
 	 * @param color Color to set the LEDs to
 	 */
 	void setMinuteSegmentColors(CRGB color);
-	
+
 	/**
 	 * @brief Attempts to display a string on the seven segment displays
 	 * @param text String of text to display
@@ -96,10 +96,10 @@ public:
 	 * @brief Display the time
 	 * @param hours 		Hours in a range of 0 to 24, anything else will generate a debug output and not do anything
 	 * @param minutes 		Hours in a range of 0 to 59, anything else will generate a debug output and not do anything
-	 * @param dynamicMode 	Will display minutes on hour display and seconds on minutes in case the timer is less than an hour.
+	 * @param seconds 		If not -1 will display minutes on hour display and seconds on minutes in case the timer is less than an hour.
 	 * 						Will display whatever is possible on the highes digit display depending on the type of display segment configured.
 	 */
-	void displayTime(uint8_t hours, uint8_t minutes, bool timerMode = false);
+	void displayTime(uint8_t hours, uint8_t minutes, int8_t seconds = -1);
 
 	/**
 	 * @brief Has to be called in the cyclicly loop to enable live updating of the LEDs

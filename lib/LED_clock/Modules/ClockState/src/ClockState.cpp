@@ -70,8 +70,8 @@ void ClockState::handleStates()
 			#endif
 		break;
 		case ClockState::TIMER_MODE:
-			//timers only support up to one hour durations, but really only 19 minutes if the first segment can only display a one
-			ShelfDisplays->displayTime(currentTime.minutes, currentTime.seconds);
+			currentTime = timeM->getRemainingTimerTime();
+			ShelfDisplays->displayTime(currentTime.hours, currentTime.minutes, currentTime.seconds);
 		break;
 		case ClockState::ALARM_MODE:
 			if(currentAlarmSignalState == true)

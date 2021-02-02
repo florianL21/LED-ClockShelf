@@ -75,19 +75,12 @@ String TimeManager::getCurrentTimeString()
 
 TimeManager::TimeInfo TimeManager::getCurrentTime()
 {
-	if(TimerModeActive == false)
-	{
-		return currentTime;
-	}
-	else
-	{
-		return TimerDuration;
-	}
+	return currentTime;
 }
 
-TimeManager::TimeInfo TimeManager::getRealCurrentTime()
+TimeManager::TimeInfo TimeManager::getRemainingTimerTime()
 {
-	return currentTime;
+	return TimerDuration;
 }
 
 bool TimeManager::synchronize()

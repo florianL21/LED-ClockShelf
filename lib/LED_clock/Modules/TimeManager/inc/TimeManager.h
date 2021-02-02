@@ -65,9 +65,9 @@ public:
 	TimeInfo getCurrentTime();
 
 	/**
-	 * @brief get the real raw current time in a struct without any precalculations
+	 * @brief get the remaining time of the active timer
 	 */
-	TimeInfo getRealCurrentTime();
+	TimeInfo getRemainingTimerTime();
 
 	/**
 	 * @brief get the current time as a string

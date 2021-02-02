@@ -156,7 +156,7 @@ void DisplayManager::InitSegments(uint16_t indexOfFirstLed, uint8_t ledsPerSegme
 }
 
 //TODO: implement timer mode
-void DisplayManager::displayTime(uint8_t hours, uint8_t minutes, bool timerMode)
+void DisplayManager::displayTime(uint8_t hours, uint8_t minutes, int8_t seconds)
 {
 	#if DISPLAY_0_AT_MIDNIGHT == true
 	if(hours == 24)
