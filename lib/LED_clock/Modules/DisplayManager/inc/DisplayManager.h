@@ -94,10 +94,12 @@ public:
 
 	/**
 	 * @brief Display the time
-	 * @param hours 	Hours in a range of 0 to 24, anything else will generate a debug output and not do anything
-	 * @param minutes 	Hours in a range of 0 to 59, anything else will generate a debug output and not do anything
+	 * @param hours 		Hours in a range of 0 to 24, anything else will generate a debug output and not do anything
+	 * @param minutes 		Hours in a range of 0 to 59, anything else will generate a debug output and not do anything
+	 * @param dynamicMode 	Will display minutes on hour display and seconds on minutes in case the timer is less than an hour.
+	 * 						Will display whatever is possible on the highes digit display depending on the type of display segment configured.
 	 */
-	void displayTime(uint8_t hours, uint8_t minutes);
+	void displayTime(uint8_t hours, uint8_t minutes, bool timerMode = false);
 
 	/**
 	 * @brief Has to be called in the cyclicly loop to enable live updating of the LEDs
@@ -135,7 +137,7 @@ public:
 	 * @param progress How much progress there is to do in total
 	 */
 	void showProgress(uint32_t progress, uint32_t total);
-	
+
 	/**
 	 * @brief Use this delay instead of the Arduino delay to enable Display updates during the delay.
 	 * @param timeInMs Delay time in ms

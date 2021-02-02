@@ -147,7 +147,6 @@ void DisplayManager::InitSegments(uint16_t indexOfFirstLed, uint8_t ledsPerSegme
 		}
 		Displays[diplayIndex[i]]->add(allSegments[i], SegmentPositions[i]);
 		animationManager.add(allSegments[i]);
-		// animationManagers[diplayIndex[i]]->add(allSegments[i]); //TODO: check if even needed, might be duplicate
 		currentLEDIndex += ledsPerSegment;
 	}
 	//set the initial brightness to avoid jumps
@@ -156,46 +155,21 @@ void DisplayManager::InitSegments(uint16_t indexOfFirstLed, uint8_t ledsPerSegme
 	setGlobalBrightness(initBrightness, false);
 }
 
-
-//TODO: Fix this, it currently crashes
-void DisplayManager::displayText(String text)
+//TODO: implement timer mode
+void DisplayManager::displayTime(uint8_t hours, uint8_t minutes, bool timerMode)
 {
-	if(text.length() > 0)
+	#if DISPLAY_0_AT_MIDNIGHT == true
+	if(hours == 24)
 	{
-		uint8_t startDisplay;
-		if(Displays[0]->canDisplay(text[0]))
-		{
-			startDisplay = 0;
-		} else if(Displays[1]->canDisplay(text[0]))
-		{
-			startDisplay = 1;
-		}
-		else
-		{
-			startDisplay = 2;
-		}
-
-		uint8_t textPos = 0;
-
-		do
-		{
-			if(Displays[startDisplay]->canDisplay(text[textPos]))
-			{
-				Displays[startDisplay]->DisplayChar(text[textPos]);
-			}
-			else
-			{
-				Displays[++startDisplay]->DisplayChar(text[textPos]);
-			}
-			textPos++;
-			startDisplay++;
-		}
-		while (textPos < text.length() && startDisplay < NUM_DISPLAYS);
+		hours = 0;
 	}
-}
-
-void DisplayManager::displayTime(uint8_t hours, uint8_t minutes)
-{
+	#endif
+	#if USE_24_HOUR_FORMAT == false
+		if(hours >= 13)
+		{
+			hours -= 12;
+		}
+	#endif
 	uint8_t firstHourDigit = hours / 10;
 	if(firstHourDigit == 0 && DISPLAY_SWITCH_OFF_AT_0 == true)
 	{
@@ -295,11 +269,11 @@ void DisplayManager::turnAllSegmentsOff()
 	}
 }
 
-void DisplayManager::showProgress(uint32_t progress, uint32_t total) // TODO: make crash proof, currently crashing with divide by zero
+void DisplayManager::showProgress(uint32_t progress, uint32_t total)
 {
-	for (int i = 0; i < (progress / (total / (NUM_LEDS_PER_SEGMENT * NUM_SEGMENTS_PROGRESS))); i++)
+	for (int i = 0; i < map(progress, 0, total, 0, NUM_LEDS_PER_SEGMENT * NUM_SEGMENTS_PROGRESS); i++)
 	{
-		leds[i] = CRGB::Orange;
+		leds[i] = OTA_UPDATE_COLOR;
 	}
 	animationManager.handle();
 }
@@ -312,7 +286,7 @@ void DisplayManager::delay(uint32_t timeInMs)
 void DisplayManager::setGlobalBrightness(uint8_t brightness, bool enableSmoothTransition)
 {
 	currentLEDBrightness = brightness;
-	
+
 	#if ENABLE_LIGHT_SENSOR == true
 		LEDBrightnessSetPoint = constrain(brightness - lightSensorBrightness, 0, 255);
 	#else

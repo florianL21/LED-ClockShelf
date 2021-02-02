@@ -60,7 +60,7 @@ protected:
 	virtual void setAnimationEffect(AnimatableObject::AnimationFunction newEffect);
 	virtual void setAnimationEasing(EasingBase* easingEffect);
 public:
-	virtual void tick();
+	virtual void tick(int32_t currentState);
 	void setAnimationDoneCallback(AnimationCallBack* callback);
 	void setAnimationStartCallback(AnimationCallBack* callback);
 

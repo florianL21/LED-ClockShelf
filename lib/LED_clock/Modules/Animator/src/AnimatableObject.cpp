@@ -36,7 +36,7 @@ void AnimatableObject::handle()
 		uint16_t currentState = getState();
 		if(oldState != currentState)
 		{
-			tick();
+			tick(currentState);
 			oldState = currentState;
 		}
 		if(currentAnimationTime >= AnimationDuration)
@@ -46,7 +46,7 @@ void AnimatableObject::handle()
 	}
 }
 
-void AnimatableObject::tick()
+void AnimatableObject::tick(int32_t currentState)
 {
 
 }

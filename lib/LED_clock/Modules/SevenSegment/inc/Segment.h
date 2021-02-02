@@ -30,7 +30,7 @@ private:
 public:
 	Segment(CRGB LEDBuffer[], uint16_t indexOfFirstLEDInSegment, uint8_t segmentLength, direction Direction, CRGB segmentColor = CRGB::Black);
 	~Segment();
-	void tick();
+	void tick(int32_t currentState);
 
 	/**
 	 * @brief sets the color of the segment without displaying the change
@@ -44,15 +44,14 @@ public:
 
 	/**
 	 * @brief Sets the color of the segment and immidiatley writes is out to the leds
-	 */ 
+	 */
 	void displayColor(CRGB SegmentColor);
 	void display();
 	/**
 	 * @brief Turns off the leds of this segment but doesn't change the stored color of the segment
-	 */ 
+	 */
 	void off();
 	void updateAnimationColor(CRGB newColor);
-	
 };
 
 

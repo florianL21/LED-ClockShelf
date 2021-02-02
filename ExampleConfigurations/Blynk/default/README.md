@@ -12,7 +12,7 @@ This one has the minimal set of UI elements and can easily be replicated using o
 | Vertical slider	| 200			| Global brightness	| V0  | Range 0-100; One decimal; Send on release is off with interval of 100ms|
 | Segmented switch	| 400			| Element selection | V1  | Element 1 is Hours; 2 is Minutes and 3 is Internal LEDs|
 | zeRGBa			| 400			| Setting the color	| V2  | Output->Merge is on with default settings. Send on release is off with an interval of 100ms|
-| Time input		| 200			| Night time range	| V7  | Format-> HH:mm; allow start/stop input->Yes; allow day of week selection->No; Allow sunset/sunrise selection->Yes; Allow Timezone selection->No|
+| Time input		| 200			| Night time range	| V7  | Format-> HH:mm; allow start/stop input->Yes; allow day of week selection->No; Allow sunset/sunrise selection->No; Allow Timezone selection->No|
 
 Total Energy used: 1400
 

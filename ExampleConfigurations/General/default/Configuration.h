@@ -82,17 +82,42 @@
 /**
  * @brief Color of the hour segments, this will be the default color if blynk functionality is disabled
  */
-#define HOUR_COLOR		CRGB::White
+#define HOUR_COLOR							CRGB::White
 
 /**
  * @brief Color of the minute segments, this will be the default color if blynk functionality is disabled
  */
-#define MINUTE_COLOR	CRGB::Azure
+#define MINUTE_COLOR						CRGB::Azure
 
 /**
  * @brief Color of the internal LEDs, this will be the default color if blynk functionality is disabled
  */
-#define INTERNAL_COLOR	CRGB::Blue
+#define INTERNAL_COLOR						CRGB::Blue
+
+/**
+ * @brief Color of the LEDs for the OTA update progress bar
+ */
+#define OTA_UPDATE_COLOR					CRGB::Orange
+
+/**
+ * @brief Color of the LEDs while searching for a WIFI network
+ */
+#define WIFI_CONNECTING_COLOR				CRGB::Blue
+
+/**
+ * @brief Color of the LEDs signaling a successful WIFI connection
+ */
+#define WIFI_CONNECTION_SUCCESSFUL_COLOR	CRGB::Green
+
+/**
+ * @brief Color of the LEDs if system is waiting for WIFI smart config
+ */
+#define WIFI_SMART_CONFIG_COLOR				CRGB::Yellow
+
+/**
+ * @brief Color of the LEDs signaling an error of some sort
+ */
+#define ERROR_COLOR							CRGB::Red
 
 /**
  * @brief Server for the time
@@ -302,7 +327,7 @@ enum DisplayIDs {
 /**
  * @brief The time it takes for one digit to morph into another
  */
-#define DIGIT_ANIMATION_SPEED 700
+#define DIGIT_ANIMATION_SPEED 900
 
 /**
  * @brief the minimum delay between calls of FastLED.show()

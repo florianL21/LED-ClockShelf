@@ -76,7 +76,7 @@ void setup()
 {
 	Serial.begin(115200);
 
-	ShelfDisplays->InitSegments(0, NUM_LEDS_PER_SEGMENT, CRGB::Blue, 50);
+	ShelfDisplays->InitSegments(0, NUM_LEDS_PER_SEGMENT, WIFI_CONNECTING_COLOR, 50);
 
 	ShelfDisplays->setHourSegmentColors(HOUR_COLOR);
 	ShelfDisplays->setMinuteSegmentColors(MINUTE_COLOR);
@@ -156,7 +156,7 @@ void TimerDone()
 		#else
 			WiFi.begin(WIFI_SSID, WIFI_PW);
 		#endif
-		ShelfDisplays->setAllSegmentColors(CRGB::Blue);
+		ShelfDisplays->setAllSegmentColors(WIFI_CONNECTING_COLOR);
 		ShelfDisplays->showLoadingAnimation();
 		for (int i = 0; i < NUM_RETRIES; i++)
 		{
@@ -168,7 +168,7 @@ void TimerDone()
 			#endif
 			{
 				Serial.println("Reconnect successful");
-				ShelfDisplays->setAllSegmentColors(CRGB::Green);
+				ShelfDisplays->setAllSegmentColors(WIFI_CONNECTION_SUCCESSFUL_COLOR);
 				break;
 			}
 			ShelfDisplays->delay(500);
@@ -184,13 +184,13 @@ void TimerDone()
 
 				// Wait for SmartConfig packet from mobile
 				Serial.println("Waiting for SmartConfig.");
-				ShelfDisplays->setAllSegmentColors(CRGB::Red);
+				ShelfDisplays->setAllSegmentColors(WIFI_SMART_CONFIG_COLOR);
 				while (!WiFi.smartConfigDone())
 				{
 					Serial.print(".");
 					ShelfDisplays->delay(500);
 				}
-				ShelfDisplays->setAllSegmentColors(CRGB::Blue);
+				ShelfDisplays->setAllSegmentColors(WIFI_CONNECTING_COLOR);
 				Serial.println("");
 				Serial.println("SmartConfig done.");
 
@@ -199,7 +199,7 @@ void TimerDone()
 				while (WiFi.status() != WL_CONNECTED)
 				{
 					Serial.print(".");
-					ShelfDisplays->setAllSegmentColors(CRGB::Green);
+					ShelfDisplays->setAllSegmentColors(WIFI_CONNECTION_SUCCESSFUL_COLOR);
 					ShelfDisplays->delay(500);
 				}
 				Serial.println("WiFi Connected.");
@@ -207,7 +207,7 @@ void TimerDone()
 				Serial.println(WiFi.localIP());
 			#else
 				Serial.println("WIFI connection failed");
-				ShelfDisplays->setAllSegmentColors(CRGB::Red);
+				ShelfDisplays->setAllSegmentColors(ERROR_COLOR);
 			#endif
 			if(WiFi.status() != WL_CONNECTED)
 			{
@@ -250,7 +250,7 @@ void TimerDone()
 			#if IS_BLYNK_ACTIVE == true
 				BlynkConfiguration->stop();
 			#endif
-			ShelfDisplays->setAllSegmentColors(CRGB::Orange);
+			ShelfDisplays->setAllSegmentColors(OTA_UPDATE_COLOR);
 			ShelfDisplays->turnAllSegmentsOff(); //instead of the loading animation show a progress bar
 		})
 		.onEnd([]()
@@ -285,7 +285,7 @@ void TimerDone()
 			{
 				Serial.println("End Failed");
 			}
-			ShelfDisplays->setAllSegmentColors(CRGB::Red);
+			ShelfDisplays->setAllSegmentColors(ERROR_COLOR);
 		});
 
 		ArduinoOTA.begin();

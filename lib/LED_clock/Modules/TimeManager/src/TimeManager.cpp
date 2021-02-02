@@ -77,20 +77,7 @@ TimeManager::TimeInfo TimeManager::getCurrentTime()
 {
 	if(TimerModeActive == false)
 	{
-		TimeInfo returnTime = currentTime;
-		#if DISPLAY_0_AT_MIDNIGHT == true
-		if(currentTime.hours == 24)
-		{
-			returnTime.hours = 0;
-		}
-		#endif
-		#if USE_24_HOUR_FORMAT == false
-			if(currentTime.hours >= 13)
-			{
-				returnTime.hours -= 12;
-			}
-		#endif
-		return returnTime;
+		return currentTime;
 	}
 	else
 	{
@@ -182,7 +169,7 @@ bool TimeManager::isInBetween(TimeInfo time1, TimeInfo time2)
 	uint32_t startTime = time1.hours * 3600 + time1.minutes * 60 + time1.seconds;
 	uint32_t endTime = time2.hours * 3600 + time2.minutes * 60 + time2.seconds;
 	uint32_t nowTime = currentTime.hours * 3600 + currentTime.minutes * 60 + currentTime.seconds;
-	
+
 	if(startTime > endTime)
 	{
 		if(nowTime >= startTime || nowTime <= endTime)
@@ -225,7 +212,6 @@ void IRAM_ATTR onTimer()
 			{
 				timeM->advanceByOneSecondOffline();
 			}
-			
 		}
 		else
 		{

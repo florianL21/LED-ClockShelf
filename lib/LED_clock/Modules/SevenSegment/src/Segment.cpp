@@ -65,11 +65,11 @@ bool Segment::isOn()
 	return false;
 }
 
-void Segment::tick()
+void Segment::tick(int32_t currentState)
 {
     if(effect != nullptr)
     {
-		effect(leds, length, AnimationColor, numStates, getState(), invertDirection);
+		effect(leds, length, AnimationColor, numStates, currentState, invertDirection);
     }
 }
 

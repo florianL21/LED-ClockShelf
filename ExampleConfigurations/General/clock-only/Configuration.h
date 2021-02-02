@@ -56,7 +56,7 @@
 		/**
 		 * @brief The host name that shall be used for OTA updates. If you change this here it must also be changed in the platformio.ini file
 		 */
-		#define OTA_UPDATE_HOST_NAME	"LED-Shelf"
+		#define OTA_UPDATE_HOST_NAME	"LED-Clock"
 	#endif
 
 	/**
@@ -82,17 +82,42 @@
 /**
  * @brief Color of the hour segments, this will be the default color if blynk functionality is disabled
  */
-#define HOUR_COLOR		CRGB::White
+#define HOUR_COLOR							CRGB::White
 
 /**
  * @brief Color of the minute segments, this will be the default color if blynk functionality is disabled
  */
-#define MINUTE_COLOR	CRGB::Azure
+#define MINUTE_COLOR						CRGB::Azure
 
 /**
  * @brief Color of the internal LEDs, this will be the default color if blynk functionality is disabled
  */
-#define INTERNAL_COLOR	CRGB::Blue
+#define INTERNAL_COLOR						CRGB::Blue
+
+/**
+ * @brief Color of the LEDs for the OTA update progress bar
+ */
+#define OTA_UPDATE_COLOR					CRGB::Orange
+
+/**
+ * @brief Color of the LEDs while searching for a WIFI network
+ */
+#define WIFI_CONNECTING_COLOR				CRGB::Blue
+
+/**
+ * @brief Color of the LEDs signaling a successful WIFI connection
+ */
+#define WIFI_CONNECTION_SUCCESSFUL_COLOR	CRGB::Green
+
+/**
+ * @brief Color of the LEDs if system is waiting for WIFI smart config
+ */
+#define WIFI_SMART_CONFIG_COLOR				CRGB::Yellow
+
+/**
+ * @brief Color of the LEDs signaling an error of some sort
+ */
+#define ERROR_COLOR							CRGB::Red
 
 /**
  * @brief Server for the time
@@ -176,10 +201,18 @@
 #define NUM_DISPLAYS			7
 
 /**
- * @brief These enum definitions are used in the code do address the different Seven segment displays. 
+ * @brief These enum definitions are used in the code do address the different Seven segment displays.
  * 		  The numbers have to match with the place of the display in the SegmentDisplayModes array in the file DisplayConfiguration.cpp
  */
-enum DisplayIDs {LOWER_DIGIT_MINUTE_DISPLAY = 6, HIGHER_DIGIT_MINUTE_DISPLAY = 4, LOWER_DIGIT_HOUR_DISPLAY = 2, HIGHER_DIGIT_HOUR_DISPLAY = 0};
+enum DisplayIDs {
+	HIGHER_DIGIT_HOUR_DISPLAY = 0,
+	FIRST_INTERMEDIATE_DISPLAY = 1,
+	LOWER_DIGIT_HOUR_DISPLAY = 2,
+	SECOND_INTERMEDIATE_DISPLAY = 3,
+	HIGHER_DIGIT_MINUTE_DISPLAY = 4,
+	THIRD_INTERMEDIATE_DISPLAY = 5,
+	LOWER_DIGIT_MINUTE_DISPLAY = 6
+};
 
 /**
  * @brief If set to true the display will show 0 at midnight and 12 otherwise
@@ -294,7 +327,7 @@ enum DisplayIDs {LOWER_DIGIT_MINUTE_DISPLAY = 6, HIGHER_DIGIT_MINUTE_DISPLAY = 4
 /**
  * @brief The time it takes for one digit to morph into another
  */
-#define DIGIT_ANIMATION_SPEED 700
+#define DIGIT_ANIMATION_SPEED 900
 
 /**
  * @brief the minimum delay between calls of FastLED.show()

@@ -195,10 +195,9 @@
 	{
 		TimeManager::TimeInfo TimerDuration;
 		TimeInputParam t(param);
-		//Timers do not support values larger than 24 minutes, This is a bit of a hack but there is no other way around it :/
-		TimerDuration.hours = 0; //t.getStartHour();
-		TimerDuration.minutes = t.getStartHour();
-		TimerDuration.seconds = t.getStartMinute();
+		TimerDuration.hours = t.getStartHour();
+		TimerDuration.minutes = t.getStartMinute();
+		TimerDuration.seconds = t.getStartSecond();
 		//Serial.printf("StartTime: %d:%d:%d\n\r", TimerDuration.hours, TimerDuration.minutes, TimerDuration.seconds);
 		TimeM->setTimerDuration(TimerDuration);
 	}
@@ -225,7 +224,6 @@
 	BLYNK_WRITE(BLYNK_CHANNEL_NIGHT_MODE_TIME_INPUT)
 	{
 		TimeInputParam t(param);
-		//Timers do not support values larger than 24 minutes, This is a bit of a hack but there is no other way around it :/
 		ClockS->NightModeStartTime.hours = t.getStartHour();
 		ClockS->NightModeStartTime.minutes = t.getStartMinute();
 		ClockS->NightModeStartTime.seconds = t.getStartSecond();
