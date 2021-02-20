@@ -1,0 +1,32 @@
+{
+    "name": "LED_Clock-default",
+    "version": "1.0.0",
+    "build": {
+		"srcFilter": [
+			"+<Modules/*.c>",
+            "+<Modules/*.cpp>",
+            "+<Modules/**/*.cpp>",
+            "+<Modules/**/*.c>",
+            "+<Config/Animations/default/*.c>",
+            "+<Config/Animations/default/*.cpp>",
+            "+<Config/Blynk/default/*.c>",
+            "+<Config/Blynk/default/*.cpp>",
+            "+<Config/Setup/default/*.c>",
+			"+<Config/Setup/default/*.cpp>",
+            "+<Config/Transitions/default/*.c>",
+            "+<Config/Transitions/default/*.cpp>"
+		],
+		"flags": [
+            "-I Modules/Animator/inc",
+            "-I Modules/ClockState/inc",
+            "-I Modules/DisplayManager/inc",
+            "-I Modules/Misc/inc",
+            "-I Modules/SevenSegment/inc",
+            "-I Modules/TimeManager/inc",
+            "-I Config/Setup/default",
+            "-I Config/Blynk/default",
+            "-I Config/Animations/default",
+            "-I Config/Transitions/default"
+		]
+	}
+}

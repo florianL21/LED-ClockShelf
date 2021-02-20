@@ -56,7 +56,7 @@
 		/**
 		 * @brief The host name that shall be used for OTA updates. If you change this here it must also be changed in the platformio.ini file
 		 */
-		#define OTA_UPDATE_HOST_NAME	"LED-Clock"
+		#define OTA_UPDATE_HOST_NAME	"LED-Shelf"
 	#endif
 
 	/**
@@ -93,6 +93,11 @@
  * @brief Color of the internal LEDs, this will be the default color if blynk functionality is disabled
  */
 #define INTERNAL_COLOR						CRGB::Blue
+
+/**
+ * @brief Color of the seperation dot LEDs, this will be the default color if blynk functionality is disabled
+ */
+#define SEPERATION_DOT_COLOR				CRGB::Blue
 
 /**
  * @brief Color of the LEDs for the OTA update progress bar
@@ -164,17 +169,17 @@
 /**
  * @brief Total number of segments that have LEDs in the shelf
  */
-#define NUM_SEGMENTS 			37
+#define NUM_SEGMENTS 			23
 
 /**
  * @brief Number of LEDs in each segment
  */
-#define NUM_LEDS_PER_SEGMENT	8
+#define NUM_LEDS_PER_SEGMENT	9
 
 /**
  * @brief If you wired the down lighter LEDs to the end of the LED strips set this to true
  */
-#define APPEND_DOWN_LIGHTERS	true
+#define APPEND_DOWN_LIGHTERS	false
 
 /**
  * @brief Number of LEDs For interrior lights
@@ -198,21 +203,18 @@
 /**
  * @brief Number of displays in the shelf
  */
-#define NUM_DISPLAYS			7
+#define NUM_DISPLAYS			4
 
 /**
  * @brief These enum definitions are used in the code do address the different Seven segment displays.
  * 		  The numbers have to match with the place of the display in the SegmentDisplayModes array in the file DisplayConfiguration.cpp
  */
 enum DisplayIDs {
-	HIGHER_DIGIT_HOUR_DISPLAY = 0,
-	FIRST_INTERMEDIATE_DISPLAY = 1,
+	LOWER_DIGIT_MINUTE_DISPLAY = 0,
+	HIGHER_DIGIT_MINUTE_DISPLAY = 1,
 	LOWER_DIGIT_HOUR_DISPLAY = 2,
-	SECOND_INTERMEDIATE_DISPLAY = 3,
-	HIGHER_DIGIT_MINUTE_DISPLAY = 4,
-	THIRD_INTERMEDIATE_DISPLAY = 5,
-	LOWER_DIGIT_MINUTE_DISPLAY = 6
-};
+	HIGHER_DIGIT_HOUR_DISPLAY = 3
+	};
 
 /**
  * @brief If set to true the display will show 0 at midnight and 12 otherwise
@@ -227,7 +229,7 @@ enum DisplayIDs {
 /**
  * @brief If set to true 24 hour format will be used. For this one additional column is needed in the shelf to display it correctly
  */
-#define USE_24_HOUR_FORMAT			true
+#define USE_24_HOUR_FORMAT			false
 
 /**
  * @brief The number of segments to use for displaying a progress bar for the OTA updates
@@ -260,6 +262,22 @@ enum DisplayIDs {
  */
 #define ANIMATION_AFTERGLOW			0.2
 
+/**
+ * @brief Lenght of the dot/s fading animation. One flash fades in and out
+ */
+#define DOT_FLASH_SPEED 2000
+
+/**
+ * @brief Intervall in which the dot/s should flash
+ */
+#define DOT_FLASH_INTERVALL	4000
+
+/**
+ * @brief Number of seperation dots to use by default (or if no blynk functionality is avaliable)
+ * 		  allowed values are 1, 2 and 0 to turn it off
+ */
+#define NUM_SEPERATION_DOTS	2
+
 
 /***************************
 *
@@ -270,7 +288,7 @@ enum DisplayIDs {
 /**
  * @brief Enable automatic brightness adjustments based on a light sensor
  */
-#define ENABLE_LIGHT_SENSOR			false
+#define ENABLE_LIGHT_SENSOR			true
 
 #if ENABLE_LIGHT_SENSOR == true
 	/**

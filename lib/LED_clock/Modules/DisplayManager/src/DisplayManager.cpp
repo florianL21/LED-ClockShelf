@@ -261,7 +261,9 @@ void DisplayManager::setInternalLEDColor(CRGB color)
 
 void DisplayManager::setDotLEDColor(CRGB color)
 {
-	Displays[DISPLAY_FOR_SEPERATION_DOT]->setColor(color);
+	#if DISPLAY_FOR_SEPERATION_DOT > -1
+		Displays[DISPLAY_FOR_SEPERATION_DOT]->setColor(color);
+	#endif
 }
 
 void DisplayManager::AnimationManagersTemporaryOverride(Animator* OverrideanimationManager)
