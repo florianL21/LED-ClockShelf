@@ -99,8 +99,10 @@
 		Blynk.syncVirtual(BLYNK_CHANNEL_HOUR_COLOR_SAVE);
 		Blynk.syncVirtual(BLYNK_CHANNEL_MINUTE_COLOR_SAVE);
 		Blynk.syncVirtual(BLYNK_CHANNEL_INTERNAL_COLOR_SAVE);
+		Blynk.syncVirtual(BLYNK_CHANNEL_DOT_COLOR_SAVE);
 		Blynk.syncVirtual(BLYNK_CHANNEL_NIGHT_MODE_BRIGHTNESS);
 		Blynk.syncVirtual(BLYNK_CHANNEL_NIGHT_MODE_TIME_INPUT);
+		Blynk.syncVirtual(BLYNK_CHANNEL_NUM_SPERATION_DOTS);
 		Blynk.virtualWrite(BLYNK_CHANNEL_TIMER_START_BUTTON, 0);
 	}
 
@@ -126,6 +128,10 @@
 			case 3:
 				BlynkC->ColorSelection = BlynkConfig::CHANGE_INTERRIOR_COLOR;
 				Blynk.virtualWrite(BLYNK_CHANNEL_CURRENT_COLOR_PICKER, BlynkC->InternalColor.r, BlynkC->InternalColor.g, BlynkC->InternalColor.b);
+				break;
+			case 4:
+				BlynkC->ColorSelection = BlynkConfig::CHANGE_DOT_COLOR;
+				Blynk.virtualWrite(BLYNK_CHANNEL_CURRENT_COLOR_PICKER, BlynkC->DotColor.r, BlynkC->DotColor.g, BlynkC->DotColor.b);
 				break;
 			}
 		}
@@ -154,6 +160,11 @@
 				BlynkC->ShelfDisplays->setInternalLEDColor(currentColor);
 				Blynk.virtualWrite(BLYNK_CHANNEL_INTERNAL_COLOR_SAVE, currentColor.r, currentColor.g, currentColor.b);
 				BlynkC->InternalColor = currentColor;
+				break;
+			case BlynkConfig::CHANGE_DOT_COLOR:
+				BlynkC->ShelfDisplays->setDotLEDColor(currentColor);
+				Blynk.virtualWrite(BLYNK_CHANNEL_DOT_COLOR_SAVE, currentColor.r, currentColor.g, currentColor.b);
+				BlynkC->DotColor = currentColor;
 				break;
 			}
 		#else
@@ -191,14 +202,23 @@
 		BlynkC->InternalColor = SavedColor;
 	}
 
+	BLYNK_WRITE(BLYNK_CHANNEL_DOT_COLOR_SAVE)
+	{
+		CRGB SavedColor;
+		SavedColor.r  = param[0].asInt();
+		SavedColor.g  = param[1].asInt();
+		SavedColor.b  = param[2].asInt();
+		BlynkC->ShelfDisplays->setDotLEDColor(SavedColor);
+		BlynkC->DotColor = SavedColor;
+	}
+
 	BLYNK_WRITE(BLYNK_CHANNEL_TIMER_TIME_INPUT)
 	{
 		TimeManager::TimeInfo TimerDuration;
 		TimeInputParam t(param);
-		//Timers do not support values larger than 24 minutes, This is a bit of a hack but there is no other way around it :/
-		TimerDuration.hours = 0; //t.getStartHour();
-		TimerDuration.minutes = t.getStartHour();
-		TimerDuration.seconds = t.getStartMinute();
+		TimerDuration.hours = t.getStartHour();
+		TimerDuration.minutes = t.getStartMinute();
+		TimerDuration.seconds = t.getStartSecond();
 		//Serial.printf("StartTime: %d:%d:%d\n\r", TimerDuration.hours, TimerDuration.minutes, TimerDuration.seconds);
 		TimeM->setTimerDuration(TimerDuration);
 	}
@@ -225,7 +245,6 @@
 	BLYNK_WRITE(BLYNK_CHANNEL_NIGHT_MODE_TIME_INPUT)
 	{
 		TimeInputParam t(param);
-		//Timers do not support values larger than 24 minutes, This is a bit of a hack but there is no other way around it :/
 		ClockS->NightModeStartTime.hours = t.getStartHour();
 		ClockS->NightModeStartTime.minutes = t.getStartMinute();
 		ClockS->NightModeStartTime.seconds = t.getStartSecond();
@@ -241,5 +260,10 @@
 		{
 			BlynkC->ShelfDisplays->setGlobalBrightness(ClockS->nightModeBrightness);
 		}
+	}
+
+	BLYNK_WRITE(BLYNK_CHANNEL_NUM_SPERATION_DOTS)
+	{
+		ClockS->numDots = param[0].asInt() - 1;
 	}
 #endif

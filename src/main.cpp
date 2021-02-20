@@ -81,6 +81,7 @@ void setup()
 	ShelfDisplays->setHourSegmentColors(HOUR_COLOR);
 	ShelfDisplays->setMinuteSegmentColors(MINUTE_COLOR);
 	ShelfDisplays->setInternalLEDColor(INTERNAL_COLOR);
+	ShelfDisplays->setDotLEDColor(SEPERATION_DOT_COLOR);
 
 	#if RUN_WITHOUT_WIFI == false
 		wifiSetup();
@@ -108,9 +109,6 @@ void setup()
 	startupAnimation();
 	Serial.println("Setup done. Main Loop starting...");
 }
-
-bool flashMiddleDot = false;
-unsigned long last = millis();
 
 void loop()
 {

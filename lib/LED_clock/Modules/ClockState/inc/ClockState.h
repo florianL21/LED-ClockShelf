@@ -20,6 +20,7 @@ public:
 	unsigned long lastMillis;
 	bool currentAlarmSignalState;
 	bool isinNightMode;
+	uint8_t numDots;
 
 	~ClockState();
 	static ClockState* getInstance();
@@ -28,6 +29,7 @@ private:
 	TimeManager* timeM;
 	DisplayManager* ShelfDisplays;
 	static ClockState* instance;
+	unsigned long lastDotFlash;
 
 	ClockState();
 };

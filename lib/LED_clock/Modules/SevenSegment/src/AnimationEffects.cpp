@@ -12,6 +12,7 @@ AnimatableObject::AnimationFunction AnimationEffects::AnimateInToMiddle = &InToM
 AnimatableObject::AnimationFunction AnimationEffects::AnimateOutToMiddle = &OutToMiddle;
 AnimatableObject::AnimationFunction AnimationEffects::AnimateOutFromMiddle = &OutFromMiddle;
 AnimatableObject::AnimationFunction AnimationEffects::AnimateInFromMiddle = &InFromMiddle;
+AnimatableObject::AnimationFunction AnimationEffects::AnimateMiddleDotFlash = &MiddleDotFlash;
 
 AnimationEffects::AnimationEffects()
 {
@@ -123,4 +124,27 @@ void AnimationEffects::OutFromMiddle(CRGB* leds, uint16_t length, CRGB animation
 void AnimationEffects::InFromMiddle(CRGB* leds, uint16_t length, CRGB animationColor, uint16_t totalSteps, int32_t currentStep, bool invert)
 {
     //TBD
+}
+
+void AnimationEffects::MiddleDotFlash(CRGB* leds, uint16_t length, CRGB animationColor, uint16_t totalSteps, int32_t currentStep, bool invert)
+{
+	CRGB newColor = animationColor;
+	uint8_t fadeAmount = 0;
+	for (uint16_t i = 0; i < length; i++)
+	{
+		leds[i] = CRGB::Black;
+	}
+	if(currentStep < totalSteps / 2)
+	{
+		fadeAmount = map(currentStep, 0, totalSteps / 2, 255, 0);
+	}
+	else
+	{
+		fadeAmount = map(currentStep, totalSteps / 2, totalSteps, 0, 255);
+	}
+	leds[(length - 1) / 2] = newColor.fadeToBlackBy(fadeAmount);
+    if(length % 2 == 0)
+	{
+		leds[(length - 1) / 2 + 1] = leds[(length - 1) / 2];
+	}
 }

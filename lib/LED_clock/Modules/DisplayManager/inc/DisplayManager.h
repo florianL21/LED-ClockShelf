@@ -127,6 +127,11 @@ public:
 	void setInternalLEDColor(CRGB color);
 
 	/**
+	 * @brief Sets the color of the seperation dot LEDs and displays it immediatley
+	 */
+	void setDotLEDColor(CRGB color);
+
+	/**
 	 * @brief Starts the loading animation
 	 */
 	void showLoadingAnimation();
@@ -168,7 +173,7 @@ public:
 	/**
 	 * @brief Briefley Flash the dot in the middle of the clock face
 	 */
-	void flashSeperationDot();
+	void flashSeperationDot(uint8_t numDots);
 
     void test();
 

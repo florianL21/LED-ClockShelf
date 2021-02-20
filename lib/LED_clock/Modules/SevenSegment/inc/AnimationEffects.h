@@ -17,6 +17,7 @@ private:
 	static void OutToMiddle(CRGB* leds, uint16_t length, CRGB animationColor, uint16_t totalSteps, int32_t currentStep, bool invert);
 	static void OutFromMiddle(CRGB* leds, uint16_t length, CRGB animationColor, uint16_t totalSteps, int32_t currentStep, bool invert);
 	static void InFromMiddle(CRGB* leds, uint16_t length, CRGB animationColor, uint16_t totalSteps, int32_t currentStep, bool invert);
+    static void MiddleDotFlash(CRGB* leds, uint16_t length, CRGB animationColor, uint16_t totalSteps, int32_t currentStep, bool invert);
     AnimationEffects();
 public:
     ~AnimationEffects();
@@ -33,6 +34,7 @@ public:
 	static AnimatableObject::AnimationFunction AnimateOutToMiddle;
 	static AnimatableObject::AnimationFunction AnimateOutFromMiddle;
 	static AnimatableObject::AnimationFunction AnimateInFromMiddle;
+    static AnimatableObject::AnimationFunction AnimateMiddleDotFlash;
 };
 
 

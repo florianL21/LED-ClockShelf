@@ -170,14 +170,25 @@ void SevenSegment::DisplayNumber(uint8_t value)
 	currentValue = value;
 }
 
-void SevenSegment::FlashMiddleDot()
+void SevenSegment::FlashMiddleDot(uint8_t numDots)
 {
-	if(DsiplayMode != HALF_SEGMENT) // do nothing if we are only dealing with a half segment
+	if(DsiplayMode != ONLY_ONE)
 	{
-		return;
+		if(numDots == 2)
+		{
+			AnimationHandler->startAnimation(Segments[getIndexOfSegment(MiddleTopSegment)], AnimationEffects::AnimateMiddleDotFlash, DOT_FLASH_SPEED);
+			AnimationHandler->startAnimation(Segments[getIndexOfSegment(MiddleBottomSegment)], AnimationEffects::AnimateMiddleDotFlash, DOT_FLASH_SPEED);
+		}
+		else
+		{
+			AnimationHandler->startAnimation(Segments[getIndexOfSegment(CenterSegment)], AnimationEffects::AnimateMiddleDotFlash, DOT_FLASH_SPEED);
+		}
 	}
-	//TODO: implement dot flashing animation
-	// AnimationHandler->startAnimation(Segments[1], Segment::ANIMATE_MIDDLE_DOT_FLASH);
+	else
+	{
+		AnimationHandler->startAnimation(Segments[getIndexOfSegment(RightBottomSegment)], AnimationEffects::AnimateMiddleDotFlash, DOT_FLASH_SPEED);
+		AnimationHandler->startAnimation(Segments[getIndexOfSegment(RightTopSegment)], AnimationEffects::AnimateMiddleDotFlash, DOT_FLASH_SPEED);
+	}
 }
 
 void SevenSegment::setColor(CRGB color)

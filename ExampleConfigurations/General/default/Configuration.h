@@ -95,6 +95,11 @@
 #define INTERNAL_COLOR						CRGB::Blue
 
 /**
+ * @brief Color of the seperation dot LEDs, this will be the default color if blynk functionality is disabled
+ */
+#define SEPERATION_DOT_COLOR				CRGB::Blue
+
+/**
  * @brief Color of the LEDs for the OTA update progress bar
  */
 #define OTA_UPDATE_COLOR					CRGB::Orange
@@ -247,7 +252,7 @@ enum DisplayIDs {
 /**
  * @brief If set to -1 the flashing middle dot is disabled, otherwise this is the index of the Display segment that should display the dot.
  */
-#define DISPLAY_FOR_SEPERATION_DOT -1
+#define DISPLAY_FOR_SEPERATION_DOT SECOND_INTERMEDIATE_DISPLAY
 
 /**
  * @brief Target Frames per second for the smoothness of animations
@@ -259,6 +264,22 @@ enum DisplayIDs {
  * 		  NOTE: The higher this number the less obvious easing effects like bounce or elastic will be
  */
 #define ANIMATION_AFTERGLOW			0.2
+
+/**
+ * @brief Lenght of the dot/s fading animation. One flash fades in and out
+ */
+#define DOT_FLASH_SPEED 2000
+
+/**
+ * @brief Intervall in which the dot/s should flash
+ */
+#define DOT_FLASH_INTERVALL	4000
+
+/**
+ * @brief Number of seperation dots to use by default (or if no blynk functionality is avaliable)
+ * 		  allowed values are 1, 2 and 0 to turn it off
+ */
+#define NUM_SEPERATION_DOTS	2
 
 
 /***************************

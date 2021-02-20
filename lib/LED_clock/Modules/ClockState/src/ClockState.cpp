@@ -8,8 +8,10 @@ ClockState::ClockState()
 	clockBrightness = 128;
 	alarmToggleCount = 0;
 	nightModeBrightness = 0;
+	numDots = NUM_SEPERATION_DOTS;
 
 	lastMillis = millis();
+	lastDotFlash = millis();
 	currentAlarmSignalState = false;
 	isinNightMode = false;
 	timeM = TimeManager::getInstance();
@@ -62,11 +64,14 @@ void ClockState::handleStates()
 			}
 			ShelfDisplays->displayTime(currentTime.hours, currentTime.minutes);
 			#if DISPLAY_FOR_SEPERATION_DOT > -1
-				if(flashMiddleDot == true)
+				if(numDots > 0)
 				{
-					ShelfDisplays->flashSeperationDot(); //this will always flash at half the update speed
+					if(lastDotFlash + DOT_FLASH_INTERVALL <= millis())
+					{
+						lastDotFlash = millis();
+						ShelfDisplays->flashSeperationDot(numDots);
+					}
 				}
-				flashMiddleDot = !flashMiddleDot;
 			#endif
 		break;
 		case ClockState::TIMER_MODE:
