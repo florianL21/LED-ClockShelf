@@ -38,6 +38,12 @@ private:
 	uint8_t LEDBrightnessCurrent;
 	uint64_t lastBrightnessChange;
 
+	typedef struct {
+		SegmentPositions_t segmentPosition;
+		DisplayIDs Display;
+	} SegmentInstanceError;
+	static LinkedList<SegmentInstanceError>* SegmentIndexErrorList;
+
 	CRGB leds[NUM_LEDS];
 	#if APPEND_DOWN_LIGHTERS == false
 		CRGB DownlightLeds[ADDITIONAL_LEDS];
@@ -87,19 +93,28 @@ public:
 	void setMinuteSegmentColors(CRGB color);
 
 	/**
-	 * @brief Attempts to display a string on the seven segment displays
-	 * @param text String of text to display
+	 * @brief Displays the numbers given as they are on the crespective displays
+	 * @param Hour Number to show on the hours display
+	 * @param Minute Number to show on the minutes display
 	 */
-	void displayText(String text);
+	void displayRaw(uint8_t Hour, uint8_t Minute);
 
 	/**
-	 * @brief Display the time
-	 * @param hours 		Hours in a range of 0 to 24, anything else will generate a debug output and not do anything
-	 * @param minutes 		Hours in a range of 0 to 59, anything else will generate a debug output and not do anything
-	 * @param seconds 		If not -1 will display minutes on hour display and seconds on minutes in case the timer is less than an hour.
-	 * 						Will display whatever is possible on the highes digit display depending on the type of display segment configured.
+	 * @brief Display the time, Automatically convert between 24h and 12h formats
+	 * @param hours 		Hours in a range of 0 to 24
+	 * @param minutes 		Hours in a range of 0 to 59
 	 */
-	void displayTime(uint8_t hours, uint8_t minutes, int8_t seconds = -1);
+	void displayTime(uint8_t hours, uint8_t minutes);
+
+	/**
+	 * @brief Display the remaining time on the timer. Always displays the highest possible output.
+	 * 		  For example: If hour is anything else than 1 minutes will be displayed in the hour spot and seconds on the minute spot
+	 * 		  on the display if possible. 
+	 * @param hours 		Hours in a range of 0 to 24
+	 * @param minutes 		Hours in a range of 0 to 59
+	 * @param seconds 		Seconds in a range of 0 to 59
+	 */
+	void displayTimer(uint8_t hours, uint8_t minutes, uint8_t seconds);
 
 	/**
 	 * @brief Has to be called in the cyclicly loop to enable live updating of the LEDs
@@ -158,6 +173,8 @@ public:
     void test();
 
 	static int16_t getGlobalSegmentIndex(SegmentPositions_t segmentPosition, DisplayIDs Display);
+
+	static void printAnimationInitErrors();
 };
 
 

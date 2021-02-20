@@ -71,7 +71,7 @@ void ClockState::handleStates()
 		break;
 		case ClockState::TIMER_MODE:
 			currentTime = timeM->getRemainingTimerTime();
-			ShelfDisplays->displayTime(currentTime.hours, currentTime.minutes, currentTime.seconds);
+			ShelfDisplays->displayTimer(currentTime.hours, currentTime.minutes, currentTime.seconds);
 		break;
 		case ClockState::ALARM_MODE:
 			if(currentAlarmSignalState == true)

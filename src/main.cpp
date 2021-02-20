@@ -88,10 +88,6 @@ void setup()
 	#if ENABLE_OTA_UPLOAD == true
 		setupOTA();
 	#endif
-	#if RUN_WITHOUT_WIFI == false
-		ShelfDisplays->waitForLoadingAnimationFinish();
-	#endif
-
 	#if ENABLE_OTA_UPLOAD == true
 		ArduinoOTA.handle(); //give ota the opportunity to update before the main loop starts in case we have a crash in there
 	#endif
@@ -211,10 +207,13 @@ void TimerDone()
 			#endif
 			if(WiFi.status() != WL_CONNECTED)
 			{
-				while(1); //Never return from here since running the main loop without wifi connection will crash the controller
+				Serial.println("WIFI connection failed. Aborting execution.");
+				abort();
 			}
 		}
 		ShelfDisplays->stopLoadingAnimation();
+		Serial.println("Waiting for loading animation to finish...");
+		ShelfDisplays->waitForLoadingAnimationFinish();
 	}
 #endif
 

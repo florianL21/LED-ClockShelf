@@ -529,7 +529,7 @@ Animator::ComplexAmination* InitAnimate2to1(uint16_t totalAnimationLength)
 	Animator::animationStep* step2 = new Animator::animationStep;
 	step2->arrayIndex 		= new int16_t[LENGTH] 								{BOTTOM_RIGHT_SEGMENT, 					BOTTOM_MIDDLE_SEGMENT};
 	step2->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateInToTop, 		AnimationEffects::AnimateOutToRight};
-	step2->easingEffects 	= new EasingBase*[LENGTH] 							{cubicEaseOut, 							cubicEaseIn};
+	step2->easingEffects 	= new EasingBase*[LENGTH] 							{NO_EASING, 							NO_EASING};
 
 	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);

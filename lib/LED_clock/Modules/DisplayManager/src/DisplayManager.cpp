@@ -1,6 +1,7 @@
 #include "DisplayManager.h"
 
 DisplayManager* DisplayManager::instance = nullptr;
+LinkedList<DisplayManager::SegmentInstanceError>* DisplayManager::SegmentIndexErrorList = nullptr;
 
 DisplayManager::DisplayManager()
 {
@@ -153,10 +154,36 @@ void DisplayManager::InitSegments(uint16_t indexOfFirstLed, uint8_t ledsPerSegme
 	LEDBrightnessCurrent = initBrightness;
 	LEDBrightnessSmoothingStartPoint = initBrightness;
 	setGlobalBrightness(initBrightness, false);
+	//All animations should be initialized by now. So now print the backlog of errors to not forget about it
+	printAnimationInitErrors();
 }
 
-//TODO: implement timer mode
-void DisplayManager::displayTime(uint8_t hours, uint8_t minutes, int8_t seconds)
+void DisplayManager::displayRaw(uint8_t Hour, uint8_t Minute)
+{
+	uint8_t firstHourDigit = Hour / 10;
+	if(firstHourDigit == 0 && DISPLAY_SWITCH_OFF_AT_0 == true)
+	{
+		Displays[HIGHER_DIGIT_HOUR_DISPLAY]->off();
+	}
+	else
+	{
+		Displays[HIGHER_DIGIT_HOUR_DISPLAY]->DisplayNumber(firstHourDigit);
+	}
+	Displays[LOWER_DIGIT_HOUR_DISPLAY]->DisplayNumber(Hour - firstHourDigit * 10); //get the last digit
+
+	uint8_t firstMinuteDigit = Minute / 10;
+	if(firstMinuteDigit == 0 && DISPLAY_SWITCH_OFF_AT_0 == true)
+	{
+		Displays[HIGHER_DIGIT_MINUTE_DISPLAY]->off();
+	}
+	else
+	{
+		Displays[HIGHER_DIGIT_MINUTE_DISPLAY]->DisplayNumber(firstMinuteDigit);
+	}
+	Displays[LOWER_DIGIT_MINUTE_DISPLAY]->DisplayNumber(Minute - firstMinuteDigit * 10); //get the last digit
+}
+
+void DisplayManager::displayTime(uint8_t hours, uint8_t minutes)
 {
 	#if DISPLAY_0_AT_MIDNIGHT == true
 	if(hours == 24)
@@ -170,28 +197,33 @@ void DisplayManager::displayTime(uint8_t hours, uint8_t minutes, int8_t seconds)
 			hours -= 12;
 		}
 	#endif
-	uint8_t firstHourDigit = hours / 10;
-	if(firstHourDigit == 0 && DISPLAY_SWITCH_OFF_AT_0 == true)
-	{
-		Displays[HIGHER_DIGIT_HOUR_DISPLAY]->off();
-	}
-	else
-	{
-		Displays[HIGHER_DIGIT_HOUR_DISPLAY]->DisplayNumber(firstHourDigit);
-	}
-	Displays[LOWER_DIGIT_HOUR_DISPLAY]->DisplayNumber(hours - firstHourDigit * 10); //get the last digit
+	displayRaw(hours, minutes);
+}
 
-	uint8_t firstMinuteDigit = minutes / 10;
-	if(firstMinuteDigit == 0 && DISPLAY_SWITCH_OFF_AT_0 == true)
+void DisplayManager::displayTimer(uint8_t hours, uint8_t minutes, uint8_t seconds)
+{
+	if(hours != 0)
 	{
-		Displays[HIGHER_DIGIT_MINUTE_DISPLAY]->off();
+		displayRaw(hours, minutes);
 	}
 	else
 	{
-		Displays[HIGHER_DIGIT_MINUTE_DISPLAY]->DisplayNumber(firstMinuteDigit);
+		if(SegmentDisplayModes[HIGHER_DIGIT_HOUR_DISPLAY] == SevenSegment::ONLY_ONE)
+		{
+			if(minutes < 20)
+			{
+				displayRaw(minutes, seconds);
+			}
+			else
+			{
+				displayRaw(hours, minutes);
+			}
+		}
+		else
+		{
+			displayRaw(minutes, seconds);
+		}
 	}
-	Displays[LOWER_DIGIT_MINUTE_DISPLAY]->DisplayNumber(minutes - firstMinuteDigit * 10); //get the last digit
-	// Serial.printf("%d%d:%d%d\n\r", firstHourDigit, hours - firstHourDigit * 10, firstMinuteDigit, minutes - firstMinuteDigit * 10);
 }
 
 void DisplayManager::handle()
@@ -334,6 +366,30 @@ int16_t DisplayManager::getGlobalSegmentIndex(SegmentPositions_t segmentPosition
 			return i;
 		}
 	}
-	Serial.printf("[W] Segment not valid; Position: %d; Display: %d", segmentPosition, Display);
+	if(!Serial.availableForWrite()) // during startup Serial is not availiable yet so put the errors to a list
+	{
+		if(SegmentIndexErrorList == nullptr)
+		{
+			SegmentIndexErrorList = new LinkedList<SegmentInstanceError>();
+		}
+		SegmentInstanceError newError = {.segmentPosition = segmentPosition, .Display = Display};
+		SegmentIndexErrorList->add(newError);
+	}
+	else // once Serial was initialized print errors right away to not forget about them
+	{
+		Serial.printf("[W] Segment not valid; Position: %d; Display: %d\n\r", segmentPosition, Display);
+	}
 	return NO_SEGMENTS;
+}
+
+void DisplayManager::printAnimationInitErrors()
+{
+	if(SegmentIndexErrorList != nullptr)
+	{
+		while(SegmentIndexErrorList->size() > 0)
+		{
+			SegmentInstanceError currentError =	SegmentIndexErrorList->pop();
+			Serial.printf("[W] Segment not valid; Position: %d; Display: %d\n\r", currentError.segmentPosition, currentError.Display);
+		}
+	}
 }

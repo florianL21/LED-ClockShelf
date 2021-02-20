@@ -7,13 +7,9 @@ Animator::ComplexAmination* InitLoadingAnimation(uint16_t totalAnimationLength)
 {
 	#undef LENGTH
 	#define LENGTH 2
-	Animator::animationStep* preStep = new Animator::animationStep;
-	preStep->arrayIndex 		= new int16_t[LENGTH]								{SEGMENT(BOTTOM_MIDDLE_SEGMENT, HIGHER_DIGIT_HOUR_DISPLAY), 	NO_SEGMENTS};
-	preStep->animationEffects 	= new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateInToRight, 							NO_ANIMATION};
-	preStep->easingEffects 		= new EasingBase*[LENGTH] 							{NO_EASING, 													NO_EASING};
 	Animator::animationStep* step0 = new Animator::animationStep;
-	step0->arrayIndex 			= new int16_t[LENGTH]								{SEGMENT(BOTTOM_MIDDLE_SEGMENT, HIGHER_DIGIT_HOUR_DISPLAY), 	SEGMENT(BOTTOM_MIDDLE_SEGMENT, FIRST_INTERMEDIATE_DISPLAY)};
-	step0->animationEffects 	= new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateOutToRight, 							AnimationEffects::AnimateInToRight};
+	step0->arrayIndex 			= new int16_t[LENGTH]								{SEGMENT(BOTTOM_MIDDLE_SEGMENT, FIRST_INTERMEDIATE_DISPLAY), 	NO_SEGMENTS};
+	step0->animationEffects 	= new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateInToRight, 							NO_ANIMATION};
 	step0->easingEffects 		= new EasingBase*[LENGTH] 							{NO_EASING, 													NO_EASING};
 	Animator::animationStep* step1 = new Animator::animationStep;
 	step1->arrayIndex 			= new int16_t[LENGTH]								{SEGMENT(BOTTOM_MIDDLE_SEGMENT, FIRST_INTERMEDIATE_DISPLAY), 	SEGMENT(BOTTOM_MIDDLE_SEGMENT, LOWER_DIGIT_HOUR_DISPLAY)};
@@ -81,7 +77,6 @@ Animator::ComplexAmination* InitLoadingAnimation(uint16_t totalAnimationLength)
 	step16->easingEffects 		= new EasingBase*[LENGTH] 							{NO_EASING, 													NO_EASING};
 
 	LinkedList<Animator::animationStep*>* allSteps = new LinkedList<Animator::animationStep*>();
-	allSteps->add(preStep);
 	allSteps->add(step0);
 	allSteps->add(step1);
 	allSteps->add(step2);

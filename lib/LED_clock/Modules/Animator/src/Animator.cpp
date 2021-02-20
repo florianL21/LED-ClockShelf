@@ -139,6 +139,7 @@ void Animator::startAnimationStep(uint16_t stepindex)
 {
 	animationStep* StepToStart = currentComplexAnimation->animations->get(stepindex);
 	bool hasCallbacks = false;
+	bool wasEmpty = true;
 	for (int j = 0; j < currentComplexAnimation->animationComplexity; j++)
 	{
 		if(StepToStart->arrayIndex[j] != -1)
@@ -153,7 +154,12 @@ void Animator::startAnimationStep(uint16_t stepindex)
 			}
 			startAnimation(animationObjects[StepToStart->arrayIndex[j]], StepToStart->animationEffects[j], StepToStart->easingEffects[j]);
 			complexAnimationRunning = true;
+			wasEmpty = false;
 		}
+	}
+	if(wasEmpty == true)
+	{
+		Serial.println("[E] Complex animtation start point was empty. Animation was not started.");
 	}
 }
 
@@ -162,7 +168,7 @@ void Animator::PlayComplexAnimation(ComplexAmination* animation, AnimatableObjec
 	complexAnimationCounter = 0;
 	currentComplexAnimation = animation;
 	loopAnimation = looping;
-	complexAnimationRunning = true;
+	// complexAnimationRunning = true;
 	animationObjects = animationObjectsArray;
 	if(animation->animations == nullptr)
 	{
@@ -191,6 +197,7 @@ void Animator::ComplexAnimationStopLooping()
 
 void Animator::WaitForComplexAnimationCompletion()
 {
+	ComplexAnimationStopLooping();
 	while (complexAnimationRunning == true)
 	{
 		handle();
