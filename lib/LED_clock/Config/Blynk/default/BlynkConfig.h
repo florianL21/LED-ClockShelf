@@ -21,7 +21,7 @@
 	#define BLYNK_CHANNEL_ALARM_START_BUTTON 	V6
 	#define BLYNK_CHANNEL_NIGHT_MODE_TIME_INPUT	V7
 	#define BLYNK_CHANNEL_NIGHT_MODE_BRIGHTNESS	V8
-	#define BLYNK_CHANNEL_NUM_SPERATION_DOTS	V9
+	#define BLYNK_CHANNEL_NUM_SEPERATION_DOTS	V9
 
 	#define BLYNK_CHANNEL_HOUR_COLOR_SAVE		V10
 	#define BLYNK_CHANNEL_MINUTE_COLOR_SAVE		V11
@@ -46,6 +46,7 @@
 		CRGB DotColor;
 		bool blynkUIUpdateRequired = false;
 		DisplayManager* ShelfDisplays;
+		bool isClearAction;
 
 
 		~BlynkConfig();

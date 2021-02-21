@@ -18,7 +18,12 @@ TimeManager::TimeManager()
 	TimerInitialDuration.seconds = 0;
 	TimerTickCallback = nullptr;
 	TimerDoneCallback = nullptr;
+	AlarmTriggeredCallback = nullptr;
 	TimerModeActive = false;
+	AlarmActiveDays = NONE;
+	AlarmActive = false;
+	AlarmTriggered = false;
+	AlarmCleared = false;
 }
 
 TimeManager::~TimeManager()
@@ -91,9 +96,17 @@ bool TimeManager::synchronize()
 		Serial.println("[E]: TimeManager failed to get time from NTP server");
 		return false;
 	}
-	currentTime.hours = timeinfo.tm_hour;
+	currentTime.hours 	= timeinfo.tm_hour;
 	currentTime.minutes = timeinfo.tm_min;
 	currentTime.seconds = timeinfo.tm_sec;
+	if(timeinfo.tm_wday == 0) // Sunday is not the first day in the week
+	{
+		currentWeekday 	= 6;
+	}
+	else
+	{
+		currentWeekday 	= timeinfo.tm_wday - 1;
+	}
 	return true;
 }
 
@@ -180,6 +193,16 @@ bool TimeManager::isInBetween(TimeInfo time1, TimeInfo time2)
 	return false;
 }
 
+TimeManager::TimeInfo TimeManager::addSeconds(TimeInfo time, uint16_t secondsToAdd)
+{
+	uint32_t Time = time.hours * 3600 + time.minutes * 60 + time.seconds + secondsToAdd;
+	TimeInfo newTime;
+	newTime.hours = Time / 3600;
+	newTime.minutes = (Time - newTime.hours * 3600) / 60;
+	newTime.seconds = Time - newTime.hours * 3600 - newTime.minutes * 60;
+	return newTime;
+}
+
 void TimeManager::setTimerTickCallback(TimerCallBack callback)
 {
 	TimerTickCallback = callback;
@@ -188,6 +211,34 @@ void TimeManager::setTimerTickCallback(TimerCallBack callback)
 void TimeManager::setTimerDoneCallback(TimerCallBack callback)
 {
 	TimerDoneCallback = callback;
+}
+
+void TimeManager::setAlarmTime(TimeInfo alarmTime, Weekdays activeDays)
+{
+	AlarmTime = alarmTime;
+	AlarmActiveDays = activeDays;
+	AlarmTriggered = false;
+}
+
+void TimeManager::setAlarmMode(bool active)
+{
+	AlarmActive = active;
+	AlarmTriggered = false;
+}
+
+void TimeManager::setAlarmCallback(TimerCallBack callback)
+{
+	AlarmTriggeredCallback = callback;
+}
+
+bool TimeManager::isAlarmActive()
+{
+	return AlarmTriggered == true && AlarmCleared == false;
+}
+
+void TimeManager::clearAlarm()
+{
+	AlarmCleared = true;
 }
 
 void IRAM_ATTR onTimer()
@@ -226,6 +277,27 @@ void IRAM_ATTR onTimer()
 				}
 				timeM->TimerDuration = timeM->TimerInitialDuration;
 				timeM->TimerModeActive = false;
+			}
+		}
+		// handle the alarm
+		if(((1 << timeM->currentWeekday) & timeM->AlarmActiveDays) != 0)
+		{
+			if(timeM->isInBetween(timeM->AlarmTime, timeM->addSeconds(timeM->AlarmTime, ALARM_NOTIFICATION_PERIOD)))
+			{
+				if(timeM->AlarmTriggered == false)
+				{
+					timeM->AlarmTriggered = true;
+					timeM->AlarmCleared = false;
+					if(timeM->AlarmTriggeredCallback != nullptr)
+					{
+						timeM->AlarmTriggeredCallback();
+					}
+				}
+			}
+			else if(timeM->AlarmTriggered == true)
+			{
+				timeM->AlarmTriggered = false;
+				timeM->AlarmCleared = false;
 			}
 		}
 	#else

@@ -180,6 +180,8 @@ public:
 	static int16_t getGlobalSegmentIndex(SegmentPositions_t segmentPosition, DisplayIDs Display);
 
 	static void printAnimationInitErrors();
+
+	void turnAllLEDsOff();
 };
 
 

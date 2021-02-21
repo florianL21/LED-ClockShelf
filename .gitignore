@@ -3,7 +3,15 @@
 .vscode/c_cpp_properties.json
 .vscode/launch.json
 .vscode/ipch
+.vscode/settings.json
 
+# generated documentation
+doc/_build
+doc/_static
+doc/_templates
+doc/html
+doc/latex
+doc/xml
 
 # Created by https://www.gitignore.io/api/platformio
 # Edit at https://www.gitignore.io/?templates=platformio

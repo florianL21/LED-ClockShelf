@@ -15,6 +15,7 @@
 	BlynkConfig::BlynkConfig()
 	{
 		ShelfDisplays = DisplayManager::getInstance();
+		isClearAction = false;
 	}
 
 	BlynkConfig::~BlynkConfig()
@@ -55,6 +56,10 @@
 					{
 						Blynk.virtualWrite(BLYNK_CHANNEL_TIMER_START_BUTTON, 0);
 					}
+					else if(ClockS->MainState == ClockState::ALARM_NOTIFICATION)
+					{
+						Blynk.setProperty(BLYNK_CHANNEL_ALARM_START_BUTTON, "onLabel", "Clear");
+					}
 					else
 					{
 						// TimeManager::TimeInfo currentTimerValue = timeM->getCurrentTime();
@@ -91,9 +96,7 @@
 	BLYNK_CONNECTED()
 	{
 		Blynk.syncVirtual(BLYNK_CHANNEL_BRIGHTNESS_SLIDER);
-		#if BLYNK_SEPERATE_COLOR_CONTROL == true
-			Blynk.syncVirtual(BLYNK_CHANNEL_LIGHT_GROUP_SELECTOR);
-		#endif
+		Blynk.syncVirtual(BLYNK_CHANNEL_LIGHT_GROUP_SELECTOR);
 		Blynk.syncVirtual(BLYNK_CHANNEL_CURRENT_COLOR_PICKER);
 		Blynk.syncVirtual(BLYNK_CHANNEL_TIMER_TIME_INPUT);
 		Blynk.syncVirtual(BLYNK_CHANNEL_HOUR_COLOR_SAVE);
@@ -102,7 +105,9 @@
 		Blynk.syncVirtual(BLYNK_CHANNEL_DOT_COLOR_SAVE);
 		Blynk.syncVirtual(BLYNK_CHANNEL_NIGHT_MODE_BRIGHTNESS);
 		Blynk.syncVirtual(BLYNK_CHANNEL_NIGHT_MODE_TIME_INPUT);
-		Blynk.syncVirtual(BLYNK_CHANNEL_NUM_SPERATION_DOTS);
+		Blynk.syncVirtual(BLYNK_CHANNEL_NUM_SEPERATION_DOTS);
+		Blynk.syncVirtual(BLYNK_CHANNEL_ALARM_START_BUTTON);
+		Blynk.syncVirtual(BLYNK_CHANNEL_ALARM_TIME_INPUT);
 		Blynk.virtualWrite(BLYNK_CHANNEL_TIMER_START_BUTTON, 0);
 	}
 
@@ -112,30 +117,28 @@
 		BlynkC->ShelfDisplays->setGlobalBrightness(ClockS->clockBrightness);
 	}
 
-	#if BLYNK_SEPERATE_COLOR_CONTROL == true
-		BLYNK_WRITE(BLYNK_CHANNEL_LIGHT_GROUP_SELECTOR)
+	BLYNK_WRITE(BLYNK_CHANNEL_LIGHT_GROUP_SELECTOR)
+	{
+		switch (param.asInt())
 		{
-			switch (param.asInt())
-			{
-			case 1:
-				BlynkC->ColorSelection = BlynkConfig::CHANGE_HOURS_COLOR;
-				Blynk.virtualWrite(BLYNK_CHANNEL_CURRENT_COLOR_PICKER, BlynkC->HourColor.r, BlynkC->HourColor.g, BlynkC->HourColor.b);
-				break;
-			case 2:
-				BlynkC->ColorSelection = BlynkConfig::CHANGE_MINUTES_COLOR;
-				Blynk.virtualWrite(BLYNK_CHANNEL_CURRENT_COLOR_PICKER, BlynkC->MinuteColor.r, BlynkC->MinuteColor.g, BlynkC->MinuteColor.b);
-				break;
-			case 3:
-				BlynkC->ColorSelection = BlynkConfig::CHANGE_INTERRIOR_COLOR;
-				Blynk.virtualWrite(BLYNK_CHANNEL_CURRENT_COLOR_PICKER, BlynkC->InternalColor.r, BlynkC->InternalColor.g, BlynkC->InternalColor.b);
-				break;
-			case 4:
-				BlynkC->ColorSelection = BlynkConfig::CHANGE_DOT_COLOR;
-				Blynk.virtualWrite(BLYNK_CHANNEL_CURRENT_COLOR_PICKER, BlynkC->DotColor.r, BlynkC->DotColor.g, BlynkC->DotColor.b);
-				break;
-			}
+		case 1:
+			BlynkC->ColorSelection = BlynkConfig::CHANGE_HOURS_COLOR;
+			Blynk.virtualWrite(BLYNK_CHANNEL_CURRENT_COLOR_PICKER, BlynkC->HourColor.r, BlynkC->HourColor.g, BlynkC->HourColor.b);
+			break;
+		case 2:
+			BlynkC->ColorSelection = BlynkConfig::CHANGE_MINUTES_COLOR;
+			Blynk.virtualWrite(BLYNK_CHANNEL_CURRENT_COLOR_PICKER, BlynkC->MinuteColor.r, BlynkC->MinuteColor.g, BlynkC->MinuteColor.b);
+			break;
+		case 3:
+			BlynkC->ColorSelection = BlynkConfig::CHANGE_INTERRIOR_COLOR;
+			Blynk.virtualWrite(BLYNK_CHANNEL_CURRENT_COLOR_PICKER, BlynkC->InternalColor.r, BlynkC->InternalColor.g, BlynkC->InternalColor.b);
+			break;
+		case 4:
+			BlynkC->ColorSelection = BlynkConfig::CHANGE_DOT_COLOR;
+			Blynk.virtualWrite(BLYNK_CHANNEL_CURRENT_COLOR_PICKER, BlynkC->DotColor.r, BlynkC->DotColor.g, BlynkC->DotColor.b);
+			break;
 		}
-	#endif
+	}
 
 	BLYNK_WRITE(BLYNK_CHANNEL_CURRENT_COLOR_PICKER)
 	{
@@ -143,33 +146,29 @@
 		currentColor.r  = param[0].asInt();
 		currentColor.g  = param[1].asInt();
 		currentColor.b  = param[2].asInt();
-		#if BLYNK_SEPERATE_COLOR_CONTROL == true
-			switch (BlynkC->ColorSelection)
-			{
-			case BlynkConfig::CHANGE_HOURS_COLOR:
-				BlynkC->ShelfDisplays->setHourSegmentColors(currentColor);
-				Blynk.virtualWrite(BLYNK_CHANNEL_HOUR_COLOR_SAVE, currentColor.r, currentColor.g, currentColor.b);
-				BlynkC->HourColor = currentColor;
-				break;
-			case BlynkConfig::CHANGE_MINUTES_COLOR:
-				BlynkC->ShelfDisplays->setMinuteSegmentColors(currentColor);
-				Blynk.virtualWrite(BLYNK_CHANNEL_MINUTE_COLOR_SAVE, currentColor.r, currentColor.g, currentColor.b);
-				BlynkC->MinuteColor = currentColor;
-				break;
-			case BlynkConfig::CHANGE_INTERRIOR_COLOR:
-				BlynkC->ShelfDisplays->setInternalLEDColor(currentColor);
-				Blynk.virtualWrite(BLYNK_CHANNEL_INTERNAL_COLOR_SAVE, currentColor.r, currentColor.g, currentColor.b);
-				BlynkC->InternalColor = currentColor;
-				break;
-			case BlynkConfig::CHANGE_DOT_COLOR:
-				BlynkC->ShelfDisplays->setDotLEDColor(currentColor);
-				Blynk.virtualWrite(BLYNK_CHANNEL_DOT_COLOR_SAVE, currentColor.r, currentColor.g, currentColor.b);
-				BlynkC->DotColor = currentColor;
-				break;
-			}
-		#else
-			BlynkC->ShelfDisplays->setAllSegmentColors(currentColor);
-		#endif
+		switch (BlynkC->ColorSelection)
+		{
+		case BlynkConfig::CHANGE_HOURS_COLOR:
+			BlynkC->ShelfDisplays->setHourSegmentColors(currentColor);
+			Blynk.virtualWrite(BLYNK_CHANNEL_HOUR_COLOR_SAVE, currentColor.r, currentColor.g, currentColor.b);
+			BlynkC->HourColor = currentColor;
+			break;
+		case BlynkConfig::CHANGE_MINUTES_COLOR:
+			BlynkC->ShelfDisplays->setMinuteSegmentColors(currentColor);
+			Blynk.virtualWrite(BLYNK_CHANNEL_MINUTE_COLOR_SAVE, currentColor.r, currentColor.g, currentColor.b);
+			BlynkC->MinuteColor = currentColor;
+			break;
+		case BlynkConfig::CHANGE_INTERRIOR_COLOR:
+			BlynkC->ShelfDisplays->setInternalLEDColor(currentColor);
+			Blynk.virtualWrite(BLYNK_CHANNEL_INTERNAL_COLOR_SAVE, currentColor.r, currentColor.g, currentColor.b);
+			BlynkC->InternalColor = currentColor;
+			break;
+		case BlynkConfig::CHANGE_DOT_COLOR:
+			BlynkC->ShelfDisplays->setDotLEDColor(currentColor);
+			Blynk.virtualWrite(BLYNK_CHANNEL_DOT_COLOR_SAVE, currentColor.r, currentColor.g, currentColor.b);
+			BlynkC->DotColor = currentColor;
+			break;
+		}
 	}
 
 	BLYNK_WRITE(BLYNK_CHANNEL_HOUR_COLOR_SAVE)
@@ -262,8 +261,46 @@
 		}
 	}
 
-	BLYNK_WRITE(BLYNK_CHANNEL_NUM_SPERATION_DOTS)
+	BLYNK_WRITE(BLYNK_CHANNEL_NUM_SEPERATION_DOTS)
 	{
 		ClockS->numDots = param[0].asInt() - 1;
+	}
+
+	BLYNK_WRITE(BLYNK_CHANNEL_ALARM_TIME_INPUT)
+	{
+		TimeInputParam t(param);
+		TimeManager::TimeInfo AlarmTime { 
+			.hours 		= (uint8_t)t.getStartHour(),
+			.minutes 	= (uint8_t)t.getStartMinute(),
+			.seconds 	= (uint8_t)t.getStartSecond()
+		};
+		uint8_t activeDays = 0x00;
+		for (uint8_t i = 0; i < 7; i++)
+		{
+			if (t.isWeekdaySelected(i + 1)) // 1 to 7 for every weekday in blynk config
+			{
+				activeDays |= (1 << i);
+			}
+		}
+		TimeM->setAlarmTime(AlarmTime, (TimeManager::Weekdays)activeDays);
+	}
+
+	BLYNK_WRITE(BLYNK_CHANNEL_ALARM_START_BUTTON)
+	{
+		if(ClockS->MainState == ClockState::ALARM_NOTIFICATION)
+		{
+			Blynk.setProperty(BLYNK_CHANNEL_ALARM_START_BUTTON, "onLabel", "Deactivate");
+			TimeM->clearAlarm();
+			Blynk.virtualWrite(BLYNK_CHANNEL_ALARM_START_BUTTON, 1);
+			BlynkC->isClearAction = true;
+		}
+		else if(BlynkC->isClearAction == true)
+		{
+			BlynkC->isClearAction = false;
+		}
+		else
+		{
+			TimeM->setAlarmMode(param[0].asInt() == 1);
+		}
 	}
 #endif

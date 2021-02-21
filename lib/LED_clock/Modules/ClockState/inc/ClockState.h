@@ -9,7 +9,7 @@
 class ClockState
 {
 public:
-	enum ClockStates {CLOCK_MODE, TIMER_MODE, ALARM_MODE};
+	enum ClockStates {CLOCK_MODE, TIMER_MODE, TIMER_NOTIFICATION, ALARM_NOTIFICATION};
 	ClockStates MainState;
 	uint8_t clockBrightness;
 	uint16_t alarmToggleCount;

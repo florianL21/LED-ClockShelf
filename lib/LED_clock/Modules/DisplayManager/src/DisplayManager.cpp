@@ -308,6 +308,16 @@ void DisplayManager::turnAllSegmentsOff()
 	}
 }
 
+void DisplayManager::turnAllLEDsOff()
+{
+	for (uint16_t i = 0; i < NUM_SEGMENTS; i++)
+	{
+		animationManager.stopAnimation(allSegments[i]);
+	}
+	turnAllSegmentsOff();
+	setInternalLEDColor(CRGB::Black);
+}
+
 void DisplayManager::showProgress(uint32_t progress, uint32_t total)
 {
 	for (int i = 0; i < map(progress, 0, total, 0, NUM_LEDS_PER_SEGMENT * NUM_SEGMENTS_PROGRESS); i++)

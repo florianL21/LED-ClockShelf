@@ -38,10 +38,6 @@
 		 */
 		#define BLYNK_SERVER 		"blynk-cloud.com" // "139.59.206.133"
 
-		/**
-		 * @brief If you have seperate color controls for HOUR and MINUTE set this to true, if you want to use the same color for both set it to false
-		 */
-		#define BLYNK_SEPERATE_COLOR_CONTROL 	true
 	#endif
 
 	/**
@@ -142,12 +138,22 @@
 /**
  * @brief Flash the current time in case a timer is expired instead of flashing 00:00
  */
-#define ALARM_FLASH_TIME false
+#define TIMER_FLASH_TIME false
 
 /**
  * @brief Number of flashes until an alarm is considered complete and the system goes back to normal
  */
-#define ALARM_FLASH_COUNT 10
+#define TIMER_FLASH_COUNT 10
+
+/**
+ * @brief For how long the Display should flash when an alarm was fired in seconds
+ */
+#define ALARM_NOTIFICATION_PERIOD 600
+
+/**
+ * @brief How bright the clock should blink when an alarm or timer was triggered, range: 0 - 255
+ */
+#define NOTIFICATION_BRIGHTNESS 125
 
 /**
  * @brief How often the time is checked and the displays are updated

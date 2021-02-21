@@ -27,6 +27,7 @@ ClockState* states = ClockState::getInstance();
 
 void TimerTick();
 void TimerDone();
+void AlarmTriggered();
 
 void startupAnimation()
 {
@@ -104,6 +105,7 @@ void setup()
 	}
 	timeM->setTimerTickCallback(TimerTick);
 	timeM->setTimerDoneCallback(TimerDone);
+	timeM->setAlarmCallback(AlarmTriggered);
 
 	Serial.println("Displaying startup animation...");
 	startupAnimation();
@@ -126,6 +128,14 @@ void loop()
     ShelfDisplays->handle();
 }
 
+void AlarmTriggered()
+{
+	states->MainState = ClockState::ALARM_NOTIFICATION;
+	#if IS_BLYNK_ACTIVE == true
+		BlynkConfiguration->updateUI();
+	#endif
+}
+
 void TimerTick()
 {
 	#if IS_BLYNK_ACTIVE == true
@@ -135,7 +145,7 @@ void TimerTick()
 
 void TimerDone()
 {
-	states->MainState = ClockState::ALARM_MODE;
+	states->MainState = ClockState::TIMER_NOTIFICATION;
 	#if IS_BLYNK_ACTIVE == true
 		BlynkConfiguration->updateUI();
 	#endif
@@ -248,7 +258,7 @@ void TimerDone()
 				BlynkConfiguration->stop();
 			#endif
 			ShelfDisplays->setAllSegmentColors(OTA_UPDATE_COLOR);
-			ShelfDisplays->turnAllSegmentsOff(); //instead of the loading animation show a progress bar
+			ShelfDisplays->turnAllLEDsOff(); //instead of the loading animation show a progress bar
 		})
 		.onEnd([]()
 		{
