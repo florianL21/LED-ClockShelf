@@ -14,12 +14,13 @@ class Animator
 {
 public:
 	/**
-	 * @brief Configuration structure used in the linked list to construct an animation chain
-	 * 
-	 * @note Both lists have to have the same length. The length also must be consistent across all animation steps.
-	 * 
-	 * @param arrayIndex index of the array position where the objects that shall be animated is located. Set to -1 to ignore
-	 * @param animationEffects array of animation effects that shall be played back
+	 * \brief Configuration structure used in the linked list to construct an animation chain
+	 *
+	 * \note Both lists have to have the same length. The length also must be consistent across all animation steps.
+	 *
+	 * \param arrayIndex index of the array position where the objects that shall be animated is located. Set to -1 to ignore
+	 * \param animationEffects array of animation effects that shall be played back
+	 * \param easingEffects array of easing effect ("modifiers") that shall be applied to the animation
 	 */
 	typedef struct {
 		int16_t* arrayIndex;
@@ -28,13 +29,13 @@ public:
 	} animationStep;
 
 	/**
-	 * @brief Configuration structure for a complex animation
-	 * 
-	 * @note All list elements must have the same array length
-	 * 
-	 * @param animationComplexity Maximum of how many animations can be triggered at the same time
-	 * @param LengthPerAnimation How long one of the animations in the chain should last for
-	 * @param animations list of animation setps that shall be played in sequence
+	 * \brief Configuration structure for a complex animation
+	 *
+	 * \note All list elements must have the same array length
+	 *
+	 * \param animationComplexity Maximum of how many animations can be triggered at the same time
+	 * \param LengthPerAnimation How long one of the animations in the chain should last for
+	 * \param animations list of animation steps that shall be played in sequence
 	 */
 	typedef struct {
 		uint8_t animationComplexity;
@@ -75,13 +76,11 @@ public:
 	void resetAnimation(AnimatableObject* object);
 	AnimatableObject::AnimationFunction getAnimationEffect(AnimatableObject* object);
 	/**
-	 * @brief Starts a complex chain of animations
+	 * \brief Starts a complex chain of animations
 	 *
-	 * @note The first set of animations always have the trigger STARTS_WITH the configured trigger is ignored
-	 *
-	 * @param animation pointer to the animation that shall be played
-	 * @param animationObjectsArray Array of the objects that shall be animated. The indexies for the array are defined in the animation itself
-	 * @param looping Whether the animation shall be looped or not
+	 * \param animation pointer to the animation that shall be played
+	 * \param animationObjectsArray Array of the objects that shall be animated. The indices for the array are defined in the animation itself
+	 * \param looping Whether the animation shall be looped or not
 	 */
 	void PlayComplexAnimation(ComplexAmination* animation, AnimatableObject* animationObjectsArray[], bool looping = false);
 	void ComplexAnimationStopLooping();

@@ -1,3 +1,10 @@
+/**
+ * \file DisplayManager.cpp
+ * \author Florian Laschober
+ * \brief Implementation of the DisplayManager class member functions
+ */
+
+
 #include "DisplayManager.h"
 
 DisplayManager* DisplayManager::instance = nullptr;

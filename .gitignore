@@ -9,9 +9,7 @@
 doc/_build
 doc/_static
 doc/_templates
-doc/html
-doc/latex
-doc/xml
+doc/doxygen
 
 # Created by https://www.gitignore.io/api/platformio
 # Edit at https://www.gitignore.io/?templates=platformio

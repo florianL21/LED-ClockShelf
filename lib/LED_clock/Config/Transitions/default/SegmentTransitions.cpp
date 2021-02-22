@@ -1,13 +1,23 @@
 #include "SegmentTransitions.h"
 
-// easings have to be setup before any of the initAnimate functions is called
-// it's only possible to reuse an easing if the multiple anstances of
-// it running at the same time have the exat same settings. This includes duration too
+/**
+ * \brief Easings have to be setup before any of the initAnimate functions are called
+ * 		  it's only possible to reuse an easing if the multiple anstances of
+ * 		  it running at the same time have the exact same settings. This includes duration too.
+ * \addtogroup AnimationEasings
+ * \{
+ */
 BounceEase* bounceEaseOut 	= new BounceEase(EASE_OUT);
 CubicEase* cubicEaseInOut 	= new CubicEase(EASE_IN_OUT);
 CubicEase* cubicEaseIn 		= new CubicEase(EASE_IN);
 CubicEase* cubicEaseOut 	= new CubicEase(EASE_OUT);
+/** \} */
 
+/**
+ * \brief Function prototypes for all segment transition animation init functions
+ * \addtogroup TransitionAnimationInitFunctions
+ * \{
+ */
 Animator::ComplexAmination* InitAnimate0to1(uint16_t totalAnimationLength);
 Animator::ComplexAmination* InitAnimate1to2(uint16_t totalAnimationLength);
 Animator::ComplexAmination* InitAnimate2to3(uint16_t totalAnimationLength);
@@ -33,6 +43,13 @@ Animator::ComplexAmination* InitAnimate2to1(uint16_t totalAnimationLength);
 Animator::ComplexAmination* InitAnimate1to0(uint16_t totalAnimationLength);
 Animator::ComplexAmination* InitAnimate0to9(uint16_t totalAnimationLength);
 Animator::ComplexAmination* InitAnimate0to5(uint16_t totalAnimationLength);
+/** \} */
+
+/**
+ * \brief Global variables for all segment transition animations
+ * \addtogroup TransitionAnimations
+ * \{
+ */
 Animator::ComplexAmination* Animate0to1 	= InitAnimate0to1(DIGIT_ANIMATION_SPEED);
 Animator::ComplexAmination* Animate1to2 	= InitAnimate1to2(DIGIT_ANIMATION_SPEED);
 Animator::ComplexAmination* Animate2to3 	= InitAnimate2to3(DIGIT_ANIMATION_SPEED);
@@ -58,7 +75,14 @@ Animator::ComplexAmination* Animate2to1 	= InitAnimate2to1(DIGIT_ANIMATION_SPEED
 Animator::ComplexAmination* Animate1to0 	= InitAnimate1to0(DIGIT_ANIMATION_SPEED);
 Animator::ComplexAmination* Animate0to9 	= InitAnimate0to9(DIGIT_ANIMATION_SPEED);
 Animator::ComplexAmination* Animate0to5 	= InitAnimate0to5(DIGIT_ANIMATION_SPEED);
+/** \} */
 
+/**
+ * \brief This transformation lookup table defines which animation to call for which transition.
+ * 		  Every row decides from which digits we want to morph and than the column of the digit we want to morph to is selected.
+ * 		  The resulting animation is then executed in case that transition is neccesary.
+ *
+ */
 Animator::ComplexAmination* TransformationLookupTable[11][11] = {
 		  //To:0              1              2              3              4              5              6              7              8              9             OFF
 /*from 0	*/{nullptr      , Animate0to1  , nullptr      , nullptr      , nullptr      , Animate0to5  , nullptr      , nullptr      , nullptr      , Animate0to9  , nullptr      },
@@ -71,7 +95,7 @@ Animator::ComplexAmination* TransformationLookupTable[11][11] = {
 /*from 7	*/{nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , Animate7to6  , nullptr      , Animate7to8  , nullptr      , nullptr      },
 /*from 8	*/{nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , Animate8to7  , nullptr      , Animate8to9  , nullptr      },
 /*from 9	*/{Animate9to0  , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , Animate9to8  , nullptr      , nullptr      },
-/*from OFF	*/{nullptr      , AnimateOFFto1, nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      } 
+/*from OFF	*/{nullptr      , AnimateOFFto1, nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      }
 };
 
 Animator::ComplexAmination* InitAnimate0to1(uint16_t totalAnimationLength)

@@ -1,9 +1,15 @@
+/**
+ * \file BlynkConfig.cpp
+ * \author Florian Laschober
+ * \brief Implementation of member function of #BlynkConfig and also all blynk hooks used to interact via the app
+ */
+
 #include "BlynkConfig.h"
 
 #if IS_BLYNK_ACTIVE == true
 
 	/**
-	 * @note if you use a different controller make sure to change the include here
+	 * \note if you use a different controller make sure to change the include here
 	 */
 	#include <BlynkSimpleEsp32.h>
 
@@ -12,12 +18,22 @@
 	ClockState* ClockS = ClockState::getInstance();
 	TimeManager* TimeM = TimeManager::getInstance();
 
+    /**
+     * \brief Construct a new Blynk Config object. Also poulate all variables of the class with meaningful values
+     *
+     */
 	BlynkConfig::BlynkConfig()
 	{
 		ShelfDisplays = DisplayManager::getInstance();
 		isClearAction = false;
+        ColorSelection = CHANGE_HOURS_COLOR;
+        blynkUIUpdateRequired = false;
 	}
 
+    /**
+     * \brief Destroy the Blynk Config object. Ensure proper deletion
+     *
+     */
 	BlynkConfig::~BlynkConfig()
 	{
 		if(instance != nullptr)
@@ -27,6 +43,12 @@
 		}
 	}
 
+    /**
+     * \brief Either instantiate a new BlynkConfig object by calling the private constructor and return it's address
+     *        or it an instance of it already exists just return that.
+     *
+     * \return BlynkConfig* address of the new/already existing blynk config object
+     */
 	BlynkConfig* BlynkConfig::getInstance()
 	{
 		if(instance == nullptr)
@@ -36,11 +58,20 @@
 		return instance;
 	}
 
+    /**
+     * \brief Terminates the blynk task running on the second core
+     *
+     */
 	void BlynkConfig::stop()
 	{
 		vTaskDelete(BlynkLoop);
 	}
 
+    /**
+     * \brief Code for the second thread running on the second core of the ESP handling all the blynk code since
+     *        all of it is coded in a blocking way and we don't want to influence the animation smoothness
+     *
+     */
 	void BlynkLoopCode(void* pvParameters)
 	{
 		Serial.printf("Loop task running on core %d\n\r", xPortGetCoreID());
@@ -72,6 +103,11 @@
 		}
 	}
 
+
+    /**
+     * \brief call Blynk.config and start the separate thread on the second core
+     *
+     */
 	void BlynkConfig::setup()
 	{
 		Blynk.config(BLYNK_AUTH_TOKEN, BLYNK_SERVER, 80);
@@ -87,12 +123,21 @@
 		0);				// pin task to core 0
 	}
 
+    /**
+     * \brief Notify the Blynk thread that a UI update is needed.
+     *        What exactly needs to be updated will be figured out in the thread loop itself.
+     *
+     */
 	void BlynkConfig::updateUI()
 	{
 		blynkUIUpdateRequired = true;
 	}
 
-
+    /**
+     * \brief Sync all channels as soon as blynk connects to the server
+     *        Setup default UI states
+     *
+     */
 	BLYNK_CONNECTED()
 	{
 		Blynk.syncVirtual(BLYNK_CHANNEL_BRIGHTNESS_SLIDER);
@@ -111,12 +156,20 @@
 		Blynk.virtualWrite(BLYNK_CHANNEL_TIMER_START_BUTTON, 0);
 	}
 
+    /**
+     * \brief Handle a brigness change by the user through the blynk app
+     *
+     */
 	BLYNK_WRITE(BLYNK_CHANNEL_BRIGHTNESS_SLIDER)
 	{
 		ClockS->clockBrightness = param[0].asInt();
 		BlynkC->ShelfDisplays->setGlobalBrightness(ClockS->clockBrightness);
 	}
 
+    /**
+     * \brief Handle the change of the light group selector by the user through the blynk app
+     *
+     */
 	BLYNK_WRITE(BLYNK_CHANNEL_LIGHT_GROUP_SELECTOR)
 	{
 		switch (param.asInt())
@@ -140,6 +193,10 @@
 		}
 	}
 
+    /**
+     * \brief Handle a color change for the currently selected light group by the user through the blynk app
+     *
+     */
 	BLYNK_WRITE(BLYNK_CHANNEL_CURRENT_COLOR_PICKER)
 	{
 		CRGB currentColor;
@@ -171,6 +228,11 @@
 		}
 	}
 
+    /**
+     * \brief Use an unused virtual channel to permanently store the color for the hours light group to be able
+     *        to restore it's state after a reset.
+     *
+     */
 	BLYNK_WRITE(BLYNK_CHANNEL_HOUR_COLOR_SAVE)
 	{
 		CRGB SavedColor;
@@ -181,6 +243,11 @@
 		BlynkC->HourColor = SavedColor;
 	}
 
+    /**
+     * \brief Use an unused virtual channel to permanently store the color for the minutes light group to be able
+     *        to restore it's state after a reset.
+     *
+     */
 	BLYNK_WRITE(BLYNK_CHANNEL_MINUTE_COLOR_SAVE)
 	{
 		CRGB SavedColor;
@@ -191,6 +258,11 @@
 		BlynkC->MinuteColor = SavedColor;
 	}
 
+    /**
+     * \brief Use an unused virtual channel to permanently store the color for the internal light group to be able
+     *        to restore it's state after a reset.
+     *
+     */
 	BLYNK_WRITE(BLYNK_CHANNEL_INTERNAL_COLOR_SAVE)
 	{
 		CRGB SavedColor;
@@ -201,6 +273,11 @@
 		BlynkC->InternalColor = SavedColor;
 	}
 
+    /**
+     * \brief Use an unused virtual channel to permanently store the color for the dot light group to be able
+     *        to restore it's state after a reset.
+     *
+     */
 	BLYNK_WRITE(BLYNK_CHANNEL_DOT_COLOR_SAVE)
 	{
 		CRGB SavedColor;
@@ -211,6 +288,10 @@
 		BlynkC->DotColor = SavedColor;
 	}
 
+    /**
+     * \brief Handle a timer duration change by the user through the blynk app
+     *
+     */
 	BLYNK_WRITE(BLYNK_CHANNEL_TIMER_TIME_INPUT)
 	{
 		TimeManager::TimeInfo TimerDuration;
@@ -222,6 +303,10 @@
 		TimeM->setTimerDuration(TimerDuration);
 	}
 
+    /**
+     * \brief Handle the start of the timer by the user through the blynk app
+     *
+     */
 	BLYNK_WRITE(BLYNK_CHANNEL_TIMER_START_BUTTON)
 	{
 		if(param[0].asInt() == 1)
@@ -241,6 +326,10 @@
 		}
 	}
 
+    /**
+     * \brief Handle the nightime window setting change by the user through the blynk app
+     *
+     */
 	BLYNK_WRITE(BLYNK_CHANNEL_NIGHT_MODE_TIME_INPUT)
 	{
 		TimeInputParam t(param);
@@ -252,6 +341,10 @@
 		ClockS->NightModeStopTime.seconds = t.getStopSecond();
 	}
 
+    /**
+     * \brief Handle the nighttime brightness setting change by the user through the blynk app
+     *
+     */
 	BLYNK_WRITE(BLYNK_CHANNEL_NIGHT_MODE_BRIGHTNESS)
 	{
 		ClockS->nightModeBrightness = param[0].asInt();
@@ -261,15 +354,24 @@
 		}
 	}
 
+    /**
+     * \brief Handle the change of the dots display setting by the user through the blynk app
+     *
+     */
 	BLYNK_WRITE(BLYNK_CHANNEL_NUM_SEPERATION_DOTS)
 	{
 		ClockS->numDots = param[0].asInt() - 1;
 	}
 
+    /**
+     * \brief Handle an alarm time change by the user through the blynk app
+     *
+     */
 	BLYNK_WRITE(BLYNK_CHANNEL_ALARM_TIME_INPUT)
 	{
 		TimeInputParam t(param);
-		TimeManager::TimeInfo AlarmTime { 
+		TimeManager::TimeInfo AlarmTime
+        {
 			.hours 		= (uint8_t)t.getStartHour(),
 			.minutes 	= (uint8_t)t.getStartMinute(),
 			.seconds 	= (uint8_t)t.getStartSecond()
@@ -285,6 +387,10 @@
 		TimeM->setAlarmTime(AlarmTime, (TimeManager::Weekdays)activeDays);
 	}
 
+    /**
+     * \brief Handle the activation/deactivation/clearing of the alarm function by the user through the blynk app
+     *
+     */
 	BLYNK_WRITE(BLYNK_CHANNEL_ALARM_START_BUTTON)
 	{
 		if(ClockS->MainState == ClockState::ALARM_NOTIFICATION)

@@ -12,7 +12,7 @@ class TimeManager
 {
 	friend void IRAM_ATTR onTimer();
 public:
-	typedef struct 
+	typedef struct
 	{
 		uint8_t hours;
 		uint8_t minutes;
@@ -57,54 +57,54 @@ public:
 	~TimeManager();
 
 	/**
-	 * @brief Get the singelton instance ot the Time Manager
+	 * \brief Get the singelton instance ot the Time Manager
 	 */
 	static TimeManager* getInstance();
 
 	/**
-	 * @brief Initialize the time manager and synchronize to ntp for the first time
-	 * @pre prerequisite is that WIFI is already up and running
-	 * @returns true if init was successful
+	 * \brief Initialize the time manager and synchronize to ntp for the first time
+	 * \pre prerequisite is that WIFI is already up and running
+	 * \returns true if init was successful
 	 */
 	bool init();
 
 	/**
-	 * @brief Disable the timer and deactivate the interrupt
+	 * \brief Disable the timer and deactivate the interrupt
 	 */
 	void disableTimer();
 
 	/**
-	 * @brief Synchronize the time with the NTP server
+	 * \brief Synchronize the time with the NTP server
 	 */
 	bool synchronize();
 
 	/**
-	 * @brief get the current time in a struct for displaying it on the clock
+	 * \brief get the current time in a struct for displaying it on the clock
 	 */
 	TimeInfo getCurrentTime();
 
 	/**
-	 * @brief get the remaining time of the active timer
+	 * \brief get the remaining time of the active timer
 	 */
 	TimeInfo getRemainingTimerTime();
 
 	/**
-	 * @brief get the current time as a string
+	 * \brief get the current time as a string
 	 */
 	String getCurrentTimeString();
 
 	/**
-	 * @brief Set the duration for the Timer
+	 * \brief Set the duration for the Timer
 	 */
 	void setTimerDuration(TimeInfo newTimerDuration);
 
 	/**
-	 * @brief Start the timer
+	 * \brief Start the timer
 	 */
 	void startTimer();
 
 	/**
-	 * @brief Stop the timer
+	 * \brief Stop the timer
 	 */
 	void stopTimer();
 

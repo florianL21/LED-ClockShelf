@@ -1,3 +1,9 @@
+/**
+ * \file DisplayManager.h
+ * \author Florian Laschober
+ * \brief Display manager class definition
+ */
+
 #ifndef __DISPLAY_MANAGER_H_
 #define __DISPLAY_MANAGER_H_
 
@@ -15,6 +21,12 @@
 
 #define SEGMENT(POSITION, DISPLAY)		DisplayManager::getGlobalSegmentIndex(POSITION, DISPLAY)
 
+/**
+ * \brief The display manager is responsible to Manage all displays.
+ *        It holds an instance to every display avaliable on the clock and manages the
+ *        updating of all displays together.
+ *
+ */
 class DisplayManager
 {
 public:
@@ -66,112 +78,112 @@ public:
 	static DisplayManager* getInstance();
 
 	/**
-	 * @brief Initialize all the segment using the configutration from DisplayConfiguration.cpp
-	 * @param indexOfFirstLed 	Index of the first led in the string that is part of a segment (usually 0)
-	 * @param ledsPerSegment 	Sets the number of LEDs that are in one segment. this will be the same for all segments
-	 * @param initialColor 		Sets the initial color of all the segments. This does not switch any segments on by it's own
-	 * @param initBrightness	Sets the initial brightness of all the segments to avoid brigness jumps during startup
+	 * \brief Initialize all the segment using the configutration from DisplayConfiguration.cpp
+	 * \param indexOfFirstLed 	Index of the first led in the string that is part of a segment (usually 0)
+	 * \param ledsPerSegment 	Sets the number of LEDs that are in one segment. this will be the same for all segments
+	 * \param initialColor 		Sets the initial color of all the segments. This does not switch any segments on by it's own
+	 * \param initBrightness	Sets the initial brightness of all the segments to avoid brigness jumps during startup
 	 */
 	void InitSegments(uint16_t indexOfFirstLed, uint8_t ledsPerSegment, CRGB initialColor, uint8_t initBrightness = 128);
 
 	/**
-	 * @brief Sets the color of all segments and updates it immediatley for all segments that are currently switched on
-	 * @param color Color to set the LEDs to
+	 * \brief Sets the color of all segments and updates it immediatley for all segments that are currently switched on
+	 * \param color Color to set the LEDs to
 	 */
 	void setAllSegmentColors(CRGB color);
 
 	/**
-	 * @brief Sets the color of the the segments which are displaying hours and updates it immediatley for all segments that are currently switched on
-	 * @param color Color to set the LEDs to
+	 * \brief Sets the color of the the segments which are displaying hours and updates it immediatley for all segments that are currently switched on
+	 * \param color Color to set the LEDs to
 	 */
 	void setHourSegmentColors(CRGB color);
 
 	/**
-	 * @brief Sets the color of the the segments which are displaying minutes and updates it immediatley for all segments that are currently switched on
-	 * @param color Color to set the LEDs to
+	 * \brief Sets the color of the the segments which are displaying minutes and updates it immediatley for all segments that are currently switched on
+	 * \param color Color to set the LEDs to
 	 */
 	void setMinuteSegmentColors(CRGB color);
 
 	/**
-	 * @brief Displays the numbers given as they are on the crespective displays
-	 * @param Hour Number to show on the hours display
-	 * @param Minute Number to show on the minutes display
+	 * \brief Displays the numbers given as they are on the crespective displays
+	 * \param Hour Number to show on the hours display
+	 * \param Minute Number to show on the minutes display
 	 */
 	void displayRaw(uint8_t Hour, uint8_t Minute);
 
 	/**
-	 * @brief Display the time, Automatically convert between 24h and 12h formats
-	 * @param hours 		Hours in a range of 0 to 24
-	 * @param minutes 		Hours in a range of 0 to 59
+	 * \brief Display the time, Automatically convert between 24h and 12h formats
+	 * \param hours 		Hours in a range of 0 to 24
+	 * \param minutes 		Hours in a range of 0 to 59
 	 */
 	void displayTime(uint8_t hours, uint8_t minutes);
 
 	/**
-	 * @brief Display the remaining time on the timer. Always displays the highest possible output.
+	 * \brief Display the remaining time on the timer. Always displays the highest possible output.
 	 * 		  For example: If hour is anything else than 1 minutes will be displayed in the hour spot and seconds on the minute spot
-	 * 		  on the display if possible. 
-	 * @param hours 		Hours in a range of 0 to 24
-	 * @param minutes 		Hours in a range of 0 to 59
-	 * @param seconds 		Seconds in a range of 0 to 59
+	 * 		  on the display if possible.
+	 * \param hours 		Hours in a range of 0 to 24
+	 * \param minutes 		Hours in a range of 0 to 59
+	 * \param seconds 		Seconds in a range of 0 to 59
 	 */
 	void displayTimer(uint8_t hours, uint8_t minutes, uint8_t seconds);
 
 	/**
-	 * @brief Has to be called in the cyclicly loop to enable live updating of the LEDs
+	 * \brief Has to be called in the cyclicly loop to enable live updating of the LEDs
 	 */
 	void handle();
 
 	/**
-	 * @brief Sets the color of the interrior LEDs and displays it immediatley
+	 * \brief Sets the color of the interrior LEDs and displays it immediatley
 	 */
 	void setInternalLEDColor(CRGB color);
 
 	/**
-	 * @brief Sets the color of the seperation dot LEDs and displays it immediatley
+	 * \brief Sets the color of the seperation dot LEDs and displays it immediatley
 	 */
 	void setDotLEDColor(CRGB color);
 
 	/**
-	 * @brief Starts the loading animation
+	 * \brief Starts the loading animation
 	 */
 	void showLoadingAnimation();
 
 	/**
-	 * @brief Stops the currently running animation after it is finished. This causes a looping animation to stop after its current cycle
+	 * \brief Stops the currently running animation after it is finished. This causes a looping animation to stop after its current cycle
 	 */
 	void stopLoadingAnimation();
 
 	/**
-	 * @brief Wait until the currently set complex animation is finished.
+	 * \brief Wait until the currently set complex animation is finished.
 	 */
 	void waitForLoadingAnimationFinish();
 
 	/**
-	 * @brief Turns all displays off completely, Does not affect interior lights
+	 * \brief Turns all displays off completely, Does not affect interior lights
 	 */
 	void turnAllSegmentsOff();
 
 	/**
-	 * @brief Display a progress bar on the LEDs
-	 * @param progress How much progress was done already
-	 * @param progress How much progress there is to do in total
+	 * \brief Display a progress bar on the LEDs
+	 * \param progress How much progress was done already
+	 * \param progress How much progress there is to do in total
 	 */
 	void showProgress(uint32_t progress, uint32_t total);
 
 	/**
-	 * @brief Use this delay instead of the Arduino delay to enable Display updates during the delay.
-	 * @param timeInMs Delay time in ms
+	 * \brief Use this delay instead of the Arduino delay to enable Display updates during the delay.
+	 * \param timeInMs Delay time in ms
 	 */
 	void delay(uint32_t timeInMs);
 	/**
-	 * @brief Sets the Brightness globally for all leds
-	 * @param brightness value between 0 for lowest, and 255 for the highes brightness
-	 * @param enableSmoothTransition If true the LEDs will transition to the new value smoothly
+	 * \brief Sets the Brightness globally for all leds
+	 * \param brightness value between 0 for lowest, and 255 for the highes brightness
+	 * \param enableSmoothTransition If true the LEDs will transition to the new value smoothly
 	 */
 	void setGlobalBrightness(uint8_t brightness, bool enableSmoothTransition = true);
 
 	/**
-	 * @brief Briefley Flash the dot in the middle of the clock face
+	 * \brief Briefley Flash the dot in the middle of the clock face
 	 */
 	void flashSeperationDot(uint8_t numDots);
 

@@ -33,22 +33,22 @@ public:
 	void tick(int32_t currentState);
 
 	/**
-	 * @brief sets the color of the segment without displaying the change
+	 * \brief sets the color of the segment without displaying the change
 	 */
 	void setColor(CRGB SegmentColor);
 
 	/**
-	 * @brief sets the color of the segment and updates it automatically in case the segment is turned on
+	 * \brief sets the color of the segment and updates it automatically in case the segment is turned on
 	 */
 	void updateColor(CRGB SegmentColor);
 
 	/**
-	 * @brief Sets the color of the segment and immidiatley writes is out to the leds
+	 * \brief Sets the color of the segment and immidiatley writes is out to the leds
 	 */
 	void displayColor(CRGB SegmentColor);
 	void display();
 	/**
-	 * @brief Turns off the leds of this segment but doesn't change the stored color of the segment
+	 * \brief Turns off the leds of this segment but doesn't change the stored color of the segment
 	 */
 	void off();
 	void updateAnimationColor(CRGB newColor);

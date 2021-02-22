@@ -1,6 +1,6 @@
 #include "SevenSegment.h"
 /**
- * @brief defines the mapping of a number to the segments
+ * \brief defines the mapping of a number to the segments
  */
 uint8_t SevenSegment::segmentMap[10] = {
 	LeftTopSegment | MiddleTopSegment | RightTopSegment | LeftBottomSegment | MiddleBottomSegment | RightBottomSegment, // 0

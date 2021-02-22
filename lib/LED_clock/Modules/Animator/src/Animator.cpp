@@ -3,7 +3,6 @@ unsigned long Animator::lastLEDUpdate=0;
 
 Animator::Animator()
 {
-	// lastLEDUpdate = millis();
 	complexAnimationCounter = 0;
 	complexAnimationRunning = false;
 }

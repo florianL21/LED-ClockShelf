@@ -1,8 +1,25 @@
+/**
+ * \file Animations.cpp
+ * \author Florian Laschober
+ * \brief Implementations of all preconfigured animations avaliable.
+ * 		  The default animations designed for a 12h display with intermediate segments between the digits
+ */
+
 #include "Animations.h"
 
 Animator::ComplexAmination* InitLoadingAnimation(uint16_t totalAnimationLength);
+/**
+ * \brief Initialize the animation in global context to make it usable.
+ *
+ */
 Animator::ComplexAmination* LoadingAnimation = InitLoadingAnimation(LOADING_ANIMATION_DURATION);
 
+/**
+ * \brief Initialize the loading animation
+ *
+ * \param totalAnimationLength Duration of the whole animation in milliseconds
+ * \return Animator::ComplexAmination* pointer to the newly created animation
+ */
 Animator::ComplexAmination* InitLoadingAnimation(uint16_t totalAnimationLength)
 {
 	#undef LENGTH

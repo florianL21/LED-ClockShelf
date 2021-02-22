@@ -81,7 +81,11 @@ void AnimatableObject::start()
 		reset();
 	}
 	animationStarted = true;
-	onAnimationStart();
+	if(easing != nullptr)
+	{
+		easing->setTotalChangeInPosition(numStates);
+		easing->setDuration(AnimationDuration);
+	}
 	if(startCallback != nullptr)
 	{
 		startCallback();
@@ -107,7 +111,6 @@ void AnimatableObject::reset()
 void AnimatableObject::done()
 {
 	reset();
-	onAnimationDone();
 	if(finishedCallback != nullptr)
 	{
 		finishedCallback();
@@ -135,20 +138,6 @@ void AnimatableObject::setAnimationDoneCallback(AnimationCallBack* callback)
 void AnimatableObject::setAnimationStartCallback(AnimationCallBack* callback)
 {
 	startCallback = callback;
-}
-
-void AnimatableObject::onAnimationStart()
-{
-	if(easing != nullptr)
-	{
-		easing->setTotalChangeInPosition(numStates);
-		easing->setDuration(AnimationDuration);
-	}
-}
-
-void AnimatableObject::onAnimationDone()
-{
-	
 }
 
 void AnimatableObject::setAnimationEffect(AnimatableObject::AnimationFunction newEffect)
