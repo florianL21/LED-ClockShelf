@@ -2,8 +2,9 @@
  * \file DisplayConfiguration.cpp
  * \author Florian laschober
  * \brief Configuration for the whole LED setup.
- * 		  This configuration is for a 12h display without intermediate segments
  */
+
+//This configuration is for a 12h display without intermediate segments
 
 #include "DisplayManager.h"
 
@@ -16,7 +17,6 @@
 /**
  * \brief Each segment belongs to some display. This array defines the segment position within this one display.
  * 		  The order of these has to mach the order in which the LEDs are wired.
- *		  TODO: add wiring diagram of this version
  */
 SevenSegment::SegmentPosition DisplayManager::SegmentPositions[NUM_SEGMENTS] = {
 	SevenSegment::RightTopSegment,
@@ -46,7 +46,7 @@ SevenSegment::SegmentPosition DisplayManager::SegmentPositions[NUM_SEGMENTS] = {
 
 /**
  * \brief Each segment has a direction, this is important for animation.
- * 		  The order of them is the same as #SegmentPositions and the direction has to match the
+ * 		  The order of them is the same as #DisplayManager::SegmentPositions and the direction has to match the
  *        sequence in which the LEDs are wired.
  */
 Segment::direction DisplayManager::SegmentDirections[NUM_SEGMENTS] = {
@@ -76,7 +76,7 @@ Segment::direction DisplayManager::SegmentDirections[NUM_SEGMENTS] = {
 };
 
 /**
- * \brief Displays that are present. These define the displays in the order that is set in the #diplayIndex array.
+ * \brief Displays that are present. These define the displays in the order that is set in the #DisplayManager::diplayIndex array.
  */
 SevenSegment::SevenSegmentMode DisplayManager::SegmentDisplayModes[NUM_DISPLAYS] = {
 	SevenSegment::FULL_SEGMENT,
@@ -86,7 +86,7 @@ SevenSegment::SevenSegmentMode DisplayManager::SegmentDisplayModes[NUM_DISPLAYS]
 };
 
 /**
- * \brief These indicies correspond to the index of a Diplay in the array above (#SegmentDisplayModes).
+ * \brief These indicies correspond to the index of a Diplay in the array above (#DisplayManager::SegmentDisplayModes).
  * 		  They define which segment belongs to which Display in the order that they are wired in.
  *        The enum #DisplayIDs from \ref Configuration.h can also be used to create a more readable config.
  */

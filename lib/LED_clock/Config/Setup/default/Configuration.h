@@ -161,7 +161,8 @@
 #define ALARM_NOTIFICATION_PERIOD 600
 
 /**
- * \brief How bright the clock should blink when an alarm or timer was triggered, range: 0 - 255
+ * \brief How bright the clock should blink when an alarm or timer was triggered
+ * \range 0 - 255
  */
 #define NOTIFICATION_BRIGHTNESS 125
 
@@ -223,7 +224,7 @@
 
 /**
  * \brief These enum definitions are used in the code do address the different Seven segment displays.
- * 		  The numbers have to match with the place of the display in the #SegmentDisplayModes array in the file \ref DisplayConfiguration.cpp
+ * 		  The numbers have to match with the place of the display in the #DisplayManager::SegmentDisplayModes array in the file \ref DisplayConfiguration.cpp
  */
 enum DisplayIDs {
 	HIGHER_DIGIT_HOUR_DISPLAY = 0,
@@ -367,7 +368,7 @@ enum DisplayIDs {
 #define DIGIT_ANIMATION_SPEED 900
 
 /**
- * \brief the minimum delay between calls of #FastLED.show()
+ * \brief the minimum delay between calls of FastLED.show()
  */
 #define FASTLED_SAFE_DELAY_MS 20
 

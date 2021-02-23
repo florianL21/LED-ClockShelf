@@ -223,7 +223,7 @@
 
 /**
  * \brief These enum definitions are used in the code do address the different Seven segment displays.
- * 		  The numbers have to match with the place of the display in the #SegmentDisplayModes array in the file \ref DisplayConfiguration.cpp
+ * 		  The numbers have to match with the place of the display in the #DisplayManager::SegmentDisplayModes array in the file \ref DisplayConfiguration.cpp
  */
 enum DisplayIDs {
 	LOWER_DIGIT_MINUTE_DISPLAY = 0,
@@ -364,7 +364,7 @@ enum DisplayIDs {
 #define DIGIT_ANIMATION_SPEED 900
 
 /**
- * \brief the minimum delay between calls of #FastLED.show()
+ * \brief the minimum delay between calls of FastLED.show()
  */
 #define FASTLED_SAFE_DELAY_MS 20
 

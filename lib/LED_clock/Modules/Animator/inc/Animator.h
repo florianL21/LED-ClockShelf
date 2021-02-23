@@ -1,3 +1,9 @@
+/**
+ * \file Animator.h
+ * \author Florian Laschober
+ * \brief Header for class definition of the #Animator
+ */
+
 #ifndef __ANIMATOR_H_
 #define __ANIMATOR_H_
 
@@ -10,13 +16,18 @@
 
 class AnimatableObject;
 
+/**
+ * \brief The Animator class is responsible for handling all animations of objects that inherit from #AnimatableObject
+ * 		  In the system there can be more than one Animator running at the same time.
+ */
 class Animator
 {
 public:
 	/**
 	 * \brief Configuration structure used in the linked list to construct an animation chain
 	 *
-	 * \note Both lists have to have the same length. The length also must be consistent across all animation steps.
+	 * \note All three lists have to have the same length. The length also must be consistent across all animation steps.
+	 * 		 If the system crashes when calling an animation it is most likeley due to missing arrays or missmatched array lengths.
 	 *
 	 * \param arrayIndex index of the array position where the objects that shall be animated is located. Set to -1 to ignore
 	 * \param animationEffects array of animation effects that shall be played back
@@ -61,20 +72,106 @@ private:
 	void startAnimationStep(uint16_t stepindex);
 
 public:
+	/**
+	 * \brief Construct a new Animator object
+	 */
 	Animator();
+
+	/**
+	 * \brief Destroy the Animator object
+	 */
 	~Animator();
+
+	/**
+	 * \brief Add an animatable object to the Animator. The object is then updated by it.
+	 *
+	 * \param animationToAdd Pointer to the object whose animations should be handled by this animator.
+	 */
 	void add(AnimatableObject* animationToAdd);
+
+	/**
+	 * \brief Remove an animatable object from the Animator. The object is then no longer updated by it.
+	 *
+	 * \pre The object must have been added earlier by using #Animator::add
+	 *
+	 * \param animationToRemove Pointer to the object whose animations should not be handled anymore by this animator.
+	 */
 	void remove(AnimatableObject* animationToRemove);
+
+	/**
+	 * \brief To be called periodically as fast as possible. Updates all animation states of all #AnimatableObjects assigned to this #Animator
+	 */
 	void handle();
 
+	/**
+	 * \brief Setup all parameters for an animation of an object assigned to this #Animator but do not start it.
+	 *
+	 * \param object Object for which to change the animation for
+	 * \param animationEffect Animation effect that should be used next time an animation for this object is started.
+	 * \param duration Total duration of the animation effect once it is started.
+	 * \param easing [optional] default = #NO_EASING; Easing effect to apply "on top" of the animation
+	 * \param fps [optional] default = #ANIMATION_TARGET_FPS; Target FPS to run the animation at
+	 */
 	void setAnimation(AnimatableObject* object, AnimatableObject::AnimationFunction animationEffect, uint16_t duration, EasingBase* easing = NO_EASING, uint8_t fps = ANIMATION_TARGET_FPS);
+
+	/**
+	 * \brief Setup all parameters for an animation of an object assigned to this #Animator and start it right away.
+	 *
+	 * \param object Object for which to start the animation for
+	 * \param animationEffect Animation effect that should be started
+	 * \param duration Total duration of the animation effect
+	 * \param easing [optional] default = #NO_EASING; Easing effect to apply "on top" of the animation
+	 * \param fps [optional] default = #ANIMATION_TARGET_FPS; Target FPS to run the animation at
+	 */
 	void startAnimation(AnimatableObject* object, AnimatableObject::AnimationFunction animationEffect, uint16_t duration, EasingBase* easing = NO_EASING, uint8_t fps = ANIMATION_TARGET_FPS);
+
+	/**
+	 * \brief Setup the most important parameters for an animation of an object assigned to this #Animator and start it right away.
+	 *
+	 * \param object Object for which to start the animation for
+	 * \param animationEffect Animation effect that should be started
+	 * \param easing [optional] default = #NO_EASING; Easing effect to apply "on top" of the animation
+	 */
 	void startAnimation(AnimatableObject* object, AnimatableObject::AnimationFunction animationEffect, EasingBase* easing = NO_EASING);
+
+	/**
+	 * \brief Set the animation duration of an object assigned to this #Animator
+	 *
+	 * \param object Object for which to set the suration for
+	 * \param duration Total animation duration in ms once it is started.
+	 */
 	void setAnimationDuration(AnimatableObject* object, uint16_t duration);
+
+	/**
+	 * \brief Starts an animation which was previously setup
+	 * \pre An animation must already be setup for this object. Either though a call of #Animator::setAnimation or a previous #Animator::startAnimation call.
+	 *
+	 * \param object Object for which to start the animation for
+	 */
 	void startAnimation(AnimatableObject* object);
+
+	/**
+	 * \brief Calls the #AnimatableObject::stop function on the given object.
+	 *
+	 * \param object Object for which to stop the animation for
+	 */
 	void stopAnimation(AnimatableObject* object);
+
+	/**
+	 * \brief Calls the #AnimatableObject::reset function on the given object.
+	 *
+	 * \param object Object for which to reset the animation for
+	 */
 	void resetAnimation(AnimatableObject* object);
+
+	/**
+	 * \brief Get the current animation effect of the object
+	 *
+	 * \param object Object for which to get the current animation for
+	 * \return AnimatableObject::AnimationFunction pointer to the current animation effect function
+	 */
 	AnimatableObject::AnimationFunction getAnimationEffect(AnimatableObject* object);
+
 	/**
 	 * \brief Starts a complex chain of animations
 	 *
@@ -83,9 +180,22 @@ public:
 	 * \param looping Whether the animation shall be looped or not
 	 */
 	void PlayComplexAnimation(ComplexAmination* animation, AnimatableObject* animationObjectsArray[], bool looping = false);
+
+	/**
+	 * \brief disables looping of the complex animation so that it sops running after the current cycle is done running
+	 */
 	void ComplexAnimationStopLooping();
+
+	/**
+	 * \brief Blocks exectution of further code until the currently running animation is complete
+	 */
 	void WaitForComplexAnimationCompletion();
 
+	/**
+	 * \brief Delays further execution of code without blocking any currently ongoing animations
+	 *
+	 * \param delayInMs time to wait before moving on in ms
+	 */
 	void delay(uint32_t delayInMs);
 };
 
