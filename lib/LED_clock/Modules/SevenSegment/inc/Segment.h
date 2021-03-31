@@ -5,7 +5,6 @@
 #include "AnimatableObject.h"
 #define FASTLED_INTERNAL
 #include "FastLED.h"
-#include "misc.h"
 
 
 class AnimationEffects;
@@ -43,7 +42,7 @@ public:
 	void updateColor(CRGB SegmentColor);
 
 	/**
-	 * \brief Sets the color of the segment and immidiatley writes is out to the leds
+	 * \brief Sets the color of the segment and immediately writes is out to the leds
 	 */
 	void displayColor(CRGB SegmentColor);
 	void display();

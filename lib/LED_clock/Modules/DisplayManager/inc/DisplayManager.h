@@ -16,9 +16,11 @@
 #include "TimeManager.h"
 #include "Configuration.h"
 #include "LinkedList.h"
-#include "misc.h"
 #include "Animations.h"
 
+/**
+ * \brief Macro to shorten then name of the function to make usage easier in the animation config files.
+ */
 #define SEGMENT(POSITION, DISPLAY)		DisplayManager::getGlobalSegmentIndex(POSITION, DISPLAY)
 
 /**
@@ -29,8 +31,6 @@
  */
 class DisplayManager
 {
-public:
-
 private:
 	//segment configurations
 	static SevenSegment::SegmentPosition SegmentPositions[NUM_SEGMENTS];
@@ -49,6 +49,7 @@ private:
 	uint8_t LEDBrightnessSetPoint;
 	uint8_t LEDBrightnessCurrent;
 	uint64_t lastBrightnessChange;
+    CubicEase* lightSensorEasing;
 
 	typedef struct {
 		SegmentPositions_t segmentPosition;
@@ -73,12 +74,20 @@ private:
 
 	DisplayManager();
 public:
+    /**
+     * \brief Destroys the Display Manager object and cause #DisplayManager::getInstance to create a new object the next time it is called
+     */
 	~DisplayManager();
 
+    /**
+     * \brief Get the instance of the DisplayManager object or create it if it was not yet instantiated.
+     *
+     * \return DisplayManager* returns the address to the DisplayManager object
+     */
 	static DisplayManager* getInstance();
 
 	/**
-	 * \brief Initialize all the segment using the configutration from DisplayConfiguration.cpp
+	 * \brief Initialize all the segment using the configuration from \ref DisplayConfiguration.cpp
 	 * \param indexOfFirstLed 	Index of the first led in the string that is part of a segment (usually 0)
 	 * \param ledsPerSegment 	Sets the number of LEDs that are in one segment. this will be the same for all segments
 	 * \param initialColor 		Sets the initial color of all the segments. This does not switch any segments on by it's own
@@ -87,25 +96,25 @@ public:
 	void InitSegments(uint16_t indexOfFirstLed, uint8_t ledsPerSegment, CRGB initialColor, uint8_t initBrightness = 128);
 
 	/**
-	 * \brief Sets the color of all segments and updates it immediatley for all segments that are currently switched on
+	 * \brief Sets the color of all segments and updates it immediately for all segments that are currently switched on
 	 * \param color Color to set the LEDs to
 	 */
 	void setAllSegmentColors(CRGB color);
 
 	/**
-	 * \brief Sets the color of the the segments which are displaying hours and updates it immediatley for all segments that are currently switched on
+	 * \brief Sets the color of the the segments which are displaying hours and updates it immediately for all segments that are currently switched on
 	 * \param color Color to set the LEDs to
 	 */
 	void setHourSegmentColors(CRGB color);
 
 	/**
-	 * \brief Sets the color of the the segments which are displaying minutes and updates it immediatley for all segments that are currently switched on
+	 * \brief Sets the color of the the segments which are displaying minutes and updates it immediately for all segments that are currently switched on
 	 * \param color Color to set the LEDs to
 	 */
 	void setMinuteSegmentColors(CRGB color);
 
 	/**
-	 * \brief Displays the numbers given as they are on the crespective displays
+	 * \brief Displays the numbers given as they are on the respective displays
 	 * \param Hour Number to show on the hours display
 	 * \param Minute Number to show on the minutes display
 	 */
@@ -129,17 +138,17 @@ public:
 	void displayTimer(uint8_t hours, uint8_t minutes, uint8_t seconds);
 
 	/**
-	 * \brief Has to be called in the cyclicly loop to enable live updating of the LEDs
+	 * \brief Has to be called cyclicly in the loop to enable live updating of the LEDs
 	 */
 	void handle();
 
 	/**
-	 * \brief Sets the color of the interrior LEDs and displays it immediatley
+	 * \brief Sets the color of the interrior LEDs and displays it immediately
 	 */
 	void setInternalLEDColor(CRGB color);
 
 	/**
-	 * \brief Sets the color of the seperation dot LEDs and displays it immediatley
+	 * \brief Sets the color of the seperation dot LEDs and displays it immediately
 	 */
 	void setDotLEDColor(CRGB color);
 
@@ -149,7 +158,8 @@ public:
 	void showLoadingAnimation();
 
 	/**
-	 * \brief Stops the currently running animation after it is finished. This causes a looping animation to stop after its current cycle
+	 * \brief Stops the currently running animation after it is finished.
+     *        This causes a looping animation to stop after its current cycle.
 	 */
 	void stopLoadingAnimation();
 
@@ -163,6 +173,11 @@ public:
 	 */
 	void turnAllSegmentsOff();
 
+    /**
+     * \brief Turn off all LEDs including internal LEDs
+     */
+	void turnAllLEDsOff();
+
 	/**
 	 * \brief Display a progress bar on the LEDs
 	 * \param progress How much progress was done already
@@ -175,6 +190,7 @@ public:
 	 * \param timeInMs Delay time in ms
 	 */
 	void delay(uint32_t timeInMs);
+
 	/**
 	 * \brief Sets the Brightness globally for all leds
 	 * \param brightness value between 0 for lowest, and 255 for the highes brightness
@@ -183,17 +199,34 @@ public:
 	void setGlobalBrightness(uint8_t brightness, bool enableSmoothTransition = true);
 
 	/**
-	 * \brief Briefley Flash the dot in the middle of the clock face
+	 * \brief Calling the Flash dot animation for the appropriate segments in the middle of the clock face
 	 */
 	void flashSeperationDot(uint8_t numDots);
 
+    /**
+     * \brief Used for testing purposes
+     */
     void test();
 
+    /**
+     * \brief get the index of a segment in regards to it's position on the clock face.
+     *  	  This makes writing animations a lot easier as it will act as an abstraction layer between the animation
+     *        config and the display config
+     *
+     * \param segmentPosition Position of a segment in the seven segment display
+     * \param Display Which display should be targeted
+     * \return int16_t index of the Segment in the #DisplayManager::SegmentPositions array
+     */
 	static int16_t getGlobalSegmentIndex(SegmentPositions_t segmentPosition, DisplayIDs Display);
 
+    /**
+     * \brief Debugging function which will print out any errors that occurred when using the
+     *        #DisplayManager::getGlobalSegmentIndex function.
+     *        Especially useful for debugging weirdly behaving animations as animations will be configured before the
+     *        Serial connection is up. If an error was detected by the #DisplayManager::getGlobalSegmentIndex function a
+     *        message will be added to a buffer which can then be printed out using this function.
+     */
 	static void printAnimationInitErrors();
-
-	void turnAllLEDsOff();
 };
 
 

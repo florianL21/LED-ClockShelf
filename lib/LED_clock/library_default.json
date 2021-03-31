@@ -20,7 +20,6 @@
             "-I Modules/Animator/inc",
             "-I Modules/ClockState/inc",
             "-I Modules/DisplayManager/inc",
-            "-I Modules/Misc/inc",
             "-I Modules/SevenSegment/inc",
             "-I Modules/TimeManager/inc",
             "-I Config/Setup/default",

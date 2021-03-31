@@ -83,11 +83,11 @@
 				if(blynkC->blynkUIUpdateRequired == true)
 				{
 					blynkC->blynkUIUpdateRequired = false;
-					if(ClockS->MainState == ClockState::CLOCK_MODE)
+					if(ClockS->getMode() == ClockState::CLOCK_MODE)
 					{
 						Blynk.virtualWrite(BLYNK_CHANNEL_TIMER_START_BUTTON, 0);
 					}
-					else if(ClockS->MainState == ClockState::ALARM_NOTIFICATION)
+					else if(ClockS->getMode() == ClockState::ALARM_NOTIFICATION)
 					{
 						Blynk.setProperty(BLYNK_CHANNEL_ALARM_START_BUTTON, "onLabel", "Clear");
 					}
@@ -313,16 +313,15 @@
 		{
 			TimeM->startTimer();
 			Serial.println("Timer Started");
-			ClockS->MainState = ClockState::TIMER_MODE;
+            ClockS->switchMode(ClockState::TIMER_MODE);
 		}
 		else
 		{
 			TimeM->stopTimer();
 			Serial.println("Timer Stopped");
 			Blynk.syncVirtual(BLYNK_CHANNEL_TIMER_TIME_INPUT);
-			ClockS->alarmToggleCount = 0;
 			BlynkC->ShelfDisplays->setGlobalBrightness(ClockS->clockBrightness);
-			ClockS->MainState = ClockState::CLOCK_MODE;
+            ClockS->switchMode(ClockState::CLOCK_MODE);
 		}
 	}
 
@@ -393,7 +392,7 @@
      */
 	BLYNK_WRITE(BLYNK_CHANNEL_ALARM_START_BUTTON)
 	{
-		if(ClockS->MainState == ClockState::ALARM_NOTIFICATION)
+		if(ClockS->getMode() == ClockState::ALARM_NOTIFICATION)
 		{
 			Blynk.setProperty(BLYNK_CHANNEL_ALARM_START_BUTTON, "onLabel", "Deactivate");
 			TimeM->clearAlarm();

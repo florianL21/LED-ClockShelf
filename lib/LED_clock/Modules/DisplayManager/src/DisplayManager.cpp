@@ -44,6 +44,9 @@ DisplayManager::DisplayManager()
 		lastSensorMeasurement = 0;
 		takeBrightnessMeasurement();
 	#endif
+
+    lightSensorEasing = new CubicEase();
+    lightSensorEasing->setDuration(BRIGHTNESS_INTERPOLATION);
 }
 
 DisplayManager::~DisplayManager()
@@ -51,6 +54,7 @@ DisplayManager::~DisplayManager()
 	if(instance != nullptr)
 	{
 		delete instance;
+        delete lightSensorEasing;
 		instance = nullptr;
 	}
 }
@@ -73,6 +77,11 @@ void DisplayManager::setAllSegmentColors(CRGB color)
 }
 
 #if ENABLE_LIGHT_SENSOR == true
+
+int SortFunction_SmallerThan(uint16_t &a, uint16_t &b)
+{
+	return a < b;
+}
 
 void DisplayManager::takeBrightnessMeasurement()
 {
@@ -247,9 +256,16 @@ void DisplayManager::handle()
 	uint64_t currentMillis = millis();
 	if(LEDBrightnessCurrent != LEDBrightnessSetPoint && lastBrightnessChange + BRIGHTNESS_INTERPOLATION >= currentMillis)
 	{
-		double progress = easeInOutCubic(map_float(currentMillis - lastBrightnessChange, 0.0, BRIGHTNESS_INTERPOLATION, 0.0, 1.0));
-		uint8_t smoothedBrightness = map_float(progress, 0, 1, LEDBrightnessSmoothingStartPoint, LEDBrightnessSetPoint);
-		LEDBrightnessCurrent = smoothedBrightness;
+		if(LEDBrightnessSetPoint > LEDBrightnessSmoothingStartPoint)
+		{
+			lightSensorEasing->setTotalChangeInPosition(LEDBrightnessSmoothingStartPoint - LEDBrightnessSetPoint);
+			LEDBrightnessCurrent = LEDBrightnessSmoothingStartPoint - lightSensorEasing->easeInOut(currentMillis - lastBrightnessChange);
+		}
+        else
+		{
+			lightSensorEasing->setTotalChangeInPosition(LEDBrightnessSetPoint - LEDBrightnessSmoothingStartPoint);
+			LEDBrightnessCurrent = LEDBrightnessSmoothingStartPoint + lightSensorEasing->easeInOut(currentMillis - lastBrightnessChange);
+		}
 		FastLED.setBrightness(LEDBrightnessCurrent);
 	}
 }

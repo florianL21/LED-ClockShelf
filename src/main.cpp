@@ -130,7 +130,7 @@ void loop()
 
 void AlarmTriggered()
 {
-	states->MainState = ClockState::ALARM_NOTIFICATION;
+    states->switchMode(ClockState::ALARM_NOTIFICATION);
 	#if IS_BLYNK_ACTIVE == true
 		BlynkConfiguration->updateUI();
 	#endif
@@ -145,7 +145,7 @@ void TimerTick()
 
 void TimerDone()
 {
-	states->MainState = ClockState::TIMER_NOTIFICATION;
+    states->switchMode(ClockState::TIMER_NOTIFICATION);
 	#if IS_BLYNK_ACTIVE == true
 		BlynkConfiguration->updateUI();
 	#endif

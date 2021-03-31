@@ -10,7 +10,7 @@ ClockState::ClockState()
 	nightModeBrightness = 0;
 	numDots = NUM_SEPERATION_DOTS;
 
-	lastMillis = millis();
+	lastUpdateMillis = millis();
 	lastDotFlash = millis();
 	currentAlarmSignalState = false;
 	isinNightMode = false;
@@ -36,11 +36,25 @@ ClockState* ClockState::getInstance()
 	return instance;
 }
 
+void ClockState::switchMode(ClockStates newState)
+{
+    if(newState == ClockState::CLOCK_MODE)
+    {
+        alarmToggleCount = 0;
+    }
+    MainState = newState;
+}
+
+ClockState::ClockStates ClockState::getMode()
+{
+    return MainState;
+}
+
 void ClockState::handleStates()
 {
-	if(lastMillis + TIME_UPDATE_INTERVALL <= millis()) // update the display only in a certain intervall
+	if(lastUpdateMillis + TIME_UPDATE_INTERVALL <= millis()) // update the display only in a certain intervall
 	{
-		lastMillis = millis();
+		lastUpdateMillis = millis();
 		TimeManager::TimeInfo currentTime;
 		currentTime = timeM->getCurrentTime();
 		switch (MainState)
