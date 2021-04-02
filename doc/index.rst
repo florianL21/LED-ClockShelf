@@ -1,14 +1,16 @@
-Welcome to LED-Clock's documentation!
-=====================================
+.. mdinclude:: ../README.md
+
+
+######################
+Where to go from here
+######################
 
 .. toctree::
    :maxdepth: 2
 
-   GeneralConfiguration
-   AvailableAnimations
-
-
-WIP
+   sites/GeneralConfiguration
+   sites/AvailableAnimations
+   doxyapi/library_root
 
 
 Indices and tables
