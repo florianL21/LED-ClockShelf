@@ -1,3 +1,16 @@
+/**
+ * \file AnimationEffects.cpp
+ * \author Florian Laschober
+ * \brief Implementation of the basic animations that are avaliable for all segments
+ * 		  Requirements to such an animation function:
+ * 			- All animations have to have the same prototype
+ * 			- An animation function always has to set the state of all LEDs that it is affecting for every step. This is required because an
+ * 			   animation can also be played backwards or multiple directions during the lifetime of one animation (for example a bounce easing)
+ * 			- The animation always starts when the current step is 0, but undershoot is also possible so it also has to be considered what
+ * 			  happens if current step goes negative. This should also result in a logical animation being displayed
+ * 			- The current step can go higher than totalSteps, this would then be an overshoot. Same considerations as above should be taken into account.
+ */
+
 #include "AnimationEffects.h"
 
 AnimatableObject::AnimationFunction AnimationEffects::AnimateOutToRight = &OutToRight;
@@ -13,16 +26,6 @@ AnimatableObject::AnimationFunction AnimationEffects::AnimateOutToMiddle = &OutT
 AnimatableObject::AnimationFunction AnimationEffects::AnimateOutFromMiddle = &OutFromMiddle;
 AnimatableObject::AnimationFunction AnimationEffects::AnimateInFromMiddle = &InFromMiddle;
 AnimatableObject::AnimationFunction AnimationEffects::AnimateMiddleDotFlash = &MiddleDotFlash;
-
-AnimationEffects::AnimationEffects()
-{
-
-}
-
-AnimationEffects::~AnimationEffects()
-{
-}
-
 
 void AnimationEffects::OutToRight(CRGB* leds, uint16_t length, CRGB animationColor, uint16_t totalSteps, int32_t currentStep, bool invert)
 {

@@ -1,3 +1,9 @@
+/**
+ * \file Segment.cpp
+ * \author Florian Laschober
+ * \brief Implementation of the member functions of the Segment class
+ */
+
 #include "Segment.h"
 
 Segment::Segment(CRGB LEDBuffer[], uint16_t indexOfFirstLEDInSegment, uint8_t segmentLength, direction Direction, CRGB segmentColor) : AnimatableObject(0, 0)
@@ -40,12 +46,6 @@ void Segment::setColor(CRGB SegmentColor)
 {
 	color = SegmentColor;
 	updateAnimationColor(color);
-}
-
-void Segment::displayColor(CRGB SegmentColor)
-{
-	setColor(SegmentColor);
-	display();
 }
 
 void Segment::off()

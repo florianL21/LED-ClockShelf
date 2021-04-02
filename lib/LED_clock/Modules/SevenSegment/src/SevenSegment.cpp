@@ -1,3 +1,9 @@
+/**
+ * \file SevenSegment.cpp
+ * \author Florian Laschober
+ * \brief Implementations of the member functions of the SevenSegment class
+ */
+
 #include "SevenSegment.h"
 /**
  * \brief defines the mapping of a number to the segments
@@ -75,6 +81,7 @@ void SevenSegment::add(Segment* segmentToAdd, SegmentPosition positionInDisplay)
 	AnimationHandler->add(segmentToAdd);
 }
 
+//TODO: maybe put this into a loop, it takes a lot of memory
 void SevenSegment::DisplayNumberWithoutAnim(uint8_t value)
 {
 	uint8_t currentSegmentMap = 0x00;
@@ -213,12 +220,6 @@ void SevenSegment::updateColor(CRGB color)
 	}
 }
 
-void SevenSegment::displayColor(CRGB color)
-{
-	setColor(color);
-	DisplayNumber(currentValue);
-}
-
 void SevenSegment::off()
 {
 	for (uint8_t i = 0; i < 7; i++)
@@ -226,17 +227,6 @@ void SevenSegment::off()
 		if(Segments[i] != nullptr)
 		{
 			Segments[i]->off();
-		}
-	}
-}
-
-void SevenSegment::addAnimator(Animator* AnimationManager)
-{
-	for (uint8_t i = 0; i < 7; i++)
-	{
-		if(Segments[i] != nullptr)
-		{
-			AnimationManager->add(Segments[i]);
 		}
 	}
 }

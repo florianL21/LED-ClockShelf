@@ -1,3 +1,9 @@
+/**
+ * \file AnimationEffects.h
+ * \author Florian Laschober
+ * \brief All avaliable animation effects which can be applied to sone segment are listed here
+ */
+
 #ifndef __ANIMATION_EFFECT_H_
 #define __ANIMATION_EFFECT_H_
 

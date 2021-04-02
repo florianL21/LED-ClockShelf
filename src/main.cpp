@@ -1,3 +1,9 @@
+/**
+ * \file main.cpp
+ * \author Florian Laschober
+ * \brief Glue logic to bring together all the modules and some additional stuff
+ */
+
 #include "Configuration.h"
 #include <Arduino.h>
 #include "DisplayManager.h"

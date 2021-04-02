@@ -289,22 +289,22 @@ void DisplayManager::setDotLEDColor(CRGB color)
 	#endif
 }
 
-void DisplayManager::AnimationManagersTemporaryOverride(Animator* OverrideanimationManager)
-{
-	for (uint16_t i = 0; i < NUM_DISPLAYS; i++)
-	{
-		animationManagerTempBuffer[i] = Displays[i]->AnimationHandler;
-		Displays[i]->AnimationHandler = OverrideanimationManager;
-	}
-}
+// void DisplayManager::AnimationManagersTemporaryOverride(Animator* OverrideanimationManager)
+// {
+// 	for (uint16_t i = 0; i < NUM_DISPLAYS; i++)
+// 	{
+// 		animationManagerTempBuffer[i] = Displays[i]->AnimationHandler;
+// 		Displays[i]->AnimationHandler = OverrideanimationManager;
+// 	}
+// }
 
-void DisplayManager::restoreAnimationManagers()
-{
-	for (uint16_t i = 0; i < NUM_DISPLAYS; i++)
-	{
-		Displays[i]->AnimationHandler = animationManagerTempBuffer[i];
-	}
-}
+// void DisplayManager::restoreAnimationManagers()
+// {
+// 	for (uint16_t i = 0; i < NUM_DISPLAYS; i++)
+// 	{
+// 		Displays[i]->AnimationHandler = animationManagerTempBuffer[i];
+// 	}
+// }
 
 void DisplayManager::showLoadingAnimation()
 {

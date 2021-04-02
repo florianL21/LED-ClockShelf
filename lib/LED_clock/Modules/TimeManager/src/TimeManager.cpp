@@ -1,3 +1,9 @@
+/**
+ * \file TimeManager.cpp
+ * \author Florian Laschober
+ * \brief Implementation of the TimeManager class member functions
+ */
+
 #include "TimeManager.h"
 
 TimeManager* TimeManager::TimeManagerSingelton = nullptr;
@@ -170,10 +176,10 @@ void TimeManager::stopTimer()
 	TimerModeActive = false;
 }
 
-bool TimeManager::isInBetween(TimeInfo time1, TimeInfo time2)
+bool TimeManager::isInBetween(TimeInfo timeStart, TimeInfo timeStop)
 {
-	uint32_t startTime = time1.hours * 3600 + time1.minutes * 60 + time1.seconds;
-	uint32_t endTime = time2.hours * 3600 + time2.minutes * 60 + time2.seconds;
+	uint32_t startTime = timeStart.hours * 3600 + timeStart.minutes * 60 + timeStart.seconds;
+	uint32_t endTime = timeStop.hours * 3600 + timeStop.minutes * 60 + timeStop.seconds;
 	uint32_t nowTime = currentTime.hours * 3600 + currentTime.minutes * 60 + currentTime.seconds;
 
 	if(startTime > endTime)
