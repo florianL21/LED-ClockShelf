@@ -32,9 +32,10 @@ DisplayManager::DisplayManager()
 
 	for (uint8_t i = 0; i < NUM_DISPLAYS; i++)
 	{
-		animationManagers[i] = new Animator();
 		Displays[i] = nullptr;
 	}
+
+	animationManager = Animator::getInstance();
 
 	LEDBrightnessCurrent = 128;
 	LEDBrightnessSmoothingStartPoint = 128;
@@ -51,12 +52,8 @@ DisplayManager::DisplayManager()
 
 DisplayManager::~DisplayManager()
 {
-	if(instance != nullptr)
-	{
-		delete instance;
-        delete lightSensorEasing;
-		instance = nullptr;
-	}
+	delete lightSensorEasing;
+	instance = nullptr;
 }
 
 DisplayManager* DisplayManager::getInstance()
@@ -160,10 +157,9 @@ void DisplayManager::InitSegments(uint16_t indexOfFirstLed, uint8_t ledsPerSegme
 		allSegments[i] = new Segment(leds, currentLEDIndex, ledsPerSegment, SegmentDirections[i], initialColor);
 		if(Displays[diplayIndex[i]] == nullptr)
 		{
-			Displays[diplayIndex[i]] = new SevenSegment(SegmentDisplayModes[diplayIndex[i]], animationManagers[diplayIndex[i]]);
+			Displays[diplayIndex[i]] = new SevenSegment(SegmentDisplayModes[diplayIndex[i]], animationManager);
 		}
 		Displays[diplayIndex[i]]->add(allSegments[i], SegmentPositions[i]);
-		animationManager.add(allSegments[i]);
 		currentLEDIndex += ledsPerSegment;
 	}
 	//set the initial brightness to avoid jumps
@@ -244,11 +240,7 @@ void DisplayManager::displayTimer(uint8_t hours, uint8_t minutes, uint8_t second
 
 void DisplayManager::handle()
 {
-	animationManager.handle();
-	for (uint8_t i = 0; i < NUM_DISPLAYS; i++)
-	{
-		animationManagers[i]->handle();
-	}
+	animationManager->handle();
 
 	#if ENABLE_LIGHT_SENSOR == true
 		takeBrightnessMeasurement();
@@ -289,38 +281,19 @@ void DisplayManager::setDotLEDColor(CRGB color)
 	#endif
 }
 
-// void DisplayManager::AnimationManagersTemporaryOverride(Animator* OverrideanimationManager)
-// {
-// 	for (uint16_t i = 0; i < NUM_DISPLAYS; i++)
-// 	{
-// 		animationManagerTempBuffer[i] = Displays[i]->AnimationHandler;
-// 		Displays[i]->AnimationHandler = OverrideanimationManager;
-// 	}
-// }
-
-// void DisplayManager::restoreAnimationManagers()
-// {
-// 	for (uint16_t i = 0; i < NUM_DISPLAYS; i++)
-// 	{
-// 		Displays[i]->AnimationHandler = animationManagerTempBuffer[i];
-// 	}
-// }
-
 void DisplayManager::showLoadingAnimation()
 {
-	// AnimationManagersTemporaryOverride(&animationManager);
-	animationManager.PlayComplexAnimation(LoadingAnimation, (AnimatableObject**)allSegments, true);
+	loadingAnimationID = animationManager->PlayComplexAnimation(LoadingAnimation, (AnimatableObject**)allSegments, true);
 }
 
 void DisplayManager::stopLoadingAnimation()
 {
-	animationManager.ComplexAnimationStopLooping();
+	animationManager->ComplexAnimationStopLooping(loadingAnimationID);
 }
 
 void DisplayManager::waitForLoadingAnimationFinish()
 {
-	animationManager.WaitForComplexAnimationCompletion();
-	// restoreAnimationManagers();
+	animationManager->WaitForComplexAnimationCompletion(loadingAnimationID);
 }
 
 void DisplayManager::turnAllSegmentsOff()
@@ -335,7 +308,7 @@ void DisplayManager::turnAllLEDsOff()
 {
 	for (uint16_t i = 0; i < NUM_SEGMENTS; i++)
 	{
-		animationManager.stopAnimation(allSegments[i]);
+		animationManager->stopAnimation(allSegments[i]);
 	}
 	turnAllSegmentsOff();
 	setInternalLEDColor(CRGB::Black);
@@ -347,12 +320,12 @@ void DisplayManager::showProgress(uint32_t progress, uint32_t total)
 	{
 		leds[i] = OTA_UPDATE_COLOR;
 	}
-	animationManager.handle();
+	animationManager->handle();
 }
 
 void DisplayManager::delay(uint32_t timeInMs)
 {
-	animationManager.delay(timeInMs);
+	animationManager->delay(timeInMs);
 }
 
 void DisplayManager::setGlobalBrightness(uint8_t brightness, bool enableSmoothTransition)

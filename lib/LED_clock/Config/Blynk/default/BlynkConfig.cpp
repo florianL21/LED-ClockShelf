@@ -36,11 +36,7 @@
      */
 	BlynkConfig::~BlynkConfig()
 	{
-		if(instance != nullptr)
-		{
-			delete instance;
-			instance = nullptr;
-		}
+		instance = nullptr;
 	}
 
     /**

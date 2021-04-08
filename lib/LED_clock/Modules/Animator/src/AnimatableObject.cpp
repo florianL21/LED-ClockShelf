@@ -21,6 +21,7 @@ AnimatableObject::AnimatableObject(uint16_t OverallDuration, uint16_t steps)
 	easing = nullptr;
 	currentAnimationTime = 0;
 	oldState = UINT16_MAX;
+	complexAnimationInst = nullptr;
 }
 
 AnimatableObject::~AnimatableObject()

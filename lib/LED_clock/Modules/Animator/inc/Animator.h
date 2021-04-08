@@ -54,28 +54,35 @@ public:
 		LinkedList<animationStep*>* animations;
 	} ComplexAmination;
 
+	struct ComplexAnimationInstance {
+		ComplexAmination* animation;
+		bool loop;
+		uint16_t counter;
+		AnimatableObject** objects;
+		bool running;
+	};
+
 private:
+	static Animator* currentInstance;
 	LinkedList<AnimatableObject*> AnimatableObjects;
 	static unsigned long lastLEDUpdate;
-
-	ComplexAmination* currentComplexAnimation;
-	bool loopAnimation;
-	uint16_t complexAnimationCounter;
-	bool complexAnimationRunning;
-
-	AnimatableObject** animationObjects;
 
 	int16_t getIndexInList(AnimatableObject* object);
 	void animationIterationStartCallback(AnimatableObject* sourceObject);
 	void animationIterationDoneCallback(AnimatableObject* sourceObject);
 
-	void startAnimationStep(uint16_t stepindex);
+	void startAnimationStep(uint16_t stepindex, ComplexAnimationInstance* animationInst);
 
-public:
 	/**
 	 * \brief Construct a new Animator object
 	 */
 	Animator();
+
+public:
+	/**
+	 * \brief get an instance of the Animator object
+	 */
+	static Animator* getInstance();
 
 	/**
 	 * \brief Destroy the Animator object
@@ -135,20 +142,20 @@ public:
 	void startAnimation(AnimatableObject* object, AnimatableObject::AnimationFunction animationEffect, EasingBase* easing = NO_EASING);
 
 	/**
-	 * \brief Set the animation duration of an object assigned to this #Animator
-	 *
-	 * \param object Object for which to set the suration for
-	 * \param duration Total animation duration in ms once it is started.
-	 */
-	void setAnimationDuration(AnimatableObject* object, uint16_t duration);
-
-	/**
 	 * \brief Starts an animation which was previously setup
 	 * \pre An animation must already be setup for this object. Either though a call of #Animator::setAnimation or a previous #Animator::startAnimation call.
 	 *
 	 * \param object Object for which to start the animation for
 	 */
 	void startAnimation(AnimatableObject* object);
+
+	/**
+	 * \brief Set the animation duration of an object assigned to this #Animator
+	 *
+	 * \param object Object for which to set the suration for
+	 * \param duration Total animation duration in ms once it is started.
+	 */
+	void setAnimationDuration(AnimatableObject* object, uint16_t duration);
 
 	/**
 	 * \brief Calls the #AnimatableObject::stop function on the given object.
@@ -178,18 +185,24 @@ public:
 	 * \param animation pointer to the animation that shall be played
 	 * \param animationObjectsArray Array of the objects that shall be animated. The indices for the array are defined in the animation itself
 	 * \param looping Whether the animation shall be looped or not
+	 * \return uint32_t The animation ID of the newly started animation
+	 * 					-1 which results to the max 32 bit value represents an error while starting the animation
 	 */
-	void PlayComplexAnimation(ComplexAmination* animation, AnimatableObject* animationObjectsArray[], bool looping = false);
+	ComplexAnimationInstance* PlayComplexAnimation(ComplexAmination* animation, AnimatableObject* animationObjectsArray[], bool looping = false);
 
 	/**
 	 * \brief disables looping of the complex animation so that it sops running after the current cycle is done running
+	 *
+	 * \param animationID ID of the animation which shall be stopped
 	 */
-	void ComplexAnimationStopLooping();
+	void ComplexAnimationStopLooping(ComplexAnimationInstance* animationInst);
 
 	/**
 	 * \brief Blocks exectution of further code until the currently running animation is complete
+	 *
+	 * \param animationID ID of the animation which shall be waited for
 	 */
-	void WaitForComplexAnimationCompletion();
+	void WaitForComplexAnimationCompletion(ComplexAnimationInstance* animationInst);
 
 	/**
 	 * \brief Delays further execution of code without blocking any currently ongoing animations

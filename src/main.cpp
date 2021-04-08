@@ -158,6 +158,15 @@ void TimerDone()
 }
 
 #if RUN_WITHOUT_WIFI == false
+	void WiFiStationDisconnected(WiFiEvent_t event, WiFiEventInfo_t info)
+	{
+		Serial.print("WiFi lost connection. Reason: ");
+		Serial.println(info.disconnected.reason);
+		Serial.println("Trying to Reconnect");
+		WiFi.disconnect();
+		WiFi.reconnect();
+	}
+
 	void wifiSetup()
 	{
 		#if USE_ESPTOUCH_SMART_CONFIG == true
@@ -225,6 +234,7 @@ void TimerDone()
 				abort();
 			}
 		}
+		WiFi.onEvent(WiFiStationDisconnected, SYSTEM_EVENT_STA_DISCONNECTED);
 		ShelfDisplays->stopLoadingAnimation();
 		Serial.println("Waiting for loading animation to finish...");
 		ShelfDisplays->waitForLoadingAnimationFinish();
@@ -273,6 +283,7 @@ void TimerDone()
 		.onProgress([](unsigned int progress, unsigned int total)
 		{
 			Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
+			ShelfDisplays->setGlobalBrightness(50);
 			ShelfDisplays->showProgress(progress, total);
 		})
 		.onError([](ota_error_t error)

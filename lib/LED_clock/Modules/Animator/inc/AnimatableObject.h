@@ -64,6 +64,7 @@ private:
 	uint16_t numStates;
 	uint16_t oldState;
 	bool animationStarted;
+	void* complexAnimationInst;
 
 	AnimationCallBack* finishedCallback;
 	AnimationCallBack* startCallback;

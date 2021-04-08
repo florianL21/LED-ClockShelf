@@ -35,6 +35,7 @@ TimeManager::TimeManager()
 TimeManager::~TimeManager()
 {
 	disableTimer();
+	TimeManagerSingelton = nullptr;
 }
 
 TimeManager* TimeManager::getInstance()

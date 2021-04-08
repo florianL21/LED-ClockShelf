@@ -37,7 +37,7 @@ BOTTOM_RIGHT_SEGMENT 	= 6
  * \brief Class definition for SevenSegment which groups together all Segment objects which
  * 		  belong to together and provides some wrapper functions to manage all seven segments together
  */
-class SevenSegment : AnimatableObject
+class SevenSegment
 {
 public:
 	/**

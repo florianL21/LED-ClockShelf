@@ -39,9 +39,7 @@ private:
 	static uint8_t diplayIndex[NUM_SEGMENTS];
 	static DisplayManager* instance;
 
-	Animator animationManager;
-	Animator* animationManagers[NUM_DISPLAYS];
-	Animator* animationManagerTempBuffer[NUM_DISPLAYS];
+	Animator* animationManager;
 	Segment* allSegments[NUM_SEGMENTS];
 	SevenSegment* Displays[NUM_DISPLAYS];
 	uint8_t currentLEDBrightness;
@@ -50,6 +48,7 @@ private:
 	uint8_t LEDBrightnessCurrent;
 	uint64_t lastBrightnessChange;
     CubicEase* lightSensorEasing;
+	Animator::ComplexAnimationInstance* loadingAnimationID;
 
 	typedef struct {
 		SegmentPositions_t segmentPosition;
