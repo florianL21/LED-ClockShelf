@@ -48,6 +48,9 @@ DisplayManager::DisplayManager()
 
     lightSensorEasing = new CubicEase();
     lightSensorEasing->setDuration(BRIGHTNESS_INTERPOLATION);
+	progressTotal = 0;
+	currentProgressOffset = 0;
+	currentProgressStep = 0;
 }
 
 DisplayManager::~DisplayManager()
@@ -283,7 +286,7 @@ void DisplayManager::setDotLEDColor(CRGB color)
 
 void DisplayManager::showLoadingAnimation()
 {
-	loadingAnimationID = animationManager->PlayComplexAnimation(LoadingAnimation, (AnimatableObject**)allSegments, true);
+	loadingAnimationID = animationManager->PlayComplexAnimation(IndefiniteLoadingAnimation, (AnimatableObject**)allSegments, true);
 }
 
 void DisplayManager::stopLoadingAnimation()
@@ -314,13 +317,24 @@ void DisplayManager::turnAllLEDsOff()
 	setInternalLEDColor(CRGB::Black);
 }
 
-void DisplayManager::showProgress(uint32_t progress, uint32_t total)
+void DisplayManager::displayProgress(uint32_t total)
 {
-	for (int i = 0; i < map(progress, 0, total, 0, NUM_LEDS_PER_SEGMENT * NUM_SEGMENTS_PROGRESS); i++)
+	loadingAnimationInst = animationManager->BuildComplexAnimation(LoadingProgressAnimation, (AnimatableObject**)allSegments);
+	progressTotal = total;
+	currentProgressOffset = 0;
+	currentProgressStep = 0;
+	turnAllSegmentsOff();
+	animationManager->handle(0);
+}
+
+void DisplayManager::updateProgress(uint32_t progress)
+{
+	if(progress - currentProgressOffset > (progressTotal / NUM_SEGMENTS_PROGRESS))
 	{
-		leds[i] = OTA_UPDATE_COLOR;
+		currentProgressOffset += (progressTotal / NUM_SEGMENTS_PROGRESS);
+		currentProgressStep++;
 	}
-	animationManager->handle();
+	animationManager->setComplexAnimationStep(loadingAnimationInst, currentProgressStep, map(progress - currentProgressOffset, 0, progressTotal / NUM_SEGMENTS_PROGRESS, 0, LoadingProgressAnimation->LengthPerAnimation));
 }
 
 void DisplayManager::delay(uint32_t timeInMs)

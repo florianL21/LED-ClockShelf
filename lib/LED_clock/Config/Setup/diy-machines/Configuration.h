@@ -250,7 +250,7 @@ enum DisplayIDs {
 /**
  * \brief The number of segments to use for displaying a progress bar for the OTA updates
  */
-#define NUM_SEGMENTS_PROGRESS		16
+#define NUM_SEGMENTS_PROGRESS		6
 
 /**
  * \brief The time is shall take for one iteration of the loading animation

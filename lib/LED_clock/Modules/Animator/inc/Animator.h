@@ -107,8 +107,10 @@ public:
 
 	/**
 	 * \brief To be called periodically as fast as possible. Updates all animation states of all #AnimatableObjects assigned to this #Animator
+	 *
+	 * \param state if not -1 any animations currently running are going to be set to an exact state
 	 */
-	void handle();
+	void handle(uint32_t state = -1);
 
 	/**
 	 * \brief Setup all parameters for an animation of an object assigned to this #Animator but do not start it.
@@ -189,6 +191,26 @@ public:
 	 * 					-1 which results to the max 32 bit value represents an error while starting the animation
 	 */
 	ComplexAnimationInstance* PlayComplexAnimation(ComplexAmination* animation, AnimatableObject* animationObjectsArray[], bool looping = false);
+
+	/**
+	 * \brief Builds a complex animation but does not start it.
+	 *
+	 * \param animation pointer to the animation that shall be played
+	 * \param animationObjectsArray Array of the objects that shall be animated. The indices for the array are defined in the animation itself
+	 * \param looping Whether the animation shall be looped or not
+	 * \return uint32_t The animation ID of the newly started animation
+	 * 					-1 which results to the max 32 bit value represents an error while starting the animation
+	 */
+	ComplexAnimationInstance* BuildComplexAnimation(ComplexAmination* animation, AnimatableObject* animationObjectsArray[], bool looping = false);
+
+	/**
+	 * \brief set a complex animation to a specific step and state
+	 *
+	 * \param animationInst animation to use, retrived by calling #Animator::BuildComplexAnimation
+	 * \param step Step of the complex animation which shall be executed
+	 * \param state state of the current step
+	 */
+	void setComplexAnimationStep(ComplexAnimationInstance* animationInst, uint8_t step, uint32_t state);
 
 	/**
 	 * \brief disables looping of the complex animation so that it sops running after the current cycle is done running

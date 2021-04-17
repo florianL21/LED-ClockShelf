@@ -49,11 +49,11 @@ void Animator::remove(AnimatableObject* animationToRemove)
 	}
 }
 
-void Animator::handle()
+void Animator::handle(uint32_t state)
 {
 	for (int i = 0; i < AnimatableObjects.size(); i++)
 	{
-		AnimatableObjects.get(i)->handle();
+		AnimatableObjects.get(i)->handle(state);
 	}
 
 	if(lastLEDUpdate + FASTLED_SAFE_DELAY_MS < millis())
@@ -144,7 +144,6 @@ void Animator::animationIterationDoneCallback(AnimatableObject* sourceObject)
 		}
 		else
 		{
-			Serial.println("Animation done: ");
 			//make sure that no references to this animations are retained before deleting it
 			for (int i = 0; i < AnimatableObjects.size(); i++)
 			{
@@ -198,38 +197,12 @@ void Animator::startAnimationStep(uint16_t stepindex, ComplexAnimationInstance* 
 
 Animator::ComplexAnimationInstance* Animator::PlayComplexAnimation(ComplexAmination* animation, AnimatableObject* animationObjectsArray[], bool looping)
 {
-	if(animation->animations == nullptr)
-	{
-		Serial.println("[E] animation chain was null pointer!");
-		return nullptr;
-	}
-	if(animationObjectsArray == nullptr)
-	{
-		Serial.println("[E] animation objects was null pointer!");
-		return nullptr;
-	}
-
-	ComplexAnimationInstance* ComplexAnimation = new ComplexAnimationInstance {
-		.animation = animation,
-		.loop = looping,
-		.counter = 0,
-		.objects = animationObjectsArray,
-		.running = false
-	};
+	ComplexAnimationInstance* ComplexAnimation = BuildComplexAnimation(animation, animationObjectsArray, looping);
 	if(ComplexAnimation == nullptr)
 	{
-		Serial.println("[E] Animation objet could not be instantiated!");
 		return nullptr;
 	}
-	if(animation->animations->size() >= 1)
-	{
-		startAnimationStep(0, ComplexAnimation);
-	}
-	else
-	{
-		Serial.println("[E] animation chain size was zero this Should not be the case!");
-		return nullptr;
-	}
+	startAnimationStep(0, ComplexAnimation);
 	return ComplexAnimation;
 }
 
@@ -263,5 +236,99 @@ void Animator::WaitForComplexAnimationCompletion(ComplexAnimationInstance* anima
 			animationRunning = false;
 		}
 		handle();
+	}
+}
+
+Animator::ComplexAnimationInstance* Animator::BuildComplexAnimation(ComplexAmination* animation, AnimatableObject* animationObjectsArray[], bool looping)
+{
+	if(animation->animations == nullptr)
+	{
+		Serial.println("[E] animation chain was null pointer!");
+		return nullptr;
+	}
+	if(animationObjectsArray == nullptr)
+	{
+		Serial.println("[E] animation objects was null pointer!");
+		return nullptr;
+	}
+
+	ComplexAnimationInstance* ComplexAnimation = new ComplexAnimationInstance {
+		.animation = animation,
+		.loop = looping,
+		.counter = 0,
+		.objects = animationObjectsArray,
+		.running = false
+	};
+	if(ComplexAnimation == nullptr)
+	{
+		Serial.println("[E] Animation objet could not be instantiated!");
+		return nullptr;
+	}
+	if(animation->animations->size() >= 1)
+	{
+		return ComplexAnimation;
+	}
+	else
+	{
+		Serial.println("[E] animation chain size was zero this Should not be the case!");
+		return nullptr;
+	}
+}
+
+void Animator::setComplexAnimationStep(ComplexAnimationInstance* animationInst, uint8_t step, uint32_t state)
+{
+	if(animationInst == nullptr)
+	{
+		Serial.printf("[E] Complex animation instance was nullpointer. Animation step %d was not started\n\r", step);
+		return;
+	}
+	if(step > animationInst->animation->animations->size() - 1)
+	{
+		Serial.printf("[E] invalid step (%d) for complex animation; Highest allowed step: %d\n\r", step, animationInst->animation->animations->size());
+		return;
+	}
+
+	animationStep* StepToStart = animationInst->animation->animations->get(step);
+	bool hasCallbacks = false;
+	bool wasEmpty = true;
+	AnimatableObject* currentObject;
+	for (int j = 0; j < animationInst->animation->animationComplexity; j++)
+	{
+		if(StepToStart->arrayIndex[j] != -1)
+		{
+			currentObject = animationInst->objects[StepToStart->arrayIndex[j]];
+			setAnimationDuration(currentObject, animationInst->animation->LengthPerAnimation);
+			currentObject->ComplexAnimationManager = this;
+			if(hasCallbacks == false) //only assign the callbacks to one object as all of them should start and end at the same time
+			{
+				hasCallbacks = true;
+				currentObject->complexAnimationInst = animationInst;
+			}
+			startAnimation(currentObject, StepToStart->animationEffects[j], StepToStart->easingEffects[j]);
+			animationInst->running = true;
+			wasEmpty = false;
+			//make sure to disable all other animations of this animation chain
+			for (int i = 0; i < AnimatableObjects.size(); i++)
+			{
+				AnimatableObject* cObject = AnimatableObjects.get(i);
+				cObject->startCallback = nullptr;
+				cObject->finishedCallback = nullptr;
+				cObject->ComplexAnimDoneCallback = nullptr;
+				cObject->ComplexAnimStartCallback = nullptr;
+				if(cObject->complexAnimationInst == animationInst)
+				{
+					if(cObject != currentObject)
+					{
+						cObject->complexAnimationInst = nullptr;
+						cObject->handle(cObject->AnimationDuration);
+					}
+				}
+			}
+		}
+	}
+	handle(state);
+	if(wasEmpty == true)
+	{
+		Serial.printf("[E] Complex animtation start point was empty. Animation step (%d) was not started.\n\r", step);
 	}
 }

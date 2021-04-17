@@ -137,8 +137,10 @@ protected:
 
 	/**
 	 * \brief Gets called by the #Animator #Animator::handle method when the animation is finished.
+	 *
+	 * \param state if not -1 any animations currently running are going to be set to an exact state
 	 */
-	void handle();
+	void handle(uint32_t state = -1);
 
 	/**
 	 * \brief Set the animation effect to the current object

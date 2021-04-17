@@ -28,12 +28,20 @@ AnimatableObject::~AnimatableObject()
 {
 }
 
-void AnimatableObject::handle()
+void AnimatableObject::handle(uint32_t state)
 {
 	unsigned long currentMillis = millis();
 	if(animationStarted == true)
 	{
-		currentAnimationTime = currentMillis - AnimationStartTimestamp;
+		if(state != -1)
+		{
+			currentAnimationTime = constrain(state, 0, AnimationDuration);
+		}
+		else
+		{
+			currentAnimationTime = currentMillis - AnimationStartTimestamp;
+		}
+
 		uint16_t currentState = getState();
 		if(oldState != currentState)
 		{

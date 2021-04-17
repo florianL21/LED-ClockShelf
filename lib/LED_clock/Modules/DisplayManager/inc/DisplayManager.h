@@ -50,6 +50,11 @@ private:
     CubicEase* lightSensorEasing;
 	Animator::ComplexAnimationInstance* loadingAnimationID;
 
+	uint32_t progressTotal;
+	uint32_t currentProgressOffset;
+	uint8_t currentProgressStep;
+	Animator::ComplexAnimationInstance* loadingAnimationInst;
+
 	typedef struct {
 		SegmentPositions_t segmentPosition;
 		DisplayIDs Display;
@@ -178,11 +183,17 @@ public:
 	void turnAllLEDsOff();
 
 	/**
-	 * \brief Display a progress bar on the LEDs
-	 * \param progress How much progress was done already
-	 * \param progress How much progress there is to do in total
+	 * \brief start displaying a progress bar on the LEDs
+	 * \param total How much progress there is to do in total
 	 */
-	void showProgress(uint32_t progress, uint32_t total);
+	void displayProgress(uint32_t total);
+
+	/**
+	 * \brief Update the progress bar
+	 * \pre #DisplayManager::displayProgress has to be called once before updating the progress with this function
+	 * \param progress How much progress was done already
+	 */
+	void updateProgress(uint32_t progress);
 
 	/**
 	 * \brief Use this delay instead of the Arduino delay to enable Display updates during the delay.

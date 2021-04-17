@@ -16,6 +16,11 @@
  *        stopped by calling the stopLooping method as soon as loading is finished.
  *
  */
-extern Animator::ComplexAmination* LoadingAnimation;
+extern Animator::ComplexAmination* IndefiniteLoadingAnimation;
+
+/**
+ * \brief Animation which is used to display a progress with a defined end point. Similar to a progress bar.
+ */
+extern Animator::ComplexAmination* LoadingProgressAnimation;
 
 #endif

@@ -238,10 +238,12 @@ void TimerDone()
 		ShelfDisplays->stopLoadingAnimation();
 		Serial.println("Waiting for loading animation to finish...");
 		ShelfDisplays->waitForLoadingAnimationFinish();
+		ShelfDisplays->turnAllSegmentsOff();
 	}
 #endif
 
 #if ENABLE_OTA_UPLOAD == true
+	bool progressFirstStep = true;
 	void setupOTA()
 	{
 		// Port defaults to 3232
@@ -275,6 +277,7 @@ void TimerDone()
 			#endif
 			ShelfDisplays->setAllSegmentColors(OTA_UPDATE_COLOR);
 			ShelfDisplays->turnAllLEDsOff(); //instead of the loading animation show a progress bar
+			ShelfDisplays->setGlobalBrightness(50);
 		})
 		.onEnd([]()
 		{
@@ -283,8 +286,12 @@ void TimerDone()
 		.onProgress([](unsigned int progress, unsigned int total)
 		{
 			Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
-			ShelfDisplays->setGlobalBrightness(50);
-			ShelfDisplays->showProgress(progress, total);
+			if(progressFirstStep == true)
+			{
+				ShelfDisplays->displayProgress(total);
+				progressFirstStep = false;
+			}
+			ShelfDisplays->updateProgress(progress);
 		})
 		.onError([](ota_error_t error)
 		{
