@@ -1,0 +1,31 @@
+{
+    "name": "LED_Clock-Only",
+    "version": "1.0.0",
+    "build": {
+		"srcFilter": [
+			"+<Modules/*.c>",
+            "+<Modules/*.cpp>",
+            "+<Modules/**/*.cpp>",
+            "+<Modules/**/*.c>",
+            "+<Config/Animations/clock-only/*.c>",
+            "+<Config/Animations/clock-only/*.cpp>",
+            "+<Config/Blynk/default/*.c>",
+            "+<Config/Blynk/default/*.cpp>",
+            "+<Config/Setup/clock-only/*.c>",
+			"+<Config/Setup/clock-only/*.cpp>",
+            "+<Config/Transitions/default/*.c>",
+            "+<Config/Transitions/default/*.cpp>"
+		],
+		"flags": [
+            "-I Modules/Animator/inc",
+            "-I Modules/ClockState/inc",
+            "-I Modules/DisplayManager/inc",
+            "-I Modules/SevenSegment/inc",
+            "-I Modules/TimeManager/inc",
+            "-I Config/Setup/clock-only",
+            "-I Config/Blynk/default",
+            "-I Config/Animations/clock-only",
+            "-I Config/Transitions/default"
+		]
+	}
+}

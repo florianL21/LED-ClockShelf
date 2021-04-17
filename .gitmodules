@@ -1,0 +1,3 @@
+[submodule "lib/Easings"]
+	path = lib/Easings
+	url = https://github.com/chuank/Easing.git
