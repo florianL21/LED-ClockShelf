@@ -3,6 +3,9 @@
   <img src="https://github.com/florianL21/LED-ClockShelf/blob/master/doc/images/Animation.gif?raw=true" alt="Animation example"/>
 </p>
 
+You are looking at Version 1.0 of the project. To get documentation for this release take a look at [this snapshot](https://giant-led-clock.readthedocs.io/en/snapshot-v1/) on read the docs
+
+
 This is the software of a variation of the LED clock from [DIY machines.](https://www.instructables.com/id/How-to-Build-a-Giant-Hidden-Shelf-Edge-Clock/)
 I have a separate branch with a ready to use configuration which works on the original version of this clock out of the box [on this branch](https://github.com/florianL21/LED-ClockShelf/tree/diy-machines-version)
 
@@ -18,7 +21,7 @@ Detailed documentation is available on [Read the docs.](https://github.com/flori
 
 If you are interested in my variation of the design which uses a lot of wood instead of the 3D prints and is a bit bigger than the original you can find it on [thingiverse here](https://www.thingiverse.com/thing:4352352)
 
-# Development Environment:
+## Development Environment:
 
 I am using VScode with PlatformIO.
 VSCode can be downloaded from [here.](https://code.visualstudio.com/)
@@ -29,7 +32,7 @@ Via the PlatformIO home the following libraries have to be installed:
  * "FastLED" by Daniel Garcia
  * "LinkedList" by Ivan Seidel
 
-# Important files for configuration:
+## Important files for configuration:
 Files that are important for configuration (sorted by importance):
  1. At the top of /include/Configuration.h -> Contains almost all important settings, like WIFI config, pin configurations etc.
  2. /src/DisplayManager/DisplayConfiguration.cpp -> Configuration of which leds belong to which segments and which segments belong to which display, the order of the segments and their animation directions *It is really important to get this one right!*

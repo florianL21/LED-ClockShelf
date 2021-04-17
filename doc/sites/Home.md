@@ -18,7 +18,7 @@ The whole codebase is highly modular and configurable and can be tweaked exactly
 2. :doc:`Install the development environment and all needed libraries <Setup>`
 
 ## Starting points for Version 2.0:
-TBD
+Take a look at the [latest version of this documentation](https://giant-led-clock.readthedocs.io/en/latest/)
 
 ## Starting points for Version 1.0 of this project:
 3. :doc:`Configure the code to fit your needs <Basic-config>`
