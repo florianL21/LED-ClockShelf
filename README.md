@@ -21,7 +21,7 @@ Further animations can be easily added and existing animation can be adjusted to
 
 The whole codebase is highly modular and configurable and can be tweaked exactly to your preferences.
 
-Detailed documentation is available on [Read the docs.](https://github.com/florianL21/LED-ClockShelf/wiki)
+Detailed documentation is available on [Read the docs.](https://giant-led-clock.readthedocs.io/en/snapshot-v1/)
 
 If you are interested in my variation of the design which uses a lot of wood instead of the 3D prints and is a bit bigger than the original you can find it on [thingiverse here](https://www.thingiverse.com/thing:4352352)
 
