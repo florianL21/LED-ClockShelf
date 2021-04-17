@@ -3,8 +3,12 @@
   <img src="https://github.com/florianL21/LED-ClockShelf/blob/master/doc/images/Animation.gif?raw=true" alt="Animation example"/>
 </p>
 
-You are looking at Version 1.0 of the project. To get documentation for this release take a look at [this snapshot](https://giant-led-clock.readthedocs.io/en/snapshot-v1/) on read the docs
+----------------------
 
+ATTENTION: You are looking at Version 1.0 of the project. To get documentation for this release take a look at [this snapshot](https://giant-led-clock.readthedocs.io/en/snapshot-v1/) on read the docs
+The source code for this release can be found at [this branch on github](https://github.com/florianL21/LED-ClockShelf/tree/Snapshot-v1)
+
+----------------------
 
 This is the software of a variation of the LED clock from [DIY machines.](https://www.instructables.com/id/How-to-Build-a-Giant-Hidden-Shelf-Edge-Clock/)
 I have a separate branch with a ready to use configuration which works on the original version of this clock out of the box [on this branch](https://github.com/florianL21/LED-ClockShelf/tree/diy-machines-version)
