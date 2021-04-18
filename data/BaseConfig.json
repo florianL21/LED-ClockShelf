@@ -1,0 +1,80 @@
+{
+    "ENABLE_WIFI": true,
+    "WIFI": {
+        "ENABLE_BLYNK": true,
+        "BLYNK": {
+            "AUTH_TOKEN": "AUTH_TOKEN_GOES_HERE",
+            "SERVER": "blynk-cloud.com"
+        },
+        "OTA_UPLOAD": true,
+        "HOST_NAME": "LED-Shelf",
+        "NUM_RETRIES": 50,
+        "SMART_CONFIG": true,
+        "WIFI_SSID": "SET_YOUR_SSID_HERE",
+        "WIFI_PW": "SET_YOUR_PASSWORD_HERE"
+    },
+    "COLORS":
+    {
+        "DEFAULT_HOUR": 16777215,
+        "DEFAULT_MINUTE": 15794175,
+        "DEFAULT_INTERNAL": 255,
+        "DEFAULT_SEPARATION_DOT": 255,
+        "OTA_UPDATE": 16753920,
+        "WIFI_CONNECTING": 255,
+        "WIFI_CONNECTION_SUCCESSFUL": 32768,
+        "WIFI_SMART_CONFIG": 16776960,
+        "ERROR": 16711680
+    },
+    "NTP_SERVER": "pool.ntp.org",
+    "TIMEZONE_INFO": "CET-1CEST-2,M3.5.0/02:00:00,M10.5.0/03:00:00",
+    "TIME_SYNC_INTERVAL": 1800,
+    "TIMER_FLASH_TIME": false,
+    "TIMER_FLASH_COUNT": 10,
+    "ALARM_NOTIFICATION_PERIOD": 600,
+    "NOTIFICATION_BRIGHTNESS": 125,
+    "TIME_UPDATE_INTERVAL":	500,
+    "LED": {
+        "LED_DATA_PIN": 21,
+        "NUM_SEGMENTS":  32,
+        "NUM_LEDS_PER_SEGMENT": 12,
+        "APPEND_DOWN_LIGHTERS": true,
+        "ADDITIONAL_LEDS": 12,
+        "DOWNLIGHT_LED_DATA_PIN": 22,
+        "NUM_DISPLAYS": 7,
+        "DISPLAY_0_AT_MIDNIGHT": false,
+        "DISPLAY_SWITCH_OFF_AT_0": false,
+        "USE_24_HOUR_FORMAT": false,
+        "NUM_SEGMENTS_PROGRESS": 16,
+        "LOADING_ANIMATION_DURATION": 3000,
+        "BRIGHTNESS_INTERPOLATION": 3000,
+        "DISPLAY_FOR_SEPARATION_DOT": 3,
+        "ANIMATION_TARGET_FPS": 60,
+        "ANIMATION_AFTERGLOW": 0.2,
+        "DOT_FLASH_SPEED": 2000,
+        "DOT_FLASH_INTERVAL": 4000,
+        "NUM_SEPARATION_DOTS": 2,
+        "DISPLAY_IDS":
+        {
+            "HIGHER_DIGIT_HOUR": 0,
+            "FIRST_INTERMEDIATE": 1,
+            "LOWER_DIGIT_HOUR": 2,
+            "SECOND_INTERMEDIATE": 3,
+            "HIGHER_DIGIT_MINUTE": 4,
+            "THIRD_INTERMEDIATE": 5,
+            "LOWER_DIGIT_MINUTE": 6
+        }
+    },
+    "ENABLE_LIGHT_SENSOR": false,
+    "LIGHT_SENSOR": {
+        "LIGHT_SENSOR_PIN": 34,
+        "LIGHT_SENSOR_AVERAGE": 15,
+        "LIGHT_SENSOR_MEDIAN_WIDTH": 5,
+        "LIGHT_SENSOR_READ_DELAY": 500,
+        "LIGHT_SENSOR_MIN": 0,
+        "LIGHT_SENSOR_MAX": 4095,
+        "LIGHT_SENSOR_SENSITIVITY": 100
+    },
+    "TIME_MANAGER_DEMO_MODE": false,
+    "DIGIT_ANIMATION_SPEED": 900,
+    "FASTLED_SAFE_DELAY_MS": 20
+}

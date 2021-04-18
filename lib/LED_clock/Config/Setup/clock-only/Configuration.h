@@ -9,6 +9,17 @@
 #ifndef _CONFIGURATIONS_H_
 #define _CONFIGURATIONS_H_
 
+//Place all new configs here:
+#define BASE_CONFIG_FILE_NAME 		"/BaseConfig.json"
+#define JSON_BUFFER_CHUNK_SIZE		1024
+#define JSON_BUFFER_INITIAL_SIZE	200
+#define JSON_BUFFER_BASE_CONFIG		3072
+#define MAX_JSON_BUFFER				5000
+
+
+
+// Legacy configs:
+
 /**
  * \addtogroup MainConfiguration
  * \brief Main configuration settings

@@ -23,6 +23,7 @@
             "-I Modules/Misc/inc",
             "-I Modules/SevenSegment/inc",
             "-I Modules/TimeManager/inc",
+            "-I Modules/ConfigManager/inc",
             "-I Config/Setup/clock-only",
             "-I Config/Blynk/default",
             "-I Config/Animations/clock-only",

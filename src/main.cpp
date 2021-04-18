@@ -8,6 +8,7 @@
 #include <Arduino.h>
 #include "DisplayManager.h"
 #include "ClockState.h"
+#include "ConfigManager.h"
 
 #if RUN_WITHOUT_WIFI == false
 	#include "WiFi.h"
@@ -89,6 +90,8 @@ void setup()
 	ShelfDisplays->setMinuteSegmentColors(MINUTE_COLOR);
 	ShelfDisplays->setInternalLEDColor(INTERNAL_COLOR);
 	ShelfDisplays->setDotLEDColor(SEPERATION_DOT_COLOR);
+
+	ConfigManager::getInstance();
 
 	#if RUN_WITHOUT_WIFI == false
 		wifiSetup();
@@ -268,6 +271,7 @@ void TimerDone()
 			else // U_SPIFFS
 			{
 				type = "filesystem";
+				SPIFFS.end();
 			}
 			// NOTE: if updating SPIFFS this would be the place to unmount SPIFFS using SPIFFS.end()
 			Serial.println("Start updating " + type);
