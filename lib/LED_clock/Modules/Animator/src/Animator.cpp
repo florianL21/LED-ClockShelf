@@ -167,6 +167,11 @@ void Animator::startAnimationStep(uint16_t stepindex, ComplexAnimationInstance* 
 	}
 
 	animationStep* StepToStart = animationInst->animation->animations->get(stepindex);
+	if(StepToStart == nullptr)
+	{
+		Serial.printf("[E] Complex animation stepindex wa invalid. Animation step %d was not started\n\r", stepindex);
+		return;
+	}
 	bool hasCallbacks = false;
 	bool wasEmpty = true;
 	AnimatableObject* currentObject;
@@ -175,18 +180,25 @@ void Animator::startAnimationStep(uint16_t stepindex, ComplexAnimationInstance* 
 		if(StepToStart->arrayIndex[j] != -1)
 		{
 			currentObject = animationInst->objects[StepToStart->arrayIndex[j]];
-			setAnimationDuration(currentObject, animationInst->animation->LengthPerAnimation);
-			currentObject->ComplexAnimationManager = this;
-			if(hasCallbacks == false) //only assign the callbacks to one object as all of them should start and end at the same time
+			if(currentObject != nullptr)
 			{
-				hasCallbacks = true;
-				currentObject->complexAnimationInst = animationInst;
-				currentObject->ComplexAnimDoneCallback = &Animator::animationIterationDoneCallback;
-				currentObject->ComplexAnimStartCallback = &Animator::animationIterationStartCallback;
+				setAnimationDuration(currentObject, animationInst->animation->LengthPerAnimation);
+				currentObject->ComplexAnimationManager = this;
+				if(hasCallbacks == false) //only assign the callbacks to one object as all of them should start and end at the same time
+				{
+					hasCallbacks = true;
+					currentObject->complexAnimationInst = animationInst;
+					currentObject->ComplexAnimDoneCallback = &Animator::animationIterationDoneCallback;
+					currentObject->ComplexAnimStartCallback = &Animator::animationIterationStartCallback;
+				}
+				startAnimation(currentObject, StepToStart->animationEffects[j], StepToStart->easingEffects[j]);
+				animationInst->running = true;
+				wasEmpty = false;
 			}
-			startAnimation(currentObject, StepToStart->animationEffects[j], StepToStart->easingEffects[j]);
-			animationInst->running = true;
-			wasEmpty = false;
+			else
+			{
+				Serial.printf("[E] Complex animation object was nullpointer. Animation step %d was not started\n\r", stepindex);
+			}
 		}
 	}
 	if(wasEmpty == true)

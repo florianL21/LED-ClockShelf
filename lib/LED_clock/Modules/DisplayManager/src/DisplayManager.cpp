@@ -8,7 +8,7 @@
 #include "DisplayManager.h"
 
 DisplayManager* DisplayManager::instance = nullptr;
-LinkedList<DisplayManager::SegmentInstanceError>* DisplayManager::SegmentIndexErrorList = nullptr;
+DynamicList<DisplayManager::SegmentInstanceError*>* DisplayManager::SegmentIndexErrorList = nullptr;
 
 DisplayManager::DisplayManager()
 {
@@ -106,7 +106,7 @@ void DisplayManager::takeBrightnessMeasurement()
 		}
 		else
 		{
-			LinkedList<uint16_t> sortedMeasurements;
+			DynamicList<uint16_t> sortedMeasurements;
 			//copy all the values to a new temporary list in order to sort them
 			for (uint16_t i = 0; i < lightSensorMeasurements.size(); i++)
 			{
@@ -397,9 +397,10 @@ int16_t DisplayManager::getGlobalSegmentIndex(SegmentPositions_t segmentPosition
 	{
 		if(SegmentIndexErrorList == nullptr)
 		{
-			SegmentIndexErrorList = new LinkedList<SegmentInstanceError>();
+			SegmentIndexErrorList = new DynamicList<SegmentInstanceError*>();
 		}
-		SegmentInstanceError newError = {.segmentPosition = segmentPosition, .Display = Display};
+		SegmentInstanceError* newError = new SegmentInstanceError{.segmentPosition = segmentPosition, .Display = Display};
+
 		SegmentIndexErrorList->add(newError);
 	}
 	else // once Serial was initialized print errors right away to not forget about them
@@ -413,10 +414,11 @@ void DisplayManager::printAnimationInitErrors()
 {
 	if(SegmentIndexErrorList != nullptr)
 	{
+		SegmentInstanceError* currentError;
 		while(SegmentIndexErrorList->size() > 0)
 		{
-			SegmentInstanceError currentError =	SegmentIndexErrorList->pop();
-			Serial.printf("[W] Segment not valid; Position: %d; Display: %d\n\r", currentError.segmentPosition, currentError.Display);
+			currentError =	SegmentIndexErrorList->pop();
+			Serial.printf("[W] Segment not valid; Position: %d; Display: %d\n\r", currentError->segmentPosition, currentError->Display);
 		}
 	}
 }

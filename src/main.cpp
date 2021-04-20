@@ -9,6 +9,7 @@
 #include "DisplayManager.h"
 #include "ClockState.h"
 #include "ConfigManager.h"
+#include "ESPAsyncWebServer.h"
 
 #if RUN_WITHOUT_WIFI == false
 	#include "WiFi.h"
@@ -24,6 +25,7 @@ DisplayManager* ShelfDisplays = DisplayManager::getInstance();
 BlynkConfig* BlynkConfiguration = BlynkConfig::getInstance();
 TimeManager* timeM = TimeManager::getInstance();
 ClockState* states = ClockState::getInstance();
+AsyncWebServer server(80);
 
 #if ENABLE_OTA_UPLOAD == true
 	void setupOTA();
@@ -80,6 +82,24 @@ void startupAnimation()
 	}
 }
 
+void sendWebFile(AsyncWebServerRequest *request)
+{
+	request->send(SPIFFS, "/index.html", "text/html");
+}
+
+void startWebServer()
+{
+	server.on("/", HTTP_GET, sendWebFile);
+
+	server.on("/index.js.gz", HTTP_GET, [](AsyncWebServerRequest *request){
+		AsyncWebServerResponse* response = request->beginResponse(SPIFFS, "/index.js.gz", "text/html");
+        response->addHeader("Content-Encoding", "gzip");
+        request->send(response);
+	});
+
+	server.begin();
+}
+
 void setup()
 {
 	Serial.begin(115200);
@@ -107,6 +127,8 @@ void setup()
 		BlynkConfiguration->setup();
 	#endif
 
+	startWebServer();
+
 	Serial.println("Fetching time from NTP server...");
 	if(timeM->init() == false)
 	{
@@ -119,6 +141,7 @@ void setup()
 	Serial.println("Displaying startup animation...");
 	startupAnimation();
 	Serial.println("Setup done. Main Loop starting...");
+	Serial.printf("Free heap: %d\n\r", esp_get_free_heap_size());
 }
 
 void loop()

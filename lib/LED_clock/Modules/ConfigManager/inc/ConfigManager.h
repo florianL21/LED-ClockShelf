@@ -10,7 +10,7 @@
 #include <Arduino.h>
 #include <ArduinoJson.h>
 #include <SPIFFS.h>
-#include <LinkedList.h>
+#include "LinkedList.h"
 #include "Configuration.h"
 
 /**
@@ -28,7 +28,7 @@ private:
         uint8_t configClass;
     };
     static ConfigManager* instance;
-    LinkedList<changedEventCallback*> eventCallbacks;
+    DynamicList<changedEventCallback*> eventCallbacks;
     static char UNDEFINED[];
 
 	ConfigManager();

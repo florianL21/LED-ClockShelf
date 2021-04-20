@@ -55,7 +55,7 @@ Animator::ComplexAmination* InitIndefiniteLoadingAnimation(uint16_t totalAnimati
 	step6->animationEffects 	= new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateOutToBottom, 						NO_ANIMATION};
 	step6->easingEffects 		= new EasingBase*[LENGTH] 							{NO_EASING, 												NO_EASING};
 
-	LinkedList<Animator::animationStep*>* allSteps = new LinkedList<Animator::animationStep*>();
+	DynamicList<Animator::animationStep*>* allSteps = new DynamicList<Animator::animationStep*>();
 	allSteps->add(step0);
 	allSteps->add(step1);
 	allSteps->add(step2);
@@ -100,7 +100,7 @@ Animator::ComplexAmination* InitLoadingProgressAnimation(uint16_t totalAnimation
 	step5->animationEffects 	= new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateInToBottom};
 	step5->easingEffects 		= new EasingBase*[LENGTH] 							{NO_EASING};
 
-	LinkedList<Animator::animationStep*>* allSteps = new LinkedList<Animator::animationStep*>();
+	DynamicList<Animator::animationStep*>* allSteps = new DynamicList<Animator::animationStep*>();
 	allSteps->add(step0);
 	allSteps->add(step1);
 	allSteps->add(step2);

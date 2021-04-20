@@ -59,7 +59,7 @@ private:
 		SegmentPositions_t segmentPosition;
 		DisplayIDs Display;
 	} SegmentInstanceError;
-	static LinkedList<SegmentInstanceError>* SegmentIndexErrorList;
+	static DynamicList<SegmentInstanceError*>* SegmentIndexErrorList;
 
 	CRGB leds[NUM_LEDS];
 	#if APPEND_DOWN_LIGHTERS == false
@@ -67,7 +67,7 @@ private:
 	#endif
 
 	#if ENABLE_LIGHT_SENSOR == true
-		LinkedList<uint16_t> lightSensorMeasurements;
+		DynamicList<uint16_t> lightSensorMeasurements;
 		uint64_t lastSensorMeasurement;
 		uint8_t lightSensorBrightness;
 		void takeBrightnessMeasurement();

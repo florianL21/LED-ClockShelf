@@ -111,7 +111,7 @@ Animator::ComplexAmination* InitAnimate0to1(uint16_t totalAnimationLength)
 	step1->animationEffects = new AnimatableObject::AnimationFunction[LENGTH]	{AnimationEffects::AnimateOutToRight, 	AnimationEffects::AnimateOutToRight};
 	step1->easingEffects 	= new EasingBase*[LENGTH]							{cubicEaseOut, 							cubicEaseOut};
 
-	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
+	DynamicList<Animator::animationStep*>* AnimationStepSequence = new DynamicList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
 	AnimationStepSequence->add(step1);
 
@@ -139,7 +139,7 @@ Animator::ComplexAmination* InitAnimate1to2(uint16_t totalAnimationLength)
 	step2->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateInToRight, 	AnimationEffects::AnimateInToLeft};
 	step2->easingEffects 	= new EasingBase*[LENGTH] 							{bounceEaseOut, 						bounceEaseOut};
 
-	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
+	DynamicList<Animator::animationStep*>* AnimationStepSequence = new DynamicList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
 	AnimationStepSequence->add(step1);
 	AnimationStepSequence->add(step2);
@@ -160,7 +160,7 @@ Animator::ComplexAmination* InitAnimate2to3(uint16_t totalAnimationLength)
 	step0->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateOutToBottom, 	AnimationEffects::AnimateInToTop};
 	step0->easingEffects 	= new EasingBase*[LENGTH] 							{bounceEaseOut, 						bounceEaseOut};
 
-	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
+	DynamicList<Animator::animationStep*>* AnimationStepSequence = new DynamicList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
 
 	Animator::ComplexAmination* animation = new Animator::ComplexAmination();
@@ -179,7 +179,7 @@ Animator::ComplexAmination* InitAnimate2to0(uint16_t totalAnimationLength)
 	step0->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateInToBottom, 	AnimationEffects::AnimateOutToRight, 	AnimationEffects::AnimateInToBottom};
 	step0->easingEffects 	= new EasingBase*[LENGTH] 							{bounceEaseOut, 						cubicEaseInOut,							bounceEaseOut};
 
-	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
+	DynamicList<Animator::animationStep*>* AnimationStepSequence = new DynamicList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
 
 	Animator::ComplexAmination* animation = new Animator::ComplexAmination();
@@ -198,7 +198,7 @@ Animator::ComplexAmination* InitAnimate3to4(uint16_t totalAnimationLength)
 	step0->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateOutToRight, 	AnimationEffects::AnimateInToBottom, 	AnimationEffects::AnimateOutToLeft};
 	step0->easingEffects 	= new EasingBase*[LENGTH] 							{bounceEaseOut, 						bounceEaseOut,							bounceEaseOut};
 
-	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
+	DynamicList<Animator::animationStep*>* AnimationStepSequence = new DynamicList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
 
 	Animator::ComplexAmination* animation = new Animator::ComplexAmination();
@@ -217,7 +217,7 @@ Animator::ComplexAmination* InitAnimate4to5(uint16_t totalAnimationLength)
 	step0->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateOutToTop, 	AnimationEffects::AnimateInToLeft, 	AnimationEffects::AnimateInToLeft};
 	step0->easingEffects 	= new EasingBase*[LENGTH] 							{bounceEaseOut, 						bounceEaseOut,						bounceEaseOut};
 
-	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
+	DynamicList<Animator::animationStep*>* AnimationStepSequence = new DynamicList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
 
 	Animator::ComplexAmination* animation = new Animator::ComplexAmination();
@@ -236,7 +236,7 @@ Animator::ComplexAmination* InitAnimate5to6(uint16_t totalAnimationLength)
 	step0->animationEffects = new AnimatableObject::AnimationFunction[1] 	{AnimationEffects::AnimateInToTop};
 	step0->easingEffects 	= new EasingBase*[LENGTH] 						{bounceEaseOut};
 
-	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
+	DynamicList<Animator::animationStep*>* AnimationStepSequence = new DynamicList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
 
 	Animator::ComplexAmination* animation = new Animator::ComplexAmination();
@@ -255,7 +255,7 @@ Animator::ComplexAmination* InitAnimate5to0(uint16_t totalAnimationLength)
 	step0->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateOutToRight, 	AnimationEffects::AnimateInToBottom, 	AnimationEffects::AnimateInToTop};
 	step0->easingEffects 	= new EasingBase*[LENGTH] 							{bounceEaseOut, 						bounceEaseOut,							bounceEaseOut};
 
-	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
+	DynamicList<Animator::animationStep*>* AnimationStepSequence = new DynamicList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
 
 	Animator::ComplexAmination* animation = new Animator::ComplexAmination();
@@ -282,7 +282,7 @@ Animator::ComplexAmination* InitAnimate6to7(uint16_t totalAnimationLength)
 	step2->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateOutToRight, 	NO_ANIMATION, 							NO_ANIMATION};
 	step2->easingEffects 	= new EasingBase*[LENGTH] 							{cubicEaseOut, 							NO_EASING,								NO_EASING};
 
-	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
+	DynamicList<Animator::animationStep*>* AnimationStepSequence = new DynamicList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
 	AnimationStepSequence->add(step1);
 	AnimationStepSequence->add(step2);
@@ -308,7 +308,7 @@ Animator::ComplexAmination* InitAnimate7to8(uint16_t totalAnimationLength)
 	step1->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateInToTop, 		AnimationEffects::AnimateInToRight};
 	step1->easingEffects 	= new EasingBase*[LENGTH] 							{cubicEaseOut, 							cubicEaseOut};
 
-	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
+	DynamicList<Animator::animationStep*>* AnimationStepSequence = new DynamicList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
 	AnimationStepSequence->add(step1);
 
@@ -328,7 +328,7 @@ Animator::ComplexAmination* InitAnimate8to9(uint16_t totalAnimationLength)
 	step0->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateOutToBottom};
 	step0->easingEffects 	= new EasingBase*[LENGTH] 							{bounceEaseOut};
 
-	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
+	DynamicList<Animator::animationStep*>* AnimationStepSequence = new DynamicList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
 
 	Animator::ComplexAmination* animation = new Animator::ComplexAmination();
@@ -347,7 +347,7 @@ Animator::ComplexAmination* InitAnimate9to0(uint16_t totalAnimationLength)
 	step0->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateOutToLeft, 	AnimationEffects::AnimateInToBottom};
 	step0->easingEffects 	= new EasingBase*[LENGTH] 							{bounceEaseOut, 						bounceEaseOut};
 
-	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
+	DynamicList<Animator::animationStep*>* AnimationStepSequence = new DynamicList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
 
 	Animator::ComplexAmination* animation = new Animator::ComplexAmination();
@@ -366,7 +366,7 @@ Animator::ComplexAmination* InitAnimate1toOFF(uint16_t totalAnimationLength)
 	step0->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateOutToBottom, 	AnimationEffects::AnimateOutToTop};
 	step0->easingEffects 	= new EasingBase*[LENGTH] 							{cubicEaseInOut, 						cubicEaseInOut};
 
-	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
+	DynamicList<Animator::animationStep*>* AnimationStepSequence = new DynamicList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
 
 	Animator::ComplexAmination* animation = new Animator::ComplexAmination();
@@ -385,7 +385,7 @@ Animator::ComplexAmination* InitAnimateOFFto1(uint16_t totalAnimationLength)
 	step0->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateInToTop, 	AnimationEffects::AnimateInToBottom};
 	step0->easingEffects 	= new EasingBase*[LENGTH] 							{cubicEaseInOut, 					cubicEaseInOut};
 
-	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
+	DynamicList<Animator::animationStep*>* AnimationStepSequence = new DynamicList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
 
 	Animator::ComplexAmination* animation = new Animator::ComplexAmination();
@@ -404,7 +404,7 @@ Animator::ComplexAmination* InitAnimate9to8(uint16_t totalAnimationLength)
 	step0->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateInToTop};
 	step0->easingEffects 	= new EasingBase*[LENGTH] 							{bounceEaseOut};
 
-	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
+	DynamicList<Animator::animationStep*>* AnimationStepSequence = new DynamicList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
 
 	Animator::ComplexAmination* animation = new Animator::ComplexAmination();
@@ -427,7 +427,7 @@ Animator::ComplexAmination* InitAnimate8to7(uint16_t totalAnimationLength)
 	step1->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateOutToRight, 	NO_ANIMATION, 							NO_ANIMATION};
 	step1->easingEffects 	= new EasingBase*[LENGTH] 							{cubicEaseOut, 							cubicEaseOut, 							NO_EASING};
 
-	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
+	DynamicList<Animator::animationStep*>* AnimationStepSequence = new DynamicList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
 	AnimationStepSequence->add(step1);
 
@@ -451,7 +451,7 @@ Animator::ComplexAmination* InitAnimate7to6(uint16_t totalAnimationLength)
 	step1->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateInToRight, 	AnimationEffects::AnimateInToTop, 		NO_ANIMATION};
 	step1->easingEffects 	= new EasingBase*[LENGTH] 							{cubicEaseOut, 							cubicEaseOut, 							NO_EASING};
 
-	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
+	DynamicList<Animator::animationStep*>* AnimationStepSequence = new DynamicList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
 	AnimationStepSequence->add(step1);
 
@@ -471,7 +471,7 @@ Animator::ComplexAmination* InitAnimate6to5(uint16_t totalAnimationLength)
 	step0->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateOutToBottom};
 	step0->easingEffects 	= new EasingBase*[LENGTH] 							{bounceEaseOut};
 
-	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
+	DynamicList<Animator::animationStep*>* AnimationStepSequence = new DynamicList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
 
 	Animator::ComplexAmination* animation = new Animator::ComplexAmination();
@@ -490,7 +490,7 @@ Animator::ComplexAmination* InitAnimate5to4(uint16_t totalAnimationLength)
 	step0->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateOutToRight, 	AnimationEffects::AnimateInToBottom,	AnimationEffects::AnimateOutToRight};
 	step0->easingEffects 	= new EasingBase*[LENGTH] 							{bounceEaseOut, 						bounceEaseOut, 							bounceEaseOut};
 
-	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
+	DynamicList<Animator::animationStep*>* AnimationStepSequence = new DynamicList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
 
 	Animator::ComplexAmination* animation = new Animator::ComplexAmination();
@@ -509,7 +509,7 @@ Animator::ComplexAmination* InitAnimate4to3(uint16_t totalAnimationLength)
 	step0->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateOutToTop, 	AnimationEffects::AnimateInToRight,	AnimationEffects::AnimateInToLeft};
 	step0->easingEffects 	= new EasingBase*[LENGTH] 							{bounceEaseOut, 						bounceEaseOut, 						bounceEaseOut};
 
-	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
+	DynamicList<Animator::animationStep*>* AnimationStepSequence = new DynamicList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
 
 	Animator::ComplexAmination* animation = new Animator::ComplexAmination();
@@ -528,7 +528,7 @@ Animator::ComplexAmination* InitAnimate3to2(uint16_t totalAnimationLength)
 	step0->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateOutToBottom, 	AnimationEffects::AnimateInToTop};
 	step0->easingEffects 	= new EasingBase*[LENGTH] 							{bounceEaseOut, 						bounceEaseOut};
 
-	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
+	DynamicList<Animator::animationStep*>* AnimationStepSequence = new DynamicList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
 
 	Animator::ComplexAmination* animation = new Animator::ComplexAmination();
@@ -555,7 +555,7 @@ Animator::ComplexAmination* InitAnimate2to1(uint16_t totalAnimationLength)
 	step2->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateInToTop, 		AnimationEffects::AnimateOutToRight};
 	step2->easingEffects 	= new EasingBase*[LENGTH] 							{NO_EASING, 							NO_EASING};
 
-	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
+	DynamicList<Animator::animationStep*>* AnimationStepSequence = new DynamicList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
 	AnimationStepSequence->add(step1);
 	AnimationStepSequence->add(step2);
@@ -580,7 +580,7 @@ Animator::ComplexAmination* InitAnimate1to0(uint16_t totalAnimationLength)
 	step1->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateInToTop, 		AnimationEffects::AnimateInToBottom};
 	step1->easingEffects 	= new EasingBase*[LENGTH] 							{bounceEaseOut, 						bounceEaseOut};
 
-	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
+	DynamicList<Animator::animationStep*>* AnimationStepSequence = new DynamicList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
 	AnimationStepSequence->add(step1);
 
@@ -600,7 +600,7 @@ Animator::ComplexAmination* InitAnimate0to9(uint16_t totalAnimationLength)
 	step0->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateOutToTop, 	AnimationEffects::AnimateInToRight};
 	step0->easingEffects 	= new EasingBase*[LENGTH] 							{bounceEaseOut, 						bounceEaseOut};
 
-	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
+	DynamicList<Animator::animationStep*>* AnimationStepSequence = new DynamicList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
 
 	Animator::ComplexAmination* animation = new Animator::ComplexAmination();
@@ -619,7 +619,7 @@ Animator::ComplexAmination* InitAnimate0to5(uint16_t totalAnimationLength)
 	step0->animationEffects = new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateOutToBottom, 	AnimationEffects::AnimateInToLeft, 	AnimationEffects::AnimateOutToBottom};
 	step0->easingEffects 	= new EasingBase*[LENGTH] 							{cubicEaseInOut, 						cubicEaseInOut, 					cubicEaseInOut};
 
-	LinkedList<Animator::animationStep*>* AnimationStepSequence = new LinkedList<Animator::animationStep*>();
+	DynamicList<Animator::animationStep*>* AnimationStepSequence = new DynamicList<Animator::animationStep*>();
 	AnimationStepSequence->add(step0);
 
 	Animator::ComplexAmination* animation = new Animator::ComplexAmination();

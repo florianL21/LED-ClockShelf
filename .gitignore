@@ -12,6 +12,9 @@ doc/_templates
 doc/doxygen
 doc/doxyapi
 
+#compressed files in the data folder
+data/*.gz
+
 # Created by https://www.gitignore.io/api/platformio
 # Edit at https://www.gitignore.io/?templates=platformio
 

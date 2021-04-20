@@ -91,18 +91,18 @@ void ConfigManager::checkCallbacks(void* property, uint8_t ConfigClass)
 {
     for (int i = 0; i < eventCallbacks.size(); i++)
     {
-        if(eventCallbacks[i]->property != nullptr)
+        if(eventCallbacks.get(i)->property != nullptr)
         {
-            if(eventCallbacks[i]->property == property)
+            if(eventCallbacks.get(i)->property == property)
             {
-                eventCallbacks[i]->callback();
+                eventCallbacks.get(i)->callback();
             }
         }
         else
         {
-            if((eventCallbacks[i]->configClass & ConfigClass) != 0x00)
+            if((eventCallbacks.get(i)->configClass & ConfigClass) != 0x00)
             {
-                eventCallbacks[i]->callback();
+                eventCallbacks.get(i)->callback();
             }
         }
     }
@@ -238,7 +238,7 @@ void ConfigManager::unregisterOnChangedCallback(propertyChangedCallback Callback
 {
     for (int i = 0; i < eventCallbacks.size(); i++)
     {
-        if(eventCallbacks[i]->callback == Callback && (Property == nullptr || eventCallbacks[i]->property == Property))
+        if(eventCallbacks.get(i)->callback == Callback && (Property == nullptr || eventCallbacks.get(i)->property == Property))
         {
             eventCallbacks.remove(i);
             return;
