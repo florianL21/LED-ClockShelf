@@ -5,10 +5,12 @@ import React from "react";
 const pages = [
   {link: "/WIFI", label: "WIFI Setup"},
   {link: "/Settings", label: "Settings"},
+  {link: "/", label: "Colors"},
+  {link: "/", label: "Display Setup"},
+  {link: "/", label: "Animation Setup"},
 ];
 
 function NavigationMenu(props) {
-
   return (
     <div>
       <h1 className="text-6xl w-full text-center my-8">LED Pixel Clock</h1>
@@ -16,7 +18,7 @@ function NavigationMenu(props) {
         <Menu as="div" className="">
           <Menu.Items as="div" static className="mb-0 space-y-4">
             {pages.map((page) =>(
-              <Menu.Item as="div" key={page.link} className="block items-center">
+              <Menu.Item as="div" key={page.label} className="block items-center">
                 {({ active }) => (
                   <Link to={page.link} className={`${
                     active ? "bg-indigo-500 text-white" : "text-gray-900"}

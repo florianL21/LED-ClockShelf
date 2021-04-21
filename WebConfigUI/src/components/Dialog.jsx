@@ -1,33 +1,42 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment, useEffect, useRef, useState } from "react";
-import { useTimeoutFn } from "react-use";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 
-export default function MyModal() {
-  const [open, setOpen] = useState(false);
-  const cancelButtonRef = useRef();
+export default function MyModal(props) {
+  let OkayButtonRef = useRef();
 
-  // This code makes the demo automatically show on initial render
-  let [, clear, resetIsShowing] = useTimeoutFn(() => setOpen(true), 750);
-  useEffect(() => {
-    clear();
-    setOpen(true);
-  }, []);
+  props.type == "OK/Cancel"
 
-  function closeModal() {
-    setOpen(false);
-    resetIsShowing();
+  let cancelButton = ""
+  let okayButtonLabel = "OK"
+
+  if(props.confirmMessage)
+  {
+    okayButtonLabel = props.confirmMessage
+  }
+
+  if(props.type == "OK/Cancel")
+  {
+    cancelButton = (
+      <button
+        type="button"
+        className="w-full inline-flex text-sm font-medium btn btn-secondary uppercase"
+        onClick={() => props.onClose(false)}
+      >
+        Cancel
+      </button>
+    )
   }
 
   return (
-    <Transition show={open} as={Fragment}>
+    <Transition show={props.show} as={Fragment}>
       <Dialog
         as="div"
         id="modal"
         className="fixed inset-0 z-10 overflow-y-auto"
-        initialFocus={cancelButtonRef}
         static
-        open={open}
-        onClose={closeModal}
+        initialFocus={OkayButtonRef}
+        open={props.show}
+        onClose={() => props.onClose(false)}
       >
         <div className="min-h-screen px-4 text-center">
           <Transition.Child
@@ -39,16 +48,8 @@ export default function MyModal() {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <Dialog.Overlay className="fixed inset-0" />
+            <Dialog.Overlay className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"/>
           </Transition.Child>
-
-          {/* This element is to trick the browser into centering the modal contents. */}
-          <span
-            className="inline-block h-screen align-middle"
-            aria-hidden="true"
-          >
-            &#8203;
-          </span>
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -58,28 +59,24 @@ export default function MyModal() {
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <div className="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
+            <div className="inline-block w-full sm:max-w-lg p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
               <Dialog.Title
-                as="h3"
-                className="text-lg font-medium leading-6 text-gray-900"
+                as="h1"
+                className="text-2xl font-medium text-gray-900"
               >
-                Payment successful
+                {props.title}
               </Dialog.Title>
-              <div className="mt-2">
-                <p className="text-sm text-gray-500">
-                  Your payment has been successfully submitted. We’ve sent your
-                  an email with all of the details of your order.
+              <Dialog.Description as="div" className="mt-2">
+                <p className="text-lg text-gray-500">
+                  {props.children}
                 </p>
-              </div>
+              </Dialog.Description>
 
-              <div className="mt-4">
-                <button
-                  type="button"
-                  className="inline-flex justify-center px-4 py-2 text-sm font-medium text-blue-900 bg-blue-100 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
-                  onClick={closeModal}
-                >
-                  Got it, thanks!
+              <div className="mt-4 space-y-4">
+                <button type="button" ref={OkayButtonRef} onClick={() => props.onClose(true)} className="w-full inline-flex btn btn-primary float-right uppercase">
+                  {okayButtonLabel}
                 </button>
+                {cancelButton}
               </div>
             </div>
           </Transition.Child>
