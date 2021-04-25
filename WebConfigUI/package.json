@@ -4,9 +4,9 @@
   "description": "",
   "main": "src/main.jsx",
   "scripts": {
-    "dev": "vite",
-    "build": "webpack --mode production",
-    "start": "webpack serve --mode development"
+    "dev": "set NODE_ENV=development && set PURGE_FILES=0 && vite",
+    "build": "set NODE_ENV=production && set PURGE_FILES=1 && webpack --mode production",
+    "start": "set NODE_ENV=development && set PURGE_FILES=0 && webpack serve --mode development"
   },
   "author": "",
   "license": "ISC",
@@ -33,6 +33,7 @@
     "webpack-dev-server": "^3.11.2"
   },
   "dependencies": {
+    "esbuild": "^0.11.13",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-router-dom": "^5.2.0"

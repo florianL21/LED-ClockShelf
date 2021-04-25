@@ -4,8 +4,9 @@ import React from "react";
 
 const pages = [
   {link: "/WIFI", label: "WIFI Setup"},
-  {link: "/Settings", label: "Settings"},
-  {link: "/", label: "Colors"},
+  {link: "/BaseSettings", label: "Base Settings"},
+  {link: "/Colors", label: "Colors"},
+  {link: "/HWSetup", label: "Hardware Setup"},
   {link: "/", label: "Display Setup"},
   {link: "/", label: "Animation Setup"},
 ];
@@ -14,7 +15,7 @@ function NavigationMenu(props) {
   return (
     <div>
       <h1 className="text-6xl w-full text-center my-8">LED Pixel Clock</h1>
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+      <div className="my-8 sm:mx-auto sm:w-full sm:max-w-md">
         <Menu as="div" className="">
           <Menu.Items as="div" static className="mb-0 space-y-4">
             {pages.map((page) =>(

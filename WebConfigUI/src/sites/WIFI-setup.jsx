@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Dialog from '../components/Dialog'
 
-const WIFI_new = () => {
+const WIFI_new = (props) => {
 	const [SSID, setSSID] = useState("");
 	const [PW, setPW] = useState("");
 	const [createAP, setCreateAP] = useState(false);
@@ -28,12 +28,10 @@ const WIFI_new = () => {
 		setDialogShown(false);
 		if(result == true)
 		{
-			console.log("SSID: " + SSID);
-			console.log("PW: " + PW);
-			console.log("Create AP: " + createAP);
-			setSSID("");
+            setSSID("");
 			setPW("");
 			setCreateAP(false);
+			props.onSubmit(props.domain, JSON.stringify({SSID: SSID, PW: PW, CreateAP: createAP}));
 		}
 	}
 
