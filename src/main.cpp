@@ -10,6 +10,8 @@
 #include "ClockState.h"
 #include "ConfigManager.h"
 #include "ESPAsyncWebServer.h"
+#include "AsyncJson.h"
+#include <ArduinoJson.h>
 
 #if RUN_WITHOUT_WIFI == false
 	#include "WiFi.h"
@@ -25,6 +27,7 @@ DisplayManager* ShelfDisplays = DisplayManager::getInstance();
 BlynkConfig* BlynkConfiguration = BlynkConfig::getInstance();
 TimeManager* timeM = TimeManager::getInstance();
 ClockState* states = ClockState::getInstance();
+ConfigManager* config;
 AsyncWebServer server(80);
 
 #if ENABLE_OTA_UPLOAD == true
@@ -82,20 +85,32 @@ void startupAnimation()
 	}
 }
 
-void sendWebFile(AsyncWebServerRequest *request)
-{
-	request->send(SPIFFS, "/index.html", "text/html");
-}
-
 void startWebServer()
 {
-	server.on("/", HTTP_GET, sendWebFile);
+	server.serveStatic("/", SPIFFS, "/").setDefaultFile("index.html");
 
-	server.on("/index.js.gz", HTTP_GET, [](AsyncWebServerRequest *request){
-		AsyncWebServerResponse* response = request->beginResponse(SPIFFS, "/index.js.gz", "text/html");
-        response->addHeader("Content-Encoding", "gzip");
-        request->send(response);
+	server.onNotFound([](AsyncWebServerRequest *request){
+		if(request->url() == "/WIFI" || request->url() == "/BaseSettings" || request->url() == "/Colors" || request->url() == "/HWSetup")
+		{
+			request->redirect("/");
+		} else
+		{
+			request->send(404, "text/plain", "Not found");
+		}
 	});
+
+	AsyncCallbackJsonWebHandler* handler = new AsyncCallbackJsonWebHandler("/BaseConfig", [](AsyncWebServerRequest *request, JsonVariant &json)
+	{
+		for (JsonPair kv : json.as<JsonObject>())
+		{
+			if(!config->setBaseProperty(kv))
+			{
+				Serial.printf("[W]: Property %s not set\n\r", kv.key().c_str());
+			}
+		}
+		request->send(200, "text/plain", "Config OK");
+	});
+	server.addHandler(handler);
 
 	server.begin();
 }
@@ -104,14 +119,14 @@ void setup()
 {
 	Serial.begin(115200);
 
+	config = ConfigManager::getInstance();
+
 	ShelfDisplays->InitSegments(0, NUM_LEDS_PER_SEGMENT, WIFI_CONNECTING_COLOR, 50);
 
 	ShelfDisplays->setHourSegmentColors(HOUR_COLOR);
 	ShelfDisplays->setMinuteSegmentColors(MINUTE_COLOR);
 	ShelfDisplays->setInternalLEDColor(INTERNAL_COLOR);
 	ShelfDisplays->setDotLEDColor(SEPERATION_DOT_COLOR);
-
-	ConfigManager::getInstance();
 
 	#if RUN_WITHOUT_WIFI == false
 		wifiSetup();

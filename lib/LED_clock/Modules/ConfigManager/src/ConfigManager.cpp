@@ -20,19 +20,18 @@ ConfigManager::ConfigManager()
 
 	Serial.printf("Filesystem mount successful; %d out of %d bytes used\n\r", SPIFFS.usedBytes(), SPIFFS.totalBytes());
 
-    // writing some default values:
-    WIFI.enabled = false;
-    WIFI.blynk_enabled = false;
-    WIFI.ota_enabled = false;
-    WIFI.smart_config_enabled = false;
-    WIFI.connection_retries = 0;
-    WIFI.blynk_token = UNDEFINED;
-    WIFI.blynk_server = UNDEFINED;
-    WIFI.host_name = UNDEFINED;
-    WIFI.ssid = UNDEFINED;
-    WIFI.pw = UNDEFINED;
+	BaseConfig 	= new DynamicJsonDocument(JSON_BUFFER_BASE_CONFIG);
+	ColorConfig = new DynamicJsonDocument(JSON_BUFFER_COLOR_CONFIG);
+	HWConfig 	= new DynamicJsonDocument(JSON_BUFFER_HW_CONFIG);
 
-    loadConfigFromMemory();
+	bool loadSuccessful = true;
+    loadSuccessful &= loadConfigFromMemory(BASE_CONFIG_FILE_NAME, BaseConfig);
+	loadSuccessful &= loadConfigFromMemory(COLOR_CONFIG_FILE_NAME, ColorConfig);
+	loadSuccessful &= loadConfigFromMemory(HW_CONFIG_FILE_NAME, HWConfig);
+	if(loadSuccessful == false)
+	{
+		Serial.println("[E]: Loading of json config from filesystem unsuccessful");
+	}
 }
 
 ConfigManager::~ConfigManager()
@@ -87,161 +86,131 @@ DynamicJsonDocument* ConfigManager::deserializeDynamically(fs::File &input, uint
     return nullptr;
 }
 
-void ConfigManager::checkCallbacks(void* property, uint8_t ConfigClass)
+bool ConfigManager::deserializeDynamically(fs::File &input, DynamicJsonDocument* doc)
 {
-    for (int i = 0; i < eventCallbacks.size(); i++)
-    {
-        if(eventCallbacks.get(i)->property != nullptr)
-        {
-            if(eventCallbacks.get(i)->property == property)
-            {
-                eventCallbacks.get(i)->callback();
-            }
-        }
-        else
-        {
-            if((eventCallbacks.get(i)->configClass & ConfigClass) != 0x00)
-            {
-                eventCallbacks.get(i)->callback();
-            }
-        }
-    }
-}
-
-template <class valueType, class jsonObjectType>
-bool ConfigManager::parseValue(jsonObjectType* root, String key, valueType* value)
-{
-	bool successful = false;
-	JsonVariant jvalue = (*root)[key];
-	if (!jvalue.isNull())
+	if(doc == nullptr)
 	{
-		if(!jvalue.is<valueType>())
+		return false;
+	}
+	bool successful = false;
+	bool firstTry = true;
+	size_t DocumentSize = (*doc).size();
+
+	do
+	{
+		if(firstTry == true)
 		{
-			Serial.println("E: " + key + " is not the right type");
+			firstTry = false;
 		}
 		else
 		{
-            *value = jvalue.as<valueType>();
-			successful = true;
+			doc = new DynamicJsonDocument(DocumentSize);
 		}
-	}
-	return successful;
-}
 
-template <class valueType, class jsonObjectType>
-bool ConfigManager::parseValue(jsonObjectType* root, String key, valueType* value, uint8_t ConfigClass)
-{
-	bool successful = false;
-	JsonVariant jvalue = (*root)[key];
-	if (!jvalue.isNull())
-	{
-		if(!jvalue.is<valueType>())
+		DeserializationError error = deserializeJson(*doc, input);
+		if (error)
 		{
-			Serial.println("E: " + key + " is not the right type");
+			if (error.code() == DeserializationError::NoMemory)
+			{
+				delete doc;
+				DocumentSize += JSON_BUFFER_CHUNK_SIZE;
+			}
+			else
+			{
+				Serial.println("E: json:" + String(error.c_str()));
+				break;
+			}
 		}
 		else
 		{
-            valueType newValue = (valueType)jvalue.as<valueType>();
-            if(*value != newValue)
-            {
-                *value = newValue;
-                checkCallbacks(value, ConfigClass);
-            }
 			successful = true;
+			break; //no error detected -> memory size is okay
 		}
-	}
-	return successful;
+	} while (DocumentSize < MAX_JSON_BUFFER);
+
+    return successful;
 }
 
-bool ConfigManager::loadConfigFromMemory()
+bool ConfigManager::loadConfigFromMemory(const char* filename, DynamicJsonDocument* doc)
 {
     #define ERROR_HANDLING(x, key) if(x == false) { Serial.printf("E: Key %s is mandatory", key); delete doc; return false;}
 	bool loadOK = false;
-	if(SPIFFS.exists(BASE_CONFIG_FILE_NAME))
+	if(SPIFFS.exists(filename))
 	{
-		File jsonFile = SPIFFS.open(BASE_CONFIG_FILE_NAME, "r");
+		File jsonFile = SPIFFS.open(filename, "r");
 		if (!jsonFile)
 		{
 			Serial.println("E: Open config  file failed");
 		}
 		else
 		{
-            DynamicJsonDocument* doc = deserializeDynamically(jsonFile, JSON_BUFFER_BASE_CONFIG);
-            if(doc != nullptr)
+            if(deserializeDynamically(jsonFile, doc) == true)
             {
-                ERROR_HANDLING(parseValue<bool>(doc, "ENABLE_WIFI", &(WIFI.enabled), C_WIFI), "ENABLE_WIFI")
-
-                if(WIFI.enabled == true)
-                {
-                    JsonObject WIFI_object;
-                    ERROR_HANDLING(parseValue<JsonObject>(doc, "WIFI", &WIFI_object), "WIFI")
-
-                    ERROR_HANDLING(parseValue<bool>(&WIFI_object, "ENABLE_BLYNK", &(WIFI.blynk_enabled), C_WIFI), "ENABLE_BLYNK")
-
-                    if(WIFI.blynk_enabled == true)
-                    {
-                        JsonObject blynk_object;
-                        ERROR_HANDLING(parseValue<JsonObject>(&WIFI_object, "BLYNK", &blynk_object), "BLYNK")
-                        ERROR_HANDLING(parseValue<char*>(&blynk_object, "AUTH_TOKEN", &(WIFI.blynk_token), C_WIFI), "AUTH_TOKEN")
-                        ERROR_HANDLING(parseValue<char*>(&blynk_object, "SERVER", &(WIFI.blynk_server), C_WIFI), "SERVER")
-                    }
-
-                    ERROR_HANDLING(parseValue<bool>(&WIFI_object, "OTA_UPLOAD", &(WIFI.ota_enabled), C_WIFI), "OTA_UPLOAD")
-                    ERROR_HANDLING(parseValue<uint16_t>(&WIFI_object, "NUM_RETRIES", &(WIFI.connection_retries), C_WIFI), "NUM_RETRIES")
-                    ERROR_HANDLING(parseValue<bool>(&WIFI_object, "SMART_CONFIG", &(WIFI.smart_config_enabled), C_WIFI), "SMART_CONFIG")
-                    ERROR_HANDLING(parseValue<char*>(&WIFI_object, "HOST_NAME", &(WIFI.host_name), C_WIFI), "HOST_NAME")
-                    ERROR_HANDLING(parseValue<char*>(&WIFI_object, "WIFI_SSID", &(WIFI.ssid), C_WIFI), "WIFI_SSID")
-                    ERROR_HANDLING(parseValue<char*>(&WIFI_object, "WIFI_PW", &(WIFI.pw), C_WIFI), "WIFI_PW")
-                }
-                { // Color config
-                    JsonObject colors_object;
-                    ERROR_HANDLING(parseValue<JsonObject>(doc, "COLORS", &colors_object), "COLORS")
-                    ERROR_HANDLING(parseValue<uint32_t>(&colors_object, "DEFAULT_HOUR", &(Colors.default_hour), C_COLORS), "DEFAULT_HOUR")
-                    ERROR_HANDLING(parseValue<uint32_t>(&colors_object, "DEFAULT_MINUTE", &(Colors.default_minute), C_COLORS), "DEFAULT_MINUTE")
-                    ERROR_HANDLING(parseValue<uint32_t>(&colors_object, "DEFAULT_INTERNAL", &(Colors.default_internal), C_COLORS), "DEFAULT_INTERNAL")
-                    ERROR_HANDLING(parseValue<uint32_t>(&colors_object, "DEFAULT_SEPARATION_DOT", &(Colors.default_separation_dot), C_COLORS), "DEFAULT_SEPARATION_DOT")
-                    ERROR_HANDLING(parseValue<uint32_t>(&colors_object, "OTA_UPDATE", &(Colors.ota_update), C_COLORS), "OTA_UPDATE")
-                    ERROR_HANDLING(parseValue<uint32_t>(&colors_object, "WIFI_CONNECTING", &(Colors.wifi_connecting), C_COLORS), "WIFI_CONNECTING")
-                    ERROR_HANDLING(parseValue<uint32_t>(&colors_object, "WIFI_CONNECTION_SUCCESSFUL", &(Colors.wifi_connection_successful), C_COLORS), "WIFI_CONNECTION_SUCCESSFUL")
-                    ERROR_HANDLING(parseValue<uint32_t>(&colors_object, "WIFI_SMART_CONFIG", &(Colors.wifi_smart_config), C_COLORS), "WIFI_SMART_CONFIG")
-                    ERROR_HANDLING(parseValue<uint32_t>(&colors_object, "ERROR", &(Colors.error), C_COLORS), "ERROR")
-                }
-
-                Serial.println("Config parsed successfully");
-                delete doc; //delete the dynamically allocated document after all values have been stored in variables
-                loadOK = true;
+				loadOK = true;
             }
 			jsonFile.close();
 		}
 	}
 	else
 	{
-        Serial.printf("E: Config file %s does not exist on the filesystem yet. Please create it first\n\r", BASE_CONFIG_FILE_NAME);
+        Serial.printf("E: Config file %s does not exist on the filesystem yet. Please create it first\n\r", filename);
 		loadOK = false;
 	}
 	return loadOK;
 }
 
-void ConfigManager::registerOnChangedCallback(void* Property, propertyChangedCallback Callback)
+
+template<typename T>
+T ConfigManager::getProperty(DynamicJsonDocument* root, char* key)
 {
-    changedEventCallback* newCallback = new changedEventCallback{.callback = Callback, .property = Property, .configClass = 0};
-    eventCallbacks.add(newCallback);
+	JsonVariant jvalue = (*root)[key];
+	if (!jvalue.isNull())
+	{
+		if(!jvalue.is<T>())
+		{
+			Serial.printf("[E]: BaseConfig key \"%s\" is not the correct type", key);
+		}
+		else
+		{
+			return jvalue.as<T>();
+		}
+	}
+	return nullptr;
 }
 
-void ConfigManager::registerOnChangedCallback(uint8_t ConfigClass, propertyChangedCallback Callback)
+template<typename T>
+T ConfigManager::getBaseProperty(char* key)
 {
-    changedEventCallback* newCallback = new changedEventCallback{.callback = Callback, .property = nullptr, .configClass = ConfigClass};
-    eventCallbacks.add(newCallback);
+	return getProperty<T>(BaseConfig, key);
 }
 
-void ConfigManager::unregisterOnChangedCallback(propertyChangedCallback Callback, void* Property)
+template<typename T>
+T ConfigManager::getColorProperty(char* key)
 {
-    for (int i = 0; i < eventCallbacks.size(); i++)
-    {
-        if(eventCallbacks.get(i)->callback == Callback && (Property == nullptr || eventCallbacks.get(i)->property == Property))
-        {
-            eventCallbacks.remove(i);
-            return;
-        }
-    }
+	return getProperty<T>(ColorConfig, key);
+}
+
+template<typename T>
+T ConfigManager::getHWProperty(char* key)
+{
+	return getProperty<T>(HWConfig, key);
+}
+
+template<typename T>
+bool ConfigManager::setBaseProperty(char* key, T value)
+{
+	if(BaseConfig->containsKey(key))
+	{
+		return (*BaseConfig)[key].set(key);
+	}
+	return false;
+}
+
+bool ConfigManager::setBaseProperty(JsonPair& keyValuePair)
+{
+	if(BaseConfig->containsKey(keyValuePair.key()))
+	{
+		return (*BaseConfig)[keyValuePair.key()].set(keyValuePair.value());
+	}
+	return false;
 }

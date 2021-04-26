@@ -1,0 +1,28 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "npm",
+			"script": "build",
+			"label": "npm: build",
+			"detail": "set NODE_ENV=production && set PURGE_FILES=1 && webpack --mode production",
+		},
+		{
+			"type": "shell",
+			"label": "Build and copy",
+			"command": "copy",
+			"dependsOn": "npm: build",
+			"dependsOrder": "sequence",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"args": [
+				"${workspaceFolder}\\build\\index.js.gz",
+				"\"${workspaceFolder}\\../data/index.js.gz\"",
+				"/Y"
+			],
+			"group": "build",
+			"problemMatcher": []
+		}
+	]
+}

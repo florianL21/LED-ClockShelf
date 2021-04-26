@@ -30,46 +30,19 @@ private:
     static ConfigManager* instance;
     DynamicList<changedEventCallback*> eventCallbacks;
     static char UNDEFINED[];
+	DynamicJsonDocument* BaseConfig;
+	DynamicJsonDocument* ColorConfig;
+	DynamicJsonDocument* HWConfig;
 
 	ConfigManager();
     DynamicJsonDocument* deserializeDynamically(fs::File &input, uint64_t initialDocSize);
+	bool deserializeDynamically(fs::File &input, DynamicJsonDocument* initialDocument);
 
-    template <class valueType, class jsonObjectType>
-    bool parseValue(jsonObjectType* root, String key, valueType* value, uint8_t ConfigClass);
+	template<typename T>
+	T getProperty(DynamicJsonDocument* root, char* key);
 
-    template <class valueType, class jsonObjectType>
-    bool parseValue(jsonObjectType* root, String key, valueType* value);
-    void checkCallbacks(void* Property, uint8_t ConfigClass);
+	bool loadConfigFromMemory(const char* filename, DynamicJsonDocument* doc);
 public:
-    struct WIFI_config {
-        bool enabled;
-        bool blynk_enabled;
-        bool ota_enabled;
-        bool smart_config_enabled;
-        uint16_t connection_retries;
-        char* blynk_token;
-        char* blynk_server;
-        char* host_name;
-        char* ssid;
-        char* pw;
-    };
-
-    struct Color_config {
-        uint32_t default_hour;
-        uint32_t default_minute;
-        uint32_t default_internal;
-        uint32_t default_separation_dot;
-        uint32_t ota_update;
-        uint32_t wifi_connecting;
-        uint32_t wifi_connection_successful;
-        uint32_t wifi_smart_config;
-        uint32_t error;
-    };
-
-
-    enum ConfigChanges {C_WIFI = 0x01, C_COLORS = 0x02, C_LED = 0x04, C_LIGHT_SENSOR = 0x08, C_TIME = 0x10, C_OTHER = 0x20};
-    WIFI_config WIFI;
-    Color_config Colors;
 
     /**
      * \brief Destroys the Config Manager object and cause #ConfigManager::getInstance to create a new object the next time it is called
@@ -83,10 +56,22 @@ public:
      */
 	static ConfigManager* getInstance();
 
-    bool loadConfigFromMemory();
-    void registerOnChangedCallback(void* Property, propertyChangedCallback Callback);
-    void registerOnChangedCallback(uint8_t ConfigClass, propertyChangedCallback Callback);
-    void unregisterOnChangedCallback(propertyChangedCallback Callback, void* Property = nullptr);
+
+
+	template<typename T>
+	T getBaseProperty(char* key);
+
+	template<typename T>
+	T getColorProperty(char* key);
+
+	template<typename T>
+	T getHWProperty(char* key);
+
+	template<typename T>
+	bool setBaseProperty(char* key, T value);
+
+	bool setBaseProperty(JsonPair& keyValuePair);
+
 };
 
 

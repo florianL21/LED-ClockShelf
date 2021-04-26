@@ -1,0 +1,33 @@
+{
+	"folders": [
+		{
+			"path": ".",
+			"name": "ESP source"
+		},
+	],
+	"settings": {
+		"files.exclude": {
+			"**/.git": true,
+			"WebConfigUI": true
+		},
+		"files.associations": {
+			"array": "cpp",
+			"deque": "cpp",
+			"string": "cpp",
+			"unordered_map": "cpp",
+			"unordered_set": "cpp",
+			"vector": "cpp",
+			"initializer_list": "cpp",
+			"functional": "cpp",
+			"bitset": "cpp",
+			"regex": "cpp",
+			"utility": "cpp",
+			"*.tcc": "cpp",
+			"cmath": "cpp",
+			"cstdio": "cpp",
+			"new": "cpp"
+		},
+		"editor.detectIndentation": false,
+		"editor.insertSpaces": false
+	}
+}
