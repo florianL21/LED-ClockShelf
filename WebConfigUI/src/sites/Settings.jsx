@@ -2,7 +2,7 @@ import React from "react";
 import SettingsForm from '../components/SettingsForm'
 
 const Settings = (props) => {
-  return (
+	return (
 	<div className="mt-8 p-6 sm:mx-auto sm:w-full xl:max-w-6xl">
 		<div className="bg-white py-8 px-6 shadow rounded-lg sm:py-10">
 			<div>
@@ -11,7 +11,7 @@ const Settings = (props) => {
 			<SettingsForm domain={props.domain} onSubmit={props.onSubmit} UIDefinition={props.UIDefinition} InitialValues={props.InitialValues}/>
 		</div>
 	</div>
-  );
+	);
 }
 
 export default Settings;

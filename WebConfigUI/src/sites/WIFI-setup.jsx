@@ -28,7 +28,7 @@ const WIFI_new = (props) => {
 		setDialogShown(false);
 		if(result == true)
 		{
-            setSSID("");
+			setSSID("");
 			setPW("");
 			setCreateAP(false);
 			props.onSubmit(props.domain, JSON.stringify({SSID: SSID, PW: PW, CreateAP: createAP}));

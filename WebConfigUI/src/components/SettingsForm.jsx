@@ -3,15 +3,15 @@ import Dialog from '../components/Dialog'
 
 
 const loadConfig = (UIDefinition, InitialValues) => {
-  const settings = [...UIDefinition];
-  UIDefinition.forEach((element, index) => {
+	const settings = [...UIDefinition];
+	UIDefinition.forEach((element, index) => {
 	settings[index].value = InitialValues[element.target];
-  });
-  return settings;
+	});
+	return settings;
 }
 
 const SettingsForm = (props) => {
-  const [Settings, setSettings] = useState(loadConfig(props.UIDefinition, props.InitialValues));
+	const [Settings, setSettings] = useState(loadConfig(props.UIDefinition, props.InitialValues));
 	const [dialogShown, setDialogShown] = useState(false);
 
 	const handleSubmit = (event) => {
@@ -31,7 +31,7 @@ const SettingsForm = (props) => {
 		}
 	}
 
-  const valueChangedHandler = (event, target) => {
+	const valueChangedHandler = (event, target) => {
 		const targetSettingIndex = Settings.findIndex(p => p.target === target);
 
 		const setting = {
@@ -57,9 +57,9 @@ const SettingsForm = (props) => {
 		const settings = [...Settings];
 		settings[targetSettingIndex] = setting;
 		setSettings(settings);
-  }
+	}
 
-  const isDisabled = (setting) => {
+	const isDisabled = (setting) => {
 		if("onlyIf" in setting)
 		{
 			const invert = setting.onlyIf.startsWith("!");
@@ -79,7 +79,7 @@ const SettingsForm = (props) => {
 			}
 		}
 		return false;
-  }
+	}
 
 	const toColor = (num) => {
 			num >>>= 0;
@@ -89,7 +89,7 @@ const SettingsForm = (props) => {
 			return "rgba(" + [r, g, b, 1].join(",") + ")";
 	}
 
-  const settingsForm = Settings.map((settingEntry, index) => {
+	const settingsForm = Settings.map((settingEntry, index) => {
 		let Disabled = isDisabled(settingEntry);
 		let stepSize = 1;
 		switch(settingEntry.type)
@@ -130,7 +130,7 @@ const SettingsForm = (props) => {
 						<label htmlFor={settingEntry.target} className={`block text-sm font-medium ${Disabled ? "text-gray-400" : "text-gray-800"}`}>{settingEntry.label}</label>
 						<div className="w-3.5 h-3.5" style={test}></div>
 						<div className="mt-1">
-                            <input type="range" step="1" min="0" max="1" class="absolute pointer-events-none appearance-none z-20 h-2 w-full opacity-0 cursor-pointer"/>
+							<input type="range" step="1" min="0" max="1" className="absolute pointer-events-none appearance-none z-20 h-2 w-full opacity-0 cursor-pointer"/>
 							<input disabled={Disabled} min="0" max="255" step="1" className={Disabled ? "border-gray-200 text-gray-400" : ""} id={settingEntry.target} name={settingEntry.target} value={Settings[index].value} onChange={(e) => valueChangedHandler(e, settingEntry.target)} type="range"/>
 							<input disabled={Disabled} min="0" max="255" step="1" className={Disabled ? "border-gray-200 text-gray-400" : ""} id={settingEntry.target} name={settingEntry.target} value={Settings[index].value} onChange={(e) => valueChangedHandler(e, settingEntry.target)} type="range"/>
 							<input disabled={Disabled} min="0" max="255" step="1" className={Disabled ? "border-gray-200 text-gray-400" : ""} id={settingEntry.target} name={settingEntry.target} value={Settings[index].value} onChange={(e) => valueChangedHandler(e, settingEntry.target)} type="range"/>
@@ -138,8 +138,8 @@ const SettingsForm = (props) => {
 					</div>
 				)
 		}
-  })
-  return (
+	})
+	return (
 	<div>
 		<form className="mt-10 mb-0 space-y-6" onSubmit={handleSubmit}>
 			{settingsForm}
@@ -154,7 +154,7 @@ const SettingsForm = (props) => {
 			To save the changes the device may reboot. You may loose connection to this interface temporarily.
 		</Dialog>
 	</div>
-  );
+	);
 }
 
 export default SettingsForm;
