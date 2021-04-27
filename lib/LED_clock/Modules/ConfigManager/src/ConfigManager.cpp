@@ -8,7 +8,12 @@
 #include "ConfigManager.h"
 
 ConfigManager* ConfigManager::instance = nullptr;
-char ConfigManager::UNDEFINED[] = "UNDEFINED";
+
+//Template types that can be used
+
+template bool ConfigManager::getProperty<bool>(ConfigType config, const char* key);
+template int ConfigManager::getProperty<int>(ConfigType config, const char* key);
+template const char* ConfigManager::getProperty<const char*>(ConfigType config, const char* key);
 
 ConfigManager::ConfigManager()
 {
@@ -23,14 +28,24 @@ ConfigManager::ConfigManager()
 	BaseConfig 	= new DynamicJsonDocument(JSON_BUFFER_BASE_CONFIG);
 	ColorConfig = new DynamicJsonDocument(JSON_BUFFER_COLOR_CONFIG);
 	HWConfig 	= new DynamicJsonDocument(JSON_BUFFER_HW_CONFIG);
+	EventIDs 	= new DynamicJsonDocument(JSON_BUFFER_EVENT_IDS);
 
 	bool loadSuccessful = true;
     loadSuccessful &= loadConfigFromMemory(BASE_CONFIG_FILE_NAME, BaseConfig);
 	loadSuccessful &= loadConfigFromMemory(COLOR_CONFIG_FILE_NAME, ColorConfig);
 	loadSuccessful &= loadConfigFromMemory(HW_CONFIG_FILE_NAME, HWConfig);
+	loadSuccessful &= loadConfigFromMemory(EVENT_IDS_FILE_NAME, EventIDs);
 	if(loadSuccessful == false)
 	{
 		Serial.println("[E]: Loading of json config from filesystem unsuccessful");
+	}
+	for (uint8_t i = 0; i < _CONFIG_CLASS_ID_LENGTH; i++)
+	{
+		configClassWasUpdated[i] = false;
+	}
+	for (uint8_t i = 0; i < _CONFIG_TYPE_LENGTH; i++)
+	{
+		configNeedsSaving[i] = false;
 	}
 }
 
@@ -44,8 +59,24 @@ ConfigManager* ConfigManager::getInstance()
 	if(instance == nullptr)
 	{
 		instance = new ConfigManager();
+		Serial.println("[D]: ConfigManager instance created");
 	}
 	return instance;
+}
+
+bool ConfigManager::getDefault(bool* input)
+{
+	return false;
+}
+
+int ConfigManager::getDefault(int* input)
+{
+	return -1;
+}
+
+const char* ConfigManager::getDefault(const char** input)
+{
+	return nullptr;
 }
 
 DynamicJsonDocument* ConfigManager::deserializeDynamically(fs::File &input, uint64_t initialDocSize)
@@ -161,7 +192,7 @@ bool ConfigManager::loadConfigFromMemory(const char* filename, DynamicJsonDocume
 
 
 template<typename T>
-T ConfigManager::getProperty(DynamicJsonDocument* root, char* key)
+T ConfigManager::getProperty(DynamicJsonDocument* root, const char* key)
 {
 	JsonVariant jvalue = (*root)[key];
 	if (!jvalue.isNull())
@@ -175,42 +206,147 @@ T ConfigManager::getProperty(DynamicJsonDocument* root, char* key)
 			return jvalue.as<T>();
 		}
 	}
-	return nullptr;
+	T* helper = nullptr;
+	return getDefault(helper);
 }
 
 template<typename T>
-T ConfigManager::getBaseProperty(char* key)
+T ConfigManager::getProperty(ConfigType config, const char* key)
 {
-	return getProperty<T>(BaseConfig, key);
+	return getProperty<T>(getDocument(config), key);
 }
 
 template<typename T>
-T ConfigManager::getColorProperty(char* key)
+bool ConfigManager::setProperty(ConfigType config, char* key, T value)
 {
-	return getProperty<T>(ColorConfig, key);
-}
-
-template<typename T>
-T ConfigManager::getHWProperty(char* key)
-{
-	return getProperty<T>(HWConfig, key);
-}
-
-template<typename T>
-bool ConfigManager::setBaseProperty(char* key, T value)
-{
-	if(BaseConfig->containsKey(key))
+	DynamicJsonDocument* doc = getDocument(config);
+	if(doc->containsKey(key))
 	{
-		return (*BaseConfig)[key].set(key);
+		return (*doc)[key].set(key);
 	}
+	Serial.printf("[E]: Config does not contain key %s\n\r", key);
 	return false;
 }
 
-bool ConfigManager::setBaseProperty(JsonPair& keyValuePair)
+DynamicJsonDocument* ConfigManager::getDocument(ConfigType config)
 {
-	if(BaseConfig->containsKey(keyValuePair.key()))
+	switch (config)
 	{
-		return (*BaseConfig)[keyValuePair.key()].set(keyValuePair.value());
+	case BASE_CONFIG:
+		return BaseConfig;
+	case COLOR_CONFIG:
+		return ColorConfig;
+	case HW_CONFIG:
+		return HWConfig;
+	default:
+		return nullptr;
 	}
+}
+
+const char* ConfigManager::getFileName(ConfigType config)
+{
+	switch (config)
+	{
+	case BASE_CONFIG:
+		return BASE_CONFIG_FILE_NAME;
+	case COLOR_CONFIG:
+		return COLOR_CONFIG_FILE_NAME;
+	case HW_CONFIG:
+		return HW_CONFIG_FILE_NAME;
+	default:
+		return nullptr;
+	}
+}
+
+bool ConfigManager::setProperty(JsonPair& keyValuePair, ConfigType config)
+{
+	if(config >= _CONFIG_TYPE_LENGTH)
+	{
+		Serial.printf("[E]: Config id %d is higher than maximum allowed of %d\n\r", config, _CONFIG_TYPE_LENGTH);
+		return false;
+	}
+	DynamicJsonDocument* doc = getDocument(config);
+	if(doc == nullptr)
+	{
+		Serial.printf("[E]: Config with config id %d was invalid\n\r", config);
+		return false;
+	}
+	if(doc->containsKey(keyValuePair.key()))
+	{
+		if((*doc)[keyValuePair.key()] != keyValuePair.value())
+		{
+			//TODO: find a better solution for this
+			uint8_t eventID = (*EventIDs)[keyValuePair.key()];
+			configClassWasUpdated[eventID] = true;
+			configNeedsSaving[config] = true;
+			return (*doc)[keyValuePair.key()].set(keyValuePair.value());
+		}
+		else
+		{
+			return true;
+		}
+	}
+	Serial.printf("[E]: Config does not contain key %s\n\r", keyValuePair.key().c_str());
 	return false;
+}
+
+void ConfigManager::saveConfigPersistent(ConfigType config)
+{
+	if(config >= _CONFIG_TYPE_LENGTH)
+	{
+		return;
+	}
+	if(configNeedsSaving[config])
+	{
+		File configFile = SPIFFS.open(getFileName(config), FILE_WRITE);
+		serializeJson(*getDocument(config), configFile);
+		configFile.close();
+		configNeedsSaving[config] = false;
+	}
+	else
+	{
+		Serial.printf("[I]: Skipped saving of %s to memory as there was no change.\n\r", getFileName(config));
+	}
+}
+
+void ConfigManager::applyChanges()
+{
+	uint8_t updatedConfigClasses = 0x00;
+	for (uint8_t i = 0; i < _CONFIG_CLASS_ID_LENGTH; i++)
+	{
+		if(configClassWasUpdated[i] == true)
+		{
+			updatedConfigClasses |= 1 << i;
+			configClassWasUpdated[i] = false;
+		}
+	}
+	checkCallbacks(updatedConfigClasses);
+}
+
+void ConfigManager::checkCallbacks(uint8_t ConfigEvent)
+{
+    for (int i = 0; i < eventCallbacks.size(); i++)
+    {
+		if((eventCallbacks.get(i)->configEvent & ConfigEvent) != 0x00)
+		{
+			eventCallbacks.get(i)->callback(this);
+		}
+    }
+}
+
+void ConfigManager::registerOnChangedCallback(uint8_t ConfigEvent, propertyChangedCallback Callback)
+{
+    changedEventCallback* newCallback = new changedEventCallback{.callback = Callback, .configEvent = ConfigEvent};
+    eventCallbacks.add(newCallback);
+}
+
+void ConfigManager::unregisterOnChangedCallback(propertyChangedCallback Callback)
+{
+    for (int i = 0; i < eventCallbacks.size(); i++)
+    {
+        if(eventCallbacks.get(i)->callback == Callback)
+        {
+            eventCallbacks.remove(i);
+        }
+    }
 }

@@ -10,9 +10,8 @@
 #include <Arduino.h>
 #include "time.h"
 #include "Configuration.h"
-#if RUN_WITHOUT_WIFI == false
-	#include "WiFi.h"
-#endif
+#include "WiFi.h"
+#include "ConfigManager.h"
 
 /**
  * \brief The TimeManager is responsible for synchronizing the time to the NTP servers and keeping track of it

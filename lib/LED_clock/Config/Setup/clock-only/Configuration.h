@@ -10,16 +10,6 @@
 #define _CONFIGURATIONS_H_
 
 //Place all new configs here:
-#define BASE_CONFIG_FILE_NAME 		"/BaseConfig.json"
-#define COLOR_CONFIG_FILE_NAME 		"/ColorConfig.json"
-#define HW_CONFIG_FILE_NAME 		"/HWConfig.json"
-#define JSON_BUFFER_BASE_CONFIG		1024
-#define JSON_BUFFER_COLOR_CONFIG	300
-#define JSON_BUFFER_HW_CONFIG		1024
-
-#define JSON_BUFFER_CHUNK_SIZE		256
-#define JSON_BUFFER_INITIAL_SIZE	200
-#define MAX_JSON_BUFFER				5000
 
 
 
@@ -31,74 +21,36 @@
  * \{
  */
 
+
 /**
- * \brief If you want to run the system in a minimal mode to test some basic functionality or
- * 		  debug something it could be useful to disable wifi functionality completley.
+ * \brief In case the blynk communication is not working this line causes Blynk to send debug output to the serial port.
+ * 		  If you are not worried about Blynk or have to diagnose some other issue you can comment this line out.
  */
-#define RUN_WITHOUT_WIFI 		false
+#define BLYNK_PRINT 		Serial
 
-#if RUN_WITHOUT_WIFI == false
+/**
+ * \brief The host name that shall be used for OTA updates. If you change this here it must also be changed
+ *        in the \ref platformio.ini file
+ */
+#define OTA_UPDATE_HOST_NAME	"LED-Clock"
+
+/**
+ * \brief The number of times the controller tries to connect to wifi before it fails and goes into
+ *        smartConfig mode (if that is enabled)
+ */
+#define NUM_RETRIES 			50
+
+/**
+ * \brief Use the ESP smart config to setup the wifi network. If you want to set it manually set this to false
+ */
+#define USE_ESPTOUCH_SMART_CONFIG	true
+
+#if USE_ESPTOUCH_SMART_CONFIG == false
 	/**
-	 * \brief If you want Blynk functionality set this to true and set your authentication token. Otherwise set it to false
+	 * \brief WIFI_SSID and WIFI_PW are only needed if smart setup is disabled
 	 */
-	#define IS_BLYNK_ACTIVE 		true
-
-	#if IS_BLYNK_ACTIVE == true
-		/**
-		 * \brief If you want Blynk functionality paste your authentication token here.
-		 */
-		#define BLYNK_AUTH_TOKEN 	"AUTH_TOKEN_GOES_HERE"
-
-		/**
-		 * \brief In case the blynk communication is not working this line causes Blynk to send debug output to the serial port.
-		 * 		  If you are not worried about Blynk or have to diagnose some other issue you can comment this line out.
-		 */
-		#define BLYNK_PRINT 		Serial
-
-		/**
-		 * \brief Set the Blynk server address.
-		 * \note I had troubles with using the proper blynk domain so I am using the IP address instead.
-		 * 		 Maybe this could create problems in the future so it is recommended to use the official domain.
-		 */
-		#define BLYNK_SERVER 		"blynk-cloud.com" // "139.59.206.133"
-
-	#endif
-
-	/**
-	 * \brief If you want to use OTA upload instead or in addition to the normal cable upload set this option to true.
-	 * To actually flash something via OTA you have to uncomment the OTA flash lines in the \ref platformio.ini file
-	 * This is a nice addition to cable upload but it doesn't replace it completely.
-	 * If the microcontroller crashes because of bad configuration you still have to use a cable
-	 */
-	#define ENABLE_OTA_UPLOAD			true
-
-	#if ENABLE_OTA_UPLOAD == true
-		/**
-		 * \brief The host name that shall be used for OTA updates. If you change this here it must also be changed
-         *        in the \ref platformio.ini file
-		 */
-		#define OTA_UPDATE_HOST_NAME	"LED-Clock"
-	#endif
-
-	/**
-	 * \brief The number of times the controller tries to connect to wifi before it fails and goes into
-     *        smartConfig mode (if that is enabled)
-	 */
-	#define NUM_RETRIES 			50
-
-	/**
-	 * \brief Use the ESP smart config to setup the wifi network. If you want to set it manually set this to false
-	 */
-	#define USE_ESPTOUCH_SMART_CONFIG	true
-
-	#if USE_ESPTOUCH_SMART_CONFIG == false
-		/**
-		 * \brief WIFI_SSID and WIFI_PW are only needed if smart setup is disabled
-		 */
-		#define WIFI_SSID	"SET_YOUR_SSID_HERE"
-		#define WIFI_PW		"SET_YOUR_PASSWORD_HERE"
-	#endif
-
+	#define WIFI_SSID	"SET_YOUR_SSID_HERE"
+	#define WIFI_PW		"SET_YOUR_PASSWORD_HERE"
 #endif
 
 /**

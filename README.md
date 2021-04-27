@@ -9,6 +9,8 @@ ATTENTION: You are looking at version 2.0 of the project. Documentation for this
 For Version 1.0 take a look at [this snapshot branch](https://github.com/florianL21/LED-ClockShelf/tree/Snapshot-v1)
 You wil also find the original version of the documentation there.
 
+Please note that updating from version 1 to version 2 via OTA update might not work correctly.
+
 ------------------
 
 This is the software of a variation of the LED clock from [DIY Machines](https://www.instructables.com/id/How-to-Build-a-Giant-Hidden-Shelf-Edge-Clock/)

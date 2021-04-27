@@ -28,6 +28,7 @@ ClockState* ClockState::getInstance()
 	if(instance == nullptr)
 	{
 		instance = new ClockState();
+		Serial.println("[D]: ClockState instance created");
 	}
 	return instance;
 }

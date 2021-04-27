@@ -2,7 +2,6 @@
 	"ENABLE_BLYNK": true,
 	"BLYNK_AUTH_TOKEN": "AUTH_TOKEN_GOES_HERE",
 	"BLYNK_SERVER": "blynk-cloud.com",
-	"OTA_UPLOAD": true,
 	"HOST_NAME": "LED-Shelf",
 	"NUM_RETRIES": 50,
 	"SMART_CONFIG": true,

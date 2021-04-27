@@ -18,11 +18,6 @@
 			"onlyIf": "ENABLE_BLYNK"
 		},
 		{
-			"label": "Enable OTA Updates",
-			"type": "bool",
-			"target": "OTA_UPLOAD"
-		},
-		{
 			"label": "Host name",
 			"type": "string",
 			"target": "HOST_NAME"

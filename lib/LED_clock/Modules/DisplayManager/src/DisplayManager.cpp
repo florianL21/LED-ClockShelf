@@ -64,6 +64,7 @@ DisplayManager* DisplayManager::getInstance()
 	if(instance == nullptr)
 	{
 		instance = new DisplayManager();
+		Serial.println("[D]: DisplayManager instance created");
 	}
 	return instance;
 }

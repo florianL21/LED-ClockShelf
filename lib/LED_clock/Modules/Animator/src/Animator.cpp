@@ -16,6 +16,7 @@ Animator* Animator::getInstance()
 	if(currentInstance == nullptr)
 	{
 		currentInstance = new Animator();
+		Serial.println("[D]: Animator instance created");
 	}
 	return currentInstance;
 }

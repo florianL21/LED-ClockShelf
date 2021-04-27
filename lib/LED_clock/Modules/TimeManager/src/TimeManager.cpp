@@ -43,6 +43,7 @@ TimeManager* TimeManager::getInstance()
 	if(TimeManagerSingelton == nullptr)
 	{
 		TimeManagerSingelton = new TimeManager();
+		Serial.println("[D]: TimeManager instance created");
 	}
 	return TimeManagerSingelton;
 }
@@ -251,8 +252,10 @@ void TimeManager::clearAlarm()
 void IRAM_ATTR onTimer()
 {
 	TimeManager* timeM = TimeManager::getInstance();
+	ConfigManager* config = ConfigManager::getInstance();
 	// Time code, use this for normal operation
-	#if TIME_MANAGER_DEMO_MODE == false
+	if(!config->getProperty<bool>(ConfigManager::HW_CONFIG, DEMO_MODE_KEY))
+	{
 		if(timeM->offlineTimeCounter++ >= TIME_SYNC_INTERVALL && WiFi.status() == WL_CONNECTED)
 		{
 			if(timeM->synchronize() == true)
@@ -307,7 +310,9 @@ void IRAM_ATTR onTimer()
 				timeM->AlarmCleared = false;
 			}
 		}
-	#else
+	}
+	else
+	{
 		//DEMO CODE: Useful for testing animations
 		timeM->currentTime.minutes++;
 		if(timeM->currentTime.minutes > 59)
@@ -319,5 +324,5 @@ void IRAM_ATTR onTimer()
 		{
 			timeM->currentTime.hours = 0;
 		}
-	#endif
+	}
 }
