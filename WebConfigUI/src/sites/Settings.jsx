@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import SettingsForm from '../components/SettingsForm'
 
 const Settings = (props) => {
@@ -8,7 +8,7 @@ const Settings = (props) => {
 			<div>
 				<h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">{props.children}</h2>
 			</div>
-			<SettingsForm domain={props.domain} onSubmit={props.onSubmit} UIDefinition={props.UIDefinition} InitialValues={props.InitialValues}/>
+			<SettingsForm domain={props.domain} getUI={props.getUI} getValues={props.getValues} onSubmit={props.onSubmit} />
 		</div>
 	</div>
 	);

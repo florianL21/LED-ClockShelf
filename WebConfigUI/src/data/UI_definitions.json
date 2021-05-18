@@ -1,5 +1,5 @@
 {
-	"BaseSettings": [
+	"BaseConfig": [
 		{
 			"label": "Enable Blynk functionality",
 			"type": "bool",
@@ -16,11 +16,6 @@
 			"type": "string",
 			"target": "BLYNK_SERVER",
 			"onlyIf": "ENABLE_BLYNK"
-		},
-		{
-			"label": "Enable OTA Updates",
-			"type": "bool",
-			"target": "OTA_UPLOAD"
 		},
 		{
 			"label": "Host name",
@@ -161,7 +156,7 @@
 			"max": 65535
 		}
 	],
-	"ColorSettings": [
+	"ColorConfig": [
 		{
 			"label": "Color of the hour segments",
 			"type": "color",
@@ -171,62 +166,62 @@
 		},
 		{
 			"label": "Color of the minute segments",
-			"type": "int",
+			"type": "color",
 			"target": "MINUTE",
 			"min": 0,
 			"max": 16777215
 		},
 		{
 			"label": "Color of the internal LEDs",
-			"type": "int",
+			"type": "color",
 			"target": "INTERNAL",
 			"min": 0,
 			"max": 16777215
 		},
 		{
 			"label": "Color of the separation dot LEDs",
-			"type": "int",
+			"type": "color",
 			"target": "SEPARATION_DOT",
 			"min": 0,
 			"max": 16777215
 		},
 		{
 			"label": "Color of the LEDs for the OTA update progress bar",
-			"type": "int",
+			"type": "color",
 			"target": "OTA_UPDATE",
 			"min": 0,
 			"max": 16777215
 		},
 		{
 			"label": "Color of the LEDs while searching for a WIFI network",
-			"type": "int",
+			"type": "color",
 			"target": "WIFI_CONNECTING",
 			"min": 0,
 			"max": 16777215
 		},
 		{
 			"label": "Color of the LEDs signaling a successful WIFI connection",
-			"type": "int",
+			"type": "color",
 			"target": "WIFI_CONNECTION_SUCCESSFUL",
 			"min": 0,
 			"max": 16777215
 		},
 		{
 			"label": "Color of the LEDs if system is waiting for WIFI smart config",
-			"type": "int",
+			"type": "color",
 			"target": "WIFI_SMART_CONFIG",
 			"min": 0,
 			"max": 16777215
 		},
 		{
 			"label": "Color of the LEDs signaling an error of some sort",
-			"type": "int",
+			"type": "color",
 			"target": "ERROR",
 			"min": 0,
 			"max": 16777215
 		}
 	],
-	"HWSettings": [
+	"HWConfig": [
 		{
 			"label": "Pin to which the led strip data pin is connected to",
 			"type": "int",

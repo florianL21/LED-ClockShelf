@@ -154,6 +154,10 @@ void Animator::animationIterationDoneCallback(AnimatableObject* sourceObject)
 					currentObject->complexAnimationInst = nullptr;
 				}
 			}
+			if(currentAnimation->complexAnimationFinishedCallBack != nullptr)
+			{
+				currentAnimation->complexAnimationFinishedCallBack();
+			}
 			delete currentAnimation;
 		}
 	}
@@ -170,7 +174,7 @@ void Animator::startAnimationStep(uint16_t stepindex, ComplexAnimationInstance* 
 	animationStep* StepToStart = animationInst->animation->animations->get(stepindex);
 	if(StepToStart == nullptr)
 	{
-		Serial.printf("[E] Complex animation stepindex wa invalid. Animation step %d was not started\n\r", stepindex);
+		Serial.printf("[E] Complex animation stepindex was invalid. Animation step %d was not started\n\r", stepindex);
 		return;
 	}
 	bool hasCallbacks = false;
@@ -270,7 +274,8 @@ Animator::ComplexAnimationInstance* Animator::BuildComplexAnimation(ComplexAmina
 		.loop = looping,
 		.counter = 0,
 		.objects = animationObjectsArray,
-		.running = false
+		.running = false,
+		.complexAnimationFinishedCallBack = nullptr
 	};
 	if(ComplexAnimation == nullptr)
 	{

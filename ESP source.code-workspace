@@ -25,7 +25,8 @@
 			"*.tcc": "cpp",
 			"cmath": "cpp",
 			"cstdio": "cpp",
-			"new": "cpp"
+			"new": "cpp",
+			"algorithm": "cpp"
 		},
 		"editor.detectIndentation": false,
 		"editor.insertSpaces": false

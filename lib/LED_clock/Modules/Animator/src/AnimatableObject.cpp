@@ -139,12 +139,12 @@ int32_t AnimatableObject::getState()
 	return map(currentAnimationTime, 0, AnimationDuration, 0, numStates);
 }
 
-void AnimatableObject::setAnimationDoneCallback(AnimationCallBack* callback)
+void AnimatableObject::setAnimationDoneCallback(AnimationCallBack callback)
 {
 	finishedCallback = callback;
 }
 
-void AnimatableObject::setAnimationStartCallback(AnimationCallBack* callback)
+void AnimatableObject::setAnimationStartCallback(AnimationCallBack callback)
 {
 	startCallback = callback;
 }

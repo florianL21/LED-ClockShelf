@@ -257,3 +257,8 @@ void SevenSegment::DisplayChar(char value)
 		DisplayNumber(value - '0');
 	}
 }
+
+void SevenSegment::animationDone()
+{
+	DisplayNumberWithoutAnim(currentValue);
+}

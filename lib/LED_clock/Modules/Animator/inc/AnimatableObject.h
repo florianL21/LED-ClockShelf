@@ -42,7 +42,7 @@ public:
 	/**
 	 * \brief Callback typedef to use when an animation starts/finishes
 	 */
-	typedef void AnimationCallBack(void);
+	typedef void (*AnimationCallBack)(void);
 
 	/**
 	 * \brief Typedef for animation effect functions. These should be implemented explicitly for every object that inherits from #AnimatableObject
@@ -66,8 +66,8 @@ private:
 	bool animationStarted;
 	void* complexAnimationInst;
 
-	AnimationCallBack* finishedCallback;
-	AnimationCallBack* startCallback;
+	AnimationCallBack finishedCallback;
+	AnimationCallBack startCallback;
 	Animator* ComplexAnimationManager;
 	ComplexAnimationCallBack ComplexAnimStartCallback;
 	ComplexAnimationCallBack ComplexAnimDoneCallback;
@@ -161,14 +161,14 @@ public:
 	 *
 	 * \param callback function to call
 	 */
-	void setAnimationDoneCallback(AnimationCallBack* callback);
+	void setAnimationDoneCallback(AnimationCallBack callback);
 
 	/**
 	 * \brief Set a callback to be executued once an animation is started
 	 *
 	 * \param callback function to call
 	 */
-	void setAnimationStartCallback(AnimationCallBack* callback);
+	void setAnimationStartCallback(AnimationCallBack callback);
 
 };
 

@@ -39,4 +39,20 @@
 	.btn-secondary {
 		@apply text-indigo-900 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-400
 	}
+
+	[type='range'] {
+		@apply appearance-none w-full h-3 rounded-md bg-gray-200 outline-none opacity-70 transition-opacity;
+	}
+
+	[type='range']:hover {
+		@apply opacity-100;
+	}
+
+	[type='range']::-webkit-slider-thumb {
+		@apply h-6 w-5 bg-indigo-600 appearance-none rounded-md cursor-pointer;
+	}
+
+	[type='range']::-moz-range-thumb {
+		@apply h-6 w-5 bg-indigo-600 rounded-md cursor-pointer;
+	}
 }

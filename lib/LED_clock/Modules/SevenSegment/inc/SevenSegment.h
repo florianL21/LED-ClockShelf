@@ -75,6 +75,7 @@ private:
 	bool isConfigComplete();
 	void DisplayNumberWithoutAnim(uint8_t value);
 	Animator::ComplexAmination* getTransition(uint8_t from, uint8_t to);
+	void animationDone();
 
 public:
 

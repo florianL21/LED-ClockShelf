@@ -40,6 +40,8 @@
 
 /** \} */
 
+// const char* Wifi_config_classes[] = {};
+
 /**
  * \brief The config manager is responsible to handle the json configuration files.
  *        It stores all config values in variables to be able to use them in the code

@@ -60,6 +60,7 @@ public:
 		uint16_t counter;
 		AnimatableObject** objects;
 		bool running;
+		AnimatableObject::AnimationCallBack complexAnimationFinishedCallBack;
 	};
 
 private:

@@ -6,19 +6,7 @@ import WIFI_setup from "./sites/WIFI-setup";
 import Settings from "./sites/Settings";
 import Dialog from './components/Dialog';
 
-// Development function for testing locally
-// const getConfigFile = async (fileUrl, hook) => {
-// 	import(/* @vite-ignore */"./data" + fileUrl ).then(config => {
-// 		hook(config);
-// 	})
-// }
-
 export default function App() {
-	const [UI_definitions, setUI_definitions] = useState({});
-	const [BaseConfig, setBaseConfig] 				= useState({});
-	const [ColorConfig, setColorConfig] 			= useState({});
-	const [HWConfig, setHWConfig] 						= useState({});
-
 	const [saveResponse, setSaveResponse] 		= useState("ERROR: Not saved");
 	const [dialogShown, setDialogShown] 			= useState(false);
 
@@ -55,12 +43,6 @@ export default function App() {
 		return true;
 	}
 
-	useEffect(() => {
-		getConfigFile('UI_definitions.json', setUI_definitions);
-		getConfigFile('BaseConfig.json', setBaseConfig);
-		getConfigFile('ColorConfig.json', setColorConfig);
-		getConfigFile('HWConfig.json', setHWConfig);
-	}, []);
 
 	const handleSubmit = (domain, values, setter) => {
 		putConfigFile(domain, values);
@@ -78,15 +60,15 @@ export default function App() {
 						<Route path="/WIFI" exact component={() =>
 							<WIFI_setup domain="WIFISettings" onSubmit={(d, v)=> handleSubmit(d, v, null)}/>} />
 						<Route path="/BaseSettings" exact component={() =>
-							<Settings domain="BaseConfig" onSubmit={(d, v)=> handleSubmit(d, v, setBaseConfig)} UIDefinition={UI_definitions.BaseSettings} InitialValues={BaseConfig}>
+							<Settings domain="BaseConfig" onSubmit={handleSubmit} getUI={(setter)=>getConfigFile('UI_definitions.json', setter)} getValues={(setter)=>getConfigFile('BaseConfig.json', setter)}>
 								General Settings
 							</Settings>} />
 						<Route path="/Colors" exact component={() =>
-							<Settings domain="ColorConfig" onSubmit={(d, v)=> handleSubmit(d, v, setColorConfig)} UIDefinition={UI_definitions.ColorSettings} InitialValues={ColorConfig}>
+							<Settings domain="ColorConfig" onSubmit={handleSubmit} getUI={(setter)=>getConfigFile('UI_definitions.json', setter)}  getValues={(setter)=>getConfigFile('ColorConfig.json', setter)}>
 								Color Settings
 							</Settings>} />
 						<Route path="/HWSetup" exact component={() =>
-							<Settings domain="HWConfig" onSubmit={(d, v)=> handleSubmit(d, v, setHWConfig)} UIDefinition={UI_definitions.HWSettings} InitialValues={HWConfig}>
+							<Settings domain="HWConfig" onSubmit={handleSubmit} getUI={(setter)=>getConfigFile('UI_definitions.json', setter)} getValues={(setter)=>getConfigFile('HWConfig.json', setter)}>
 								Hardware Settings
 							</Settings>} />
 					</Switch>
