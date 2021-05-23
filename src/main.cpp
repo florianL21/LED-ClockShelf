@@ -9,18 +9,23 @@
 #include "DisplayManager.h"
 #include "ClockState.h"
 #include "ConfigManager.h"
+#include "WiFiManager.h"
+#include <ArduinoOTA.h>
+#include "BlynkConfig.h"
+
 #include "ESPAsyncWebServer.h"
 #include "AsyncJson.h"
 #include <ArduinoJson.h>
 #include "WiFi.h"
-#include <ArduinoOTA.h>
-#include "BlynkConfig.h"
+#include <DNSServer.h>
 
 DisplayManager* ShelfDisplays;
 BlynkConfig* BlynkConfiguration;
 TimeManager* timeM;
 ClockState* states;
 ConfigManager* config;
+WiFiManager* WIFIManager;
+
 AsyncWebServer server(80);
 bool OTAprogressFirstStep = true;
 wifi_event_id_t reconnectEvent;
@@ -80,88 +85,57 @@ void startupAnimation()
 	}
 }
 
-String saveSettings(ConfigManager::ConfigType type, JsonObject* json)
-{
-	String FailedKeys = "";
-	bool anyErrors = false;
-	for (JsonPair kv : *json)
-	{
-		if(!config->setProperty(kv, type))
-		{
-			if(anyErrors != false)
-			{
-				FailedKeys += ", ";
-			}
-			FailedKeys += kv.key().c_str();
-			anyErrors = true;
-		}
-	}
-	config->applyChanges();
-	config->saveConfigPersistent(type);
-	if(anyErrors == true)
-	{
-		String ErrorMessage = "ERROR: Following base config properties were not set: " + FailedKeys;
-		Serial.print("[W]: ");
-		Serial.println(ErrorMessage);
-		return ErrorMessage;
-	}
-	else
-	{
-		return "Config Saved without errors";
-	}
-}
+// void startWebServer()
+// {
+// 	server.serveStatic("/", SPIFFS, "/").setDefaultFile("index.html");
 
-void startWebServer()
-{
-	server.serveStatic("/", SPIFFS, "/").setDefaultFile("index.html");
+// 	server.onNotFound([](AsyncWebServerRequest *request)
+// 	{
+// 		request->send(SPIFFS, "/index.html", "text/html");
+// 	});
 
-	server.onNotFound([](AsyncWebServerRequest *request)
-	{
-		request->send(SPIFFS, "/index.html", "text/html");
-	});
+// 	AsyncCallbackJsonWebHandler* baseConfigHandler = new AsyncCallbackJsonWebHandler("/BaseConfig", [](AsyncWebServerRequest *request, JsonVariant &json)
+// 	{
+// 		JsonObject temp = json.as<JsonObject>();
+// 		request->send(200, "text/plain", saveSettings(ConfigManager::BASE_CONFIG, &temp));
+// 	});
+// 	server.addHandler(baseConfigHandler);
 
-	AsyncCallbackJsonWebHandler* baseConfigHandler = new AsyncCallbackJsonWebHandler("/BaseConfig", [](AsyncWebServerRequest *request, JsonVariant &json)
-	{
-		JsonObject temp = json.as<JsonObject>();
-		request->send(200, "text/plain", saveSettings(ConfigManager::BASE_CONFIG, &temp));
-	});
-	server.addHandler(baseConfigHandler);
+// 	AsyncCallbackJsonWebHandler* colorConfigHandler = new AsyncCallbackJsonWebHandler("/ColorConfig", [](AsyncWebServerRequest *request, JsonVariant &json)
+// 	{
+// 		JsonObject temp = json.as<JsonObject>();
+// 		request->send(200, "text/plain", saveSettings(ConfigManager::COLOR_CONFIG, &temp));
+// 	});
+// 	server.addHandler(colorConfigHandler);
 
-	AsyncCallbackJsonWebHandler* colorConfigHandler = new AsyncCallbackJsonWebHandler("/ColorConfig", [](AsyncWebServerRequest *request, JsonVariant &json)
-	{
-		JsonObject temp = json.as<JsonObject>();
-		request->send(200, "text/plain", saveSettings(ConfigManager::COLOR_CONFIG, &temp));
-	});
-	server.addHandler(colorConfigHandler);
+// 	AsyncCallbackJsonWebHandler* hwConfigHandler = new AsyncCallbackJsonWebHandler("/HWConfig", [](AsyncWebServerRequest *request, JsonVariant &json)
+// 	{
+// 		JsonObject temp = json.as<JsonObject>();
+// 		request->send(200, "text/plain", saveSettings(ConfigManager::HW_CONFIG, &temp));
+// 	});
+// 	server.addHandler(hwConfigHandler);
 
-	AsyncCallbackJsonWebHandler* hwConfigHandler = new AsyncCallbackJsonWebHandler("/HWConfig", [](AsyncWebServerRequest *request, JsonVariant &json)
-	{
-		JsonObject temp = json.as<JsonObject>();
-		request->send(200, "text/plain", saveSettings(ConfigManager::HW_CONFIG, &temp));
-	});
-	server.addHandler(hwConfigHandler);
+// 	AsyncCallbackJsonWebHandler* WIFIConfigHandler = new AsyncCallbackJsonWebHandler("/WIFISettings", [](AsyncWebServerRequest *request, JsonVariant &json)
+// 	{
+// 		JsonObject temp = json.as<JsonObject>();
+// 		if(temp.containsKey("SSID") && temp.containsKey("PW"))
+// 		{
+// 			const char* SSID = temp["SSID"];
+// 			const char* PW = temp["PW"];
+// 			WIFI_SSID = String(SSID);
+// 			WIFI_PW = String(PW);
+// 			wifiReconnectFlag = true;
+// 			request->send(200, "text/plain", "The device will now attempt to connect to \"" + WIFI_SSID + "\" Connection to the web interface will be lost.");
+// 		}
+// 		else
+// 		{
+// 			request->send(200, "text/plain", "ERROR: All two keys (SSID, PW are mandatory but at least one of them was missing.");
+// 		}
+// 	});
+// 	server.addHandler(WIFIConfigHandler);
 
-	AsyncCallbackJsonWebHandler* WIFIConfigHandler = new AsyncCallbackJsonWebHandler("/WIFISettings", [](AsyncWebServerRequest *request, JsonVariant &json)
-	{
-		JsonObject temp = json.as<JsonObject>();
-		if(temp.containsKey("SSID") && temp.containsKey("PW"))
-		{
-			const char* SSID = temp["SSID"];
-			const char* PW = temp["PW"];
-			WIFI_SSID = String(SSID);
-			WIFI_PW = String(PW);
-			wifiReconnectFlag = true;
-			request->send(200, "text/plain", "The device will now attempt to connect to \"" + WIFI_SSID + "\" Connection to the web interface will be lost.");
-		}
-		else
-		{
-			request->send(200, "text/plain", "ERROR: All two keys (SSID, PW are mandatory but at least one of them was missing.");
-		}
-	});
-	server.addHandler(WIFIConfigHandler);
-
-	server.begin();
-}
+// 	server.begin();
+// }
 
 void setup()
 {
@@ -174,6 +148,7 @@ void setup()
 	BlynkConfiguration 	= BlynkConfig::getInstance();
 	timeM 				= TimeManager::getInstance();
 	states 				= ClockState::getInstance();
+	WIFIManager			= WiFiManager::getInstance();
 
 	Serial.println("Initializing LEDs...");
 	ShelfDisplays->InitSegments(0, NUM_LEDS_PER_SEGMENT, WIFI_CONNECTING_COLOR, 50);
@@ -184,13 +159,14 @@ void setup()
 	ShelfDisplays->setDotLEDColor(SEPERATION_DOT_COLOR);
 
 	Serial.println("Running wifi setup...");
-	wifiSetup();
+	// wifiSetup();
+	WIFIManager->autoConnect();
 	setupOTA();
 	ArduinoOTA.handle(); //give ota the opportunity to update before the main loop starts in case we have a crash in there
 
 	BlynkConfiguration->setup();
 
-	startWebServer();
+	// startWebServer();
 
 	Serial.println("Fetching time from NTP server...");
 	if(timeM->init() == false)
@@ -212,24 +188,24 @@ void loop()
 	ArduinoOTA.handle();
 	states->handleStates(); //updates display states, switches between modes etc.
     ShelfDisplays->handle();
-	if(wifiReconnectFlag == true)
-	{
-		Serial.printf("Trying to connect to %s with password %s\n\r", WIFI_SSID.c_str(), WIFI_PW.c_str());
-		server.end();
-		WiFi.removeEvent(reconnectEvent);
-		WiFi.disconnect();
-		connectToWIFI(WIFI_SSID.c_str(), WIFI_PW.c_str());
-		if(WiFi.status() == WL_CONNECTED)
-		{
-			Serial.println("Connect successful");
-			Serial.println("Resetting contoller to reconnect to the right WIFI network");
-		}
-		else
-		{
-			Serial.println("Reconnect failed, maximum number of retries exhausted");
-		}
-		ESP.restart();
-	}
+	// if(wifiReconnectFlag == true)
+	// {
+	// 	Serial.printf("Trying to connect to %s with password %s\n\r", WIFI_SSID.c_str(), WIFI_PW.c_str());
+	// 	server.end();
+	// 	WiFi.removeEvent(reconnectEvent);
+	// 	WiFi.disconnect();
+	// 	connectToWIFI(WIFI_SSID.c_str(), WIFI_PW.c_str());
+	// 	if(WiFi.status() == WL_CONNECTED)
+	// 	{
+	// 		Serial.println("Connect successful");
+	// 		Serial.println("Resetting contoller to reconnect to the right WIFI network");
+	// 	}
+	// 	else
+	// 	{
+	// 		Serial.println("Reconnect failed, maximum number of retries exhausted");
+	// 	}
+	// 	ESP.restart();
+	// }
 }
 
 void AlarmTriggered()
@@ -249,91 +225,89 @@ void TimerDone()
 	BlynkConfiguration->updateUI();
 }
 
-void WiFiStationDisconnected(WiFiEvent_t event, WiFiEventInfo_t info)
-{
-	Serial.print("WiFi lost connection. Reason: ");
-	Serial.println(info.disconnected.reason);
-	Serial.println("Trying to Reconnect");
-	WiFi.disconnect();
-	connectToWIFI();
-}
+// void WiFiStationDisconnected(WiFiEvent_t event, WiFiEventInfo_t info)
+// {
+// 	Serial.print("WiFi lost connection. Reason: ");
+// 	Serial.println(info.disconnected.reason);
+// 	Serial.println("Trying to Reconnect");
+// 	WiFi.disconnect();
+// 	connectToWIFI();
+// }
 
-void connectToWIFI(const char* SSID, const char* PW)
-{
-	Serial.println("Trying to connect to wifi network");
-	ShelfDisplays->setAllSegmentColors(WIFI_CONNECTING_COLOR);
-	ShelfDisplays->showLoadingAnimation();
-	wl_status_t connectionStatus;
-	if(SSID != nullptr && PW != nullptr)
-	{
-		connectionStatus = WiFi.begin(SSID, PW);
-	}
-	else
-	{
-		connectionStatus = WiFi.begin();
-	}
-	for (int i = 0; i < NUM_RETRIES; i++)
-	{
-		Serial.print(".");
-		if(SSID != nullptr && PW != nullptr)
-		{
-			connectionStatus = WiFi.begin(SSID, PW);
-		}
-		else
-		{
-			connectionStatus = WiFi.begin();
-		}
-		if(connectionStatus == WL_CONNECTED)
-		{
-			Serial.println("Reconnect successful");
-			ShelfDisplays->setAllSegmentColors(WIFI_CONNECTION_SUCCESSFUL_COLOR);
-			break;
-		}
-		ShelfDisplays->delay(1000);
-	}
-}
+// void connectToWIFI(const char* SSID, const char* PW)
+// {
+// 	Serial.println("Trying to connect to wifi network");
+// 	ShelfDisplays->setAllSegmentColors(WIFI_CONNECTING_COLOR);
+// 	ShelfDisplays->showLoadingAnimation();
+// 	wl_status_t connectionStatus;
+// 	if(SSID != nullptr && PW != nullptr)
+// 	{
+// 		connectionStatus = WiFi.begin(SSID, PW);
+// 	}
+// 	else
+// 	{
+// 		connectionStatus = WiFi.begin();
+// 	}
+// 	for (int i = 0; i < NUM_RETRIES; i++)
+// 	{
+// 		Serial.print(".");
+// 		if(SSID != nullptr && PW != nullptr)
+// 		{
+// 			connectionStatus = WiFi.begin(SSID, PW);
+// 		}
+// 		else
+// 		{
+// 			connectionStatus = WiFi.begin();
+// 		}
+// 		if(connectionStatus == WL_CONNECTED)
+// 		{
+// 			Serial.println("Reconnect successful");
+// 			ShelfDisplays->setAllSegmentColors(WIFI_CONNECTION_SUCCESSFUL_COLOR);
+// 			break;
+// 		}
+// 		ShelfDisplays->delay(1000);
+// 	}
+// }
 
-#include <DNSServer.h>
+// void wifiAPMode()
+// {
+// 	IPAddress apIP(8,8,4,4); // The default android DNS
+// 	DNSServer dnsServer;
+// 	const byte DNS_PORT = 53;
 
-void wifiAPMode()
-{
-	IPAddress apIP(8,8,4,4); // The default android DNS
-	DNSServer dnsServer;
-	const byte DNS_PORT = 53;
+// 	WiFi.mode(WIFI_AP);
+// 	WiFi.softAP("LED-Pixel clock fallback AP");
+// 	WiFi.softAPConfig(apIP, apIP, IPAddress(255, 255, 255, 0));
 
-	WiFi.mode(WIFI_AP);
-	WiFi.softAP("LED-Pixel clock fallback AP");
-	WiFi.softAPConfig(apIP, apIP, IPAddress(255, 255, 255, 0));
+// 	dnsServer.start(DNS_PORT, "*", apIP);
 
-	dnsServer.start(DNS_PORT, "*", apIP);
+// 	startWebServer();
 
-	startWebServer();
+// 	server.onNotFound([](AsyncWebServerRequest *request)
+// 	{
+// 		request->redirect("/WIFI");
+// 	});
+// 	while(true) {
+// 		ShelfDisplays->delay(500);
+// 	}
+// }
 
-	server.onNotFound([](AsyncWebServerRequest *request)
-	{
-		request->redirect("/WIFI");
-	});
-	while(true) {
-		ShelfDisplays->delay(500);
-	}
-}
+// void wifiSetup()
+// {
+// 	connectToWIFI();
 
-void wifiSetup()
-{
-	connectToWIFI();
-
-	if(WiFi.status() != WL_CONNECTED)
-	{
-		Serial.println("Reconnect failed Starting fallback AP");
-		ShelfDisplays->setAllSegmentColors(WIFI_SMART_CONFIG_COLOR);
-		wifiAPMode();
-	}
-	reconnectEvent = WiFi.onEvent(WiFiStationDisconnected, SYSTEM_EVENT_STA_DISCONNECTED);
-	ShelfDisplays->stopLoadingAnimation();
-	Serial.println("Waiting for loading animation to finish...");
-	ShelfDisplays->waitForLoadingAnimationFinish();
-	ShelfDisplays->turnAllSegmentsOff();
-}
+// 	if(WiFi.status() != WL_CONNECTED)
+// 	{
+// 		Serial.println("Reconnect failed Starting fallback AP");
+// 		ShelfDisplays->setAllSegmentColors(WIFI_SMART_CONFIG_COLOR);
+// 		wifiAPMode();
+// 	}
+// 	reconnectEvent = WiFi.onEvent(WiFiStationDisconnected, SYSTEM_EVENT_STA_DISCONNECTED);
+// 	ShelfDisplays->stopLoadingAnimation();
+// 	Serial.println("Waiting for loading animation to finish...");
+// 	ShelfDisplays->waitForLoadingAnimationFinish();
+// 	ShelfDisplays->turnAllSegmentsOff();
+// }
 
 void setupOTA()
 {

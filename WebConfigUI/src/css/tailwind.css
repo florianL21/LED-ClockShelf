@@ -41,7 +41,7 @@
 	}
 
 	[type='range'] {
-		@apply appearance-none w-full h-3 rounded-md bg-gray-200 outline-none opacity-70 transition-opacity;
+		@apply appearance-none w-full h-6 rounded-md bg-gray-200 outline-none opacity-70 transition-opacity;
 	}
 
 	[type='range']:hover {

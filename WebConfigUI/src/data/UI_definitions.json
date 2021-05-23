@@ -279,15 +279,29 @@
 		},
 		{
 			"label": "The display on which the separation dot should be shown",
-			"type": "enum selector",
+			"type": "dropdown",
 			"target": "DISPLAY_FOR_SEPARATION_DOT",
-			"enum": "DisplayIDs",
+			"list": [
+				{"value": 0, "label": "Higher digit hour display"},
+				{"value": 1, "label": "First intermediate display"},
+				{"value": 2, "label": "Lower digit hour display"},
+				{"value": 3, "label": "Second intermediate display"},
+				{"value": 4, "label": "Higher digit minute display"},
+				{"value": 5, "label": "Third intermediate display"},
+				{"value": 6, "label": "Lower digit minute display"}
+			]
+		},
+		{
+			"label": "The display on which the separation dot should be shown",
+			"type": "dropdown_invalid",
+			"target": "DISPLAY_FOR_SEPARATION_DOT1",
+			"list": "DisplayIDs",
 			"min": 1,
 			"max": 7
 		},
 		{
 			"label": "The indices of the displays in the order they are configured in",
-			"type": "customizable enum",
+			"type": "ListSelection",
 			"elements": [
 				{"target": "HIGHER_DIGIT_HOUR_DISPLAY", "label": "Higher digit hour display"},
 				{"target": "FIRST_INTERMEDIATE_DISPLAY", "label": "First intermediate display"},
@@ -297,7 +311,7 @@
 				{"target": "THIRD_INTERMEDIATE_DISPLAY", "label": "Third intermediate display"},
 				{"target": "LOWER_DIGIT_MINUTE_DISPLAY", "label": "Lower digit minute display"}
 			],
-			"target": "DisplayIDs",
+			"id": "DisplayIDs",
 			"deactivated": -1,
 			"min": 1,
 			"max": 7

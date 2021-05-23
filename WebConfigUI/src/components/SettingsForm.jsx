@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import Dialog from '../components/Dialog'
+import { Listbox, Transition } from '@headlessui/react'
+import { CheckIcon, SelectorIcon } from '@heroicons/react/solid'
 
 
 const loadConfig = (UIDefinition, InitialValues) => {
@@ -175,25 +177,77 @@ const SettingsForm = (props) => {
 				return (
 					<div key={settingEntry.target}>
 						<label className={`block text-sm font-medium ${Disabled ? "text-gray-400" : "text-gray-800"}`}>{settingEntry.label}</label>
-						<div className="grid grid-cols-3">
-							<div className="w-28 h-28 m-3 rounded-lg border-2" style={{backgroundColor: toColorStyle(rgbColor)}}></div>
-							<div className="col-span-2 h-full space-y-6 m-4 pt-2">
+						<div className="flex flex-col sm:flex-row">
+							<div className="sm:flex-none flex-grow sm:w-28 h-28 m-3 rounded-lg border-2" style={{backgroundColor: toColorStyle(rgbColor)}}></div>
+							<div className="flex-grow h-full space-y-4 m-4 pt-2">
 								<div className="flex">
-									<label className="inline px-2">{rgbColor.r}</label>
-									<input disabled={Disabled} type='range' step="1" min='0' max='255' id="r" className="inline" name={settingEntry.target + "r"} value={rgbColor.r} onChange={(e) => valueChangedHandler(e, settingEntry.target)}/>
+									<label className="flex-none inline px-2 w-10 h-3">{rgbColor.r}</label>
+									<input disabled={Disabled} type='range' step="1" min='0' max='255' id="r" className="flex-grow inline" name={settingEntry.target + "r"} value={rgbColor.r} onChange={(e) => valueChangedHandler(e, settingEntry.target)}/>
 								</div>
 								<div className="flex">
-									<label className="inline px-2">{rgbColor.g}</label>
-									<input disabled={Disabled} type='range' step="1" min='0' max='255' id="g" className="inline" name={settingEntry.target + "g"} value={rgbColor.g} onChange={(e) => valueChangedHandler(e, settingEntry.target)}/>
+									<label className="flex-none inline px-2 w-10 h-3">{rgbColor.g}</label>
+									<input disabled={Disabled} type='range' step="1" min='0' max='255' id="g" className="flex-grow inline" name={settingEntry.target + "g"} value={rgbColor.g} onChange={(e) => valueChangedHandler(e, settingEntry.target)}/>
 								</div>
 								<div className="flex">
-									<label className="inline px-2">{rgbColor.b}</label>
-									<input disabled={Disabled} type='range' step="1" min='0' max='255' id="b" className="inline" name={settingEntry.target + "b"} value={rgbColor.b} onChange={(e) => valueChangedHandler(e, settingEntry.target)}/>
+									<label className="flex-none inline px-2 w-10 h-3">{rgbColor.b}</label>
+									<input disabled={Disabled} type='range' step="1" min='0' max='255' id="b" className="flex-grow inline" name={settingEntry.target + "b"} value={rgbColor.b} onChange={(e) => valueChangedHandler(e, settingEntry.target)}/>
 								</div>
 							</div>
 						</div>
 					</div>
 				)
+			case "dropdown":
+				var selectedItem = Values[settingEntry.target] || '';
+				var listboxOptions;
+				if(Array.isArray(settingEntry.list))
+				{
+					listboxOptions = settingEntry.list.map((entry) => (
+						<Listbox.Option
+							key={entry.value}
+							className={({ active }) => `${active ? 'text-amber-900 bg-amber-100' : 'text-gray-900'} cursor-default select-none relative py-2 pl-10 pr-4`}
+							value={entry.value}
+						>
+							{({ selected, active }) => (
+								<>
+									<span className={`${ selected ? 'font-medium' : 'font-normal' } block truncate`}>
+										{entry.label}
+									</span>
+									{selected ? (
+										<span className={`${ active ? 'text-amber-600' : 'text-amber-600' } absolute inset-y-0 left-0 flex items-center pl-3`}>
+											<CheckIcon className="w-5 h-5" aria-hidden="true" />
+										</span>
+									) : null}
+								</>
+							)}
+						</Listbox.Option>
+					))
+				}
+				return (
+					<div key={settingEntry.target}>
+						<label htmlFor={settingEntry.target} className={`block text-sm font-medium ${Disabled ? "text-gray-400" : "text-gray-800"}`}>{settingEntry.label}</label>
+						<div className="mt-1">
+							<Listbox value={selectedItem} onChange={(e) => valueChangedHandler(e, settingEntry.target)}>
+								<div className="relative mt-1">
+									<Listbox.Button className="relative w-full py-2 pl-3 pr-10 text-left bg-white rounded-lg shadow-md cursor-default focus:outline-none focus-visible:ring-2 focus-visible:ring-opacity-75 focus-visible:ring-white focus-visible:ring-offset-orange-300 focus-visible:ring-offset-2 focus-visible:border-indigo-500 sm:text-sm">
+										<span className="block truncate">{selectedItem}</span>
+										<span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+											<SelectorIcon
+												className="w-5 h-5 text-gray-400"
+												aria-hidden="true"
+											/>
+										</span>
+									</Listbox.Button>
+									<Listbox.Options className="absolute w-full py-1 mt-1 overflow-auto text-base bg-white rounded-md shadow-lg max-h-60 ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+										{listboxOptions}
+									</Listbox.Options>
+								</div>
+							</Listbox>
+						</div>
+					</div>
+				);
+			default:
+				console.log(settingEntry.target + ": has invalid type: " + settingEntry.type);
+				return (<div key={settingEntry.target} className="invalid"></div>);
 		}
 	})
 	return (
