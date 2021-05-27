@@ -159,8 +159,7 @@ void setup()
 	ShelfDisplays->setDotLEDColor(SEPERATION_DOT_COLOR);
 
 	Serial.println("Running wifi setup...");
-	// wifiSetup();
-	WIFIManager->autoConnect();
+	WIFIManager->autoConnect(ShelfDisplays);
 	setupOTA();
 	ArduinoOTA.handle(); //give ota the opportunity to update before the main loop starts in case we have a crash in there
 

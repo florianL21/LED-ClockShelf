@@ -14,12 +14,13 @@
 #include <ESPAsyncWebServer.h>
 #include <AsyncJson.h>
 #include "ConfigManager.h"
+#include "DisplayManager.h"
 
 #define WEBSERVER_PORT 	80
 #define DNS_PORT		53
 #define AP_SSID			"LED-Pixel clock fallback AP"
 #define AP_PW			"0123456789"
-#define CONNECTION_TIMEOUT	3000 //20000
+#define CONNECTION_TIMEOUT	30000
 
 class WiFiManager
 {
@@ -27,6 +28,7 @@ private:
 	AsyncWebServer* server;
 	DNSServer* dnsServer;
 	ConfigManager* config;
+	DisplayManager* ShelfDisplays;
 
 	bool connect;
 	String WIFI_SSID;
@@ -41,12 +43,15 @@ private:
 	void handleWifiSubmit(AsyncWebServerRequest *request, JsonVariant &json);
 	void handleSaveUnavailable(AsyncWebServerRequest *request, JsonVariant &json);
 	void startWebInterface();
+	void stopAnimation();
 public:
 	static WiFiManager* getInstance();
 	~WiFiManager();
 	void setupConfigPortal();
 	bool captivePortal(AsyncWebServerRequest *request);
 	bool autoConnect();
+	bool autoConnect(DisplayManager* display);
+	void setDisplay(DisplayManager* display);
 	uint8_t waitForConnectResult();
 	int connectWifi(String ssid, String pass);
 	bool startConfigPortal();

@@ -17,6 +17,7 @@ WiFiManager::WiFiManager()
 	server = new AsyncWebServer(WEBSERVER_PORT);
 	dnsServer = new DNSServer();
 	config = ConfigManager::getInstance();
+	ShelfDisplays = nullptr;
 }
 
 WiFiManager::~WiFiManager()
@@ -25,8 +26,35 @@ WiFiManager::~WiFiManager()
 	delete dnsServer;
 }
 
+void WiFiManager::setDisplay(DisplayManager* display)
+{
+	ShelfDisplays = display;
+}
+
+bool WiFiManager::autoConnect(DisplayManager* display)
+{
+	setDisplay(display);
+	return autoConnect();
+}
+
+void WiFiManager::stopAnimation()
+{
+	if(ShelfDisplays != nullptr)
+	{
+		ShelfDisplays->stopLoadingAnimation();
+		Serial.println("Waiting for loading animation to finish...");
+		ShelfDisplays->waitForLoadingAnimationFinish();
+		ShelfDisplays->turnAllSegmentsOff();
+	}
+}
+
 bool WiFiManager::autoConnect()
 {
+	if(ShelfDisplays != nullptr)
+	{
+		ShelfDisplays->setAllSegmentColors(config->getProperty<int>(ConfigManager::COLOR_CONFIG, WIFI_CONNECTING_COLOR_KEY));
+		ShelfDisplays->showLoadingAnimation();
+	}
 	// attempt to connect; should it fail, fall back to AP
 	WiFi.mode(WIFI_STA);
 
@@ -35,6 +63,7 @@ bool WiFiManager::autoConnect()
 		Serial.print("IP Address: ");
 		Serial.println(WiFi.localIP());
 		//connected
+		stopAnimation();
 		return true;
 	}
 
@@ -43,6 +72,10 @@ bool WiFiManager::autoConnect()
 
 int WiFiManager::connectWifi(String ssid, String pass)
 {
+	if(ShelfDisplays != nullptr)
+	{
+		ShelfDisplays->setAllSegmentColors(config->getProperty<int>(ConfigManager::COLOR_CONFIG, WIFI_CONNECTING_COLOR_KEY));
+	}
 	Serial.println("Connecting as wifi client...");
 
 	//fix for auto connect racing issue
@@ -177,6 +210,10 @@ void WiFiManager::handleNotFound(AsyncWebServerRequest *request)
 
 bool WiFiManager::startConfigPortal()
 {
+	if(ShelfDisplays != nullptr)
+	{
+		ShelfDisplays->setAllSegmentColors(config->getProperty<int>(ConfigManager::COLOR_CONFIG, WIFI_CONFIG_COLOR_KEY));
+	}
 	//setup AP
 	WiFi.mode(WIFI_AP_STA);
 	Serial.println("SET AP STA");
@@ -195,7 +232,7 @@ bool WiFiManager::startConfigPortal()
 			delay(2000);
 			Serial.println("Connecting to new AP");
 
-			if (connectWifi(AP_SSID, AP_PW) != WL_CONNECTED)
+			if (connectWifi(WIFI_SSID, WIFI_PW) != WL_CONNECTED)
 			{
 				Serial.println("Failed to connect.");
 			}
@@ -203,6 +240,7 @@ bool WiFiManager::startConfigPortal()
 			{
 				//connected
 				WiFi.mode(WIFI_STA);
+				stopAnimation();
 				break;
 			}
 		}
@@ -218,7 +256,7 @@ bool WiFiManager::startConfigPortal()
 /** Redirect to captive portal if we got a request for another domain. Return true in that case so the page handler do not try to handle the request again. */
 bool WiFiManager::captivePortal(AsyncWebServerRequest *request)
 {
-	if(request->host() != WiFi.softAPIP().toString()) //TODO: check if requested url is not IP
+	if(request->host() != WiFi.softAPIP().toString())
 	{
 		Serial.printf("Redirecting %s to %s\n\r", request->host().c_str(), WiFi.softAPIP().toString().c_str());
 		request->redirect(String("http://") + WiFi.softAPIP().toString() + String("/WIFI"));
