@@ -296,41 +296,72 @@ String WiFiManager::saveWiFiSettings(ConfigManager::ConfigType type, JsonObject*
 	}
 }
 
+String WiFiManager::saveSettings(ConfigManager::ConfigType type, JsonObject* json)
+{
+	String FailedKeys = "";
+	bool anyErrors = false;
+	for (JsonPair kv : *json)
+	{
+		if(!config->setProperty(kv, type))
+		{
+			if(anyErrors != false)
+			{
+				FailedKeys += ", ";
+			}
+			FailedKeys += kv.key().c_str();
+			anyErrors = true;
+		}
+	}
+	config->applyChanges();
+	config->saveConfigPersistent(type);
+	if(anyErrors == true)
+	{
+		String ErrorMessage = "ERROR: Following base config properties were not set: " + FailedKeys;
+		Serial.print("[W]: ");
+		Serial.println(ErrorMessage);
+		return ErrorMessage;
+	}
+	else
+	{
+		return "Config Saved without errors";
+	}
+}
 
-// void WiFiManager::startWebInterface()
-// {
-// 	server->reset();
-// 	server->serveStatic("/", SPIFFS, "/").setDefaultFile("index.html");
+void WiFiManager::startWebUI()
+{
+	Serial.println("Starting web UI");
+	server->reset();
+	server->serveStatic("/", SPIFFS, "/").setDefaultFile("index.html");
 
-// 	server->onNotFound([](AsyncWebServerRequest *request)
-// 	{
-// 		request->send(SPIFFS, "/index.html", "text/html");
-// 	});
+	server->onNotFound([](AsyncWebServerRequest *request)
+	{
+		request->send(SPIFFS, "/index.html", "text/html");
+	});
 
-// 	AsyncCallbackJsonWebHandler* baseConfigHandler = new AsyncCallbackJsonWebHandler("/BaseConfig", [](AsyncWebServerRequest *request, JsonVariant &json)
-// 	{
-// 		JsonObject temp = json.as<JsonObject>();
-// 		request->send(200, "text/plain", saveSettings(ConfigManager::BASE_CONFIG, &temp));
-// 	});
-// 	server->addHandler(baseConfigHandler);
+	AsyncCallbackJsonWebHandler* baseConfigHandler = new AsyncCallbackJsonWebHandler("/BaseConfig", [this](AsyncWebServerRequest *request, JsonVariant &json)
+	{
+		JsonObject temp = json.as<JsonObject>();
+		request->send(200, "text/plain", saveSettings(ConfigManager::BASE_CONFIG, &temp));
+	});
+	server->addHandler(baseConfigHandler);
 
-// 	AsyncCallbackJsonWebHandler* colorConfigHandler = new AsyncCallbackJsonWebHandler("/ColorConfig", [](AsyncWebServerRequest *request, JsonVariant &json)
-// 	{
-// 		JsonObject temp = json.as<JsonObject>();
-// 		request->send(200, "text/plain", saveSettings(ConfigManager::COLOR_CONFIG, &temp));
-// 	});
-// 	server->addHandler(colorConfigHandler);
+	AsyncCallbackJsonWebHandler* colorConfigHandler = new AsyncCallbackJsonWebHandler("/ColorConfig", [this](AsyncWebServerRequest *request, JsonVariant &json)
+	{
+		JsonObject temp = json.as<JsonObject>();
+		request->send(200, "text/plain", saveSettings(ConfigManager::COLOR_CONFIG, &temp));
+	});
+	server->addHandler(colorConfigHandler);
 
-// 	AsyncCallbackJsonWebHandler* hwConfigHandler = new AsyncCallbackJsonWebHandler("/HWConfig", [](AsyncWebServerRequest *request, JsonVariant &json)
-// 	{
-// 		JsonObject temp = json.as<JsonObject>();
-// 		request->send(200, "text/plain", saveSettings(ConfigManager::HW_CONFIG, &temp));
-// 	});
-// 	server->addHandler(hwConfigHandler);
+	AsyncCallbackJsonWebHandler* hwConfigHandler = new AsyncCallbackJsonWebHandler("/HWConfig", [this](AsyncWebServerRequest *request, JsonVariant &json)
+	{
+		JsonObject temp = json.as<JsonObject>();
+		request->send(200, "text/plain", saveSettings(ConfigManager::HW_CONFIG, &temp));
+	});
+	server->addHandler(hwConfigHandler);
 
-// 	AsyncCallbackJsonWebHandler* WIFIConfigHandler = new AsyncCallbackJsonWebHandler("/WIFISettings", std::bind(&WiFiManager::handleWifiSubmit, this, std::placeholders::_1, std::placeholders::_2));
-// 	server->addHandler(WIFIConfigHandler);
+	AsyncCallbackJsonWebHandler* WIFIConfigHandler = new AsyncCallbackJsonWebHandler("/WIFISettings", std::bind(&WiFiManager::handleWifiSubmit, this, std::placeholders::_1, std::placeholders::_2));
+	server->addHandler(WIFIConfigHandler);
 
-// 	server->begin();
-// 	Serial.println("Web interface should be up and running");
-// }
+	server->begin();
+	Serial.println("Web interface should be up and running");
+}

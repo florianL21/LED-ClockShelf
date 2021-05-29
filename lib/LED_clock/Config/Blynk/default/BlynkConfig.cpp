@@ -148,6 +148,7 @@ void blynkReconfigure(ConfigManager* config)
 	Blynk.config(config->getProperty<const char*>(ConfigManager::BASE_CONFIG, BLYNK_TOKEN_KEY),
 				 config->getProperty<const char*>(ConfigManager::BASE_CONFIG, BLYNK_SERVER_KEY), 80);
 	BlynkC->setEnabled(config->getProperty<bool>(ConfigManager::BASE_CONFIG, BLYNK_ACTIVE_KEY));
+	ESP.restart();
 }
 
 /**

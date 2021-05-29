@@ -44,17 +44,19 @@ private:
 	void handleSaveUnavailable(AsyncWebServerRequest *request, JsonVariant &json);
 	void startWebInterface();
 	void stopAnimation();
-public:
-	static WiFiManager* getInstance();
-	~WiFiManager();
-	void setupConfigPortal();
-	bool captivePortal(AsyncWebServerRequest *request);
-	bool autoConnect();
-	bool autoConnect(DisplayManager* display);
 	void setDisplay(DisplayManager* display);
 	uint8_t waitForConnectResult();
 	int connectWifi(String ssid, String pass);
 	bool startConfigPortal();
+	void setupConfigPortal();
+	bool captivePortal(AsyncWebServerRequest *request);
+	String saveSettings(ConfigManager::ConfigType type, JsonObject* json);
+public:
+	static WiFiManager* getInstance();
+	~WiFiManager();
+	bool autoConnect();
+	bool autoConnect(DisplayManager* display);
+	void startWebUI();
 };
 
 
