@@ -16,7 +16,7 @@ BlynkConfig* BlynkC 				= nullptr;
 ClockState* ClockS 					= nullptr;
 TimeManager* TimeM 					= nullptr;
 
-void blynkReconfigure(ConfigManager* config);
+bool blynkReconfigure(ConfigManager* config);
 
 /**
  * \brief Construct a new Blynk Config object. Also poulate all variables of the class with meaningful values
@@ -143,12 +143,12 @@ void BlynkConfig::setEnabled(bool enabled)
 	}
 }
 
-void blynkReconfigure(ConfigManager* config)
+bool blynkReconfigure(ConfigManager* config)
 {
 	Blynk.config(config->getProperty<const char*>(ConfigManager::BASE_CONFIG, BLYNK_TOKEN_KEY),
 				 config->getProperty<const char*>(ConfigManager::BASE_CONFIG, BLYNK_SERVER_KEY), 80);
 	BlynkC->setEnabled(config->getProperty<bool>(ConfigManager::BASE_CONFIG, BLYNK_ACTIVE_KEY));
-	ESP.restart();
+	return SYSTEM_RESTART_REQUIRED;
 }
 
 /**

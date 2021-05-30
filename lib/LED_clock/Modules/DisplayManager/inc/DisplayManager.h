@@ -17,6 +17,7 @@
 #include "Configuration.h"
 #include "LinkedList.h"
 #include "Animations.h"
+#include "ConfigManager.h"
 
 /**
  * \brief Macro to shorten then name of the function to make usage easier in the animation config files.
@@ -39,6 +40,7 @@ private:
 	static uint8_t diplayIndex[NUM_SEGMENTS];
 	static DisplayManager* instance;
 
+	ConfigManager* config;
 	Animator* animationManager;
 	Segment* allSegments[NUM_SEGMENTS];
 	SevenSegment* Displays[NUM_DISPLAYS];
@@ -75,6 +77,7 @@ private:
 
 	void AnimationManagersTemporaryOverride(Animator* OverrideanimationManager);
 	void restoreAnimationManagers();
+	// bool reconfigureDisplays(ConfigManager* config);
 
 	DisplayManager();
 public:

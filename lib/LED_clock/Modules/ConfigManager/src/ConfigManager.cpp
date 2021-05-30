@@ -64,21 +64,6 @@ ConfigManager* ConfigManager::getInstance()
 	return instance;
 }
 
-bool ConfigManager::getDefault(bool* input)
-{
-	return false;
-}
-
-int ConfigManager::getDefault(int* input)
-{
-	return -1;
-}
-
-const char* ConfigManager::getDefault(const char** input)
-{
-	return nullptr;
-}
-
 DynamicJsonDocument* ConfigManager::deserializeDynamically(fs::File &input, uint64_t initialDocSize)
 {
 	//try  to initialize a json document big enough to fit all the data
@@ -199,15 +184,14 @@ T ConfigManager::getProperty(DynamicJsonDocument* root, const char* key)
 	{
 		if(!jvalue.is<T>())
 		{
-			Serial.printf("[E]: BaseConfig key \"%s\" is not the correct type", key);
+			Serial.printf("[E]: BaseConfig key \"%s\" is not the correct type\n\r", key);
 		}
 		else
 		{
 			return jvalue.as<T>();
 		}
 	}
-	T* helper = nullptr;
-	return getDefault(helper);
+	return  T();
 }
 
 template<typename T>
@@ -325,13 +309,18 @@ void ConfigManager::applyChanges()
 
 void ConfigManager::checkCallbacks(uint8_t ConfigEvent)
 {
+	bool needsRestart = false;
     for (int i = 0; i < eventCallbacks.size(); i++)
     {
 		if((eventCallbacks.get(i)->configEvent & ConfigEvent) != 0x00)
 		{
-			eventCallbacks.get(i)->callback(this);
+			needsRestart |= eventCallbacks.get(i)->callback(this);
 		}
     }
+	if(needsRestart == true)
+	{
+		ESP.restart();
+	}
 }
 
 void ConfigManager::registerOnChangedCallback(uint8_t ConfigEvent, propertyChangedCallback Callback)

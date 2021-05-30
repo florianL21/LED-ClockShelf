@@ -10,8 +10,11 @@
 DisplayManager* DisplayManager::instance = nullptr;
 DynamicList<DisplayManager::SegmentInstanceError*>* DisplayManager::SegmentIndexErrorList = nullptr;
 
+bool reconfigureDisplays(ConfigManager* config);
+
 DisplayManager::DisplayManager()
 {
+	config = ConfigManager::getInstance();
 	FastLED.addLeds<WS2812B, LED_DATA_PIN, GRB>(leds, NUM_LEDS);  // GRB ordering is typical
 
 	#if APPEND_DOWN_LIGHTERS == false
@@ -51,12 +54,20 @@ DisplayManager::DisplayManager()
 	progressTotal = 0;
 	currentProgressOffset = 0;
 	currentProgressStep = 0;
+
+	config->registerOnChangedCallback(ConfigManager::BASE_CONFIG_CHANGED, reconfigureDisplays);
 }
 
 DisplayManager::~DisplayManager()
 {
 	delete lightSensorEasing;
 	instance = nullptr;
+}
+
+bool reconfigureDisplays(ConfigManager* config)
+{
+	ChangeMorphAnimationSpeed(config->getProperty<int>(ConfigManager::BASE_CONFIG, DIGIT_ANIMATION_SPEED_KEY));
+	return SYSTEM_NO_RESTART_REQUIRED;
 }
 
 DisplayManager* DisplayManager::getInstance()
@@ -147,6 +158,7 @@ void DisplayManager::setMinuteSegmentColors(CRGB color)
 
 void DisplayManager::InitSegments(uint16_t indexOfFirstLed, uint8_t ledsPerSegment, CRGB initialColor, uint8_t initBrightness)
 {
+	SetupAllMorphAnimations(DIGIT_ANIMATION_SPEED);
 	for (uint8_t i = 0; i < NUM_DISPLAYS; i++)
 	{
 		if(Displays[i] != nullptr)

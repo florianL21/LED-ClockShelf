@@ -35,6 +35,7 @@
 #define BLYNK_ACTIVE_KEY			"ENABLE_BLYNK"
 #define BLYNK_TOKEN_KEY				"BLYNK_AUTH_TOKEN"
 #define BLYNK_SERVER_KEY			"BLYNK_SERVER"
+#define DIGIT_ANIMATION_SPEED_KEY	"DIGIT_ANIMATION_SPEED"
 
 #define WIFI_CONNECTING_COLOR_KEY	"WIFI_CONNECTING"
 #define WIFI_CONNECTED_COLOR_KEY	"WIFI_CONNECTION_SUCCESSFUL"
@@ -47,6 +48,9 @@
 
 // const char* Wifi_config_classes[] = {};
 
+#define SYSTEM_RESTART_REQUIRED			true
+#define SYSTEM_NO_RESTART_REQUIRED		false
+
 /**
  * \brief The config manager is responsible to handle the json configuration files.
  *        It stores all config values in variables to be able to use them in the code
@@ -54,7 +58,7 @@
 class ConfigManager
 {
 public:
-    typedef void (*propertyChangedCallback)(ConfigManager* config);
+    typedef bool (*propertyChangedCallback)(ConfigManager* config);
 	enum ConfigType {BASE_CONFIG, COLOR_CONFIG, HW_CONFIG, _CONFIG_TYPE_LENGTH};
 private:
     struct changedEventCallback {
@@ -84,16 +88,11 @@ private:
 	ConfigManager();
     DynamicJsonDocument* deserializeDynamically(fs::File &input, uint64_t initialDocSize);
 	bool deserializeDynamically(fs::File &input, DynamicJsonDocument* initialDocument);
-	// helpers for returning default types on error
-	bool getDefault(bool* input);
-	int getDefault(int* input);
-	const char* getDefault(const char** input);
 
 	template<typename T>
 	T getProperty(DynamicJsonDocument* root, const char* key);
 
 	bool loadConfigFromMemory(const char* filename, DynamicJsonDocument* doc);
-
 	DynamicJsonDocument* getDocument(ConfigType config);
 	const char* getFileName(ConfigType config);
 

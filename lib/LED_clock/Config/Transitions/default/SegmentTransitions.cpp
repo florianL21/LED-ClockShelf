@@ -13,6 +13,8 @@ CubicEase* cubicEaseIn 		= new CubicEase(EASE_IN);
 CubicEase* cubicEaseOut 	= new CubicEase(EASE_OUT);
 /** \} */
 
+typedef Animator::ComplexAmination* (*AnimationInitFunction)(uint16_t totalAnimationLength);
+
 /**
  * \brief Function prototypes for all segment transition animation init functions
  * \addtogroup TransitionAnimationInitFunctions
@@ -46,57 +48,89 @@ Animator::ComplexAmination* InitAnimate0to5(uint16_t totalAnimationLength);
 /** \} */
 
 /**
- * \brief Global variables for all segment transition animations
- * \addtogroup TransitionAnimations
- * \{
- */
-Animator::ComplexAmination* Animate0to1 	= InitAnimate0to1(DIGIT_ANIMATION_SPEED);
-Animator::ComplexAmination* Animate1to2 	= InitAnimate1to2(DIGIT_ANIMATION_SPEED);
-Animator::ComplexAmination* Animate2to3 	= InitAnimate2to3(DIGIT_ANIMATION_SPEED);
-Animator::ComplexAmination* Animate3to4 	= InitAnimate3to4(DIGIT_ANIMATION_SPEED);
-Animator::ComplexAmination* Animate2to0 	= InitAnimate2to0(DIGIT_ANIMATION_SPEED);
-Animator::ComplexAmination* Animate4to5 	= InitAnimate4to5(DIGIT_ANIMATION_SPEED);
-Animator::ComplexAmination* Animate5to6 	= InitAnimate5to6(DIGIT_ANIMATION_SPEED);
-Animator::ComplexAmination* Animate5to0 	= InitAnimate5to0(DIGIT_ANIMATION_SPEED);
-Animator::ComplexAmination* Animate6to7 	= InitAnimate6to7(DIGIT_ANIMATION_SPEED);
-Animator::ComplexAmination* Animate7to8 	= InitAnimate7to8(DIGIT_ANIMATION_SPEED);
-Animator::ComplexAmination* Animate8to9 	= InitAnimate8to9(DIGIT_ANIMATION_SPEED);
-Animator::ComplexAmination* Animate9to0 	= InitAnimate9to0(DIGIT_ANIMATION_SPEED);
-Animator::ComplexAmination* AnimateOFFto1 	= InitAnimateOFFto1(DIGIT_ANIMATION_SPEED);
-Animator::ComplexAmination* Animate1toOFF 	= InitAnimate1toOFF(DIGIT_ANIMATION_SPEED);
-Animator::ComplexAmination* Animate9to8 	= InitAnimate9to8(DIGIT_ANIMATION_SPEED);
-Animator::ComplexAmination* Animate8to7 	= InitAnimate8to7(DIGIT_ANIMATION_SPEED);
-Animator::ComplexAmination* Animate7to6 	= InitAnimate7to6(DIGIT_ANIMATION_SPEED);
-Animator::ComplexAmination* Animate6to5 	= InitAnimate6to5(DIGIT_ANIMATION_SPEED);
-Animator::ComplexAmination* Animate5to4 	= InitAnimate5to4(DIGIT_ANIMATION_SPEED);
-Animator::ComplexAmination* Animate4to3 	= InitAnimate4to3(DIGIT_ANIMATION_SPEED);
-Animator::ComplexAmination* Animate3to2 	= InitAnimate3to2(DIGIT_ANIMATION_SPEED);
-Animator::ComplexAmination* Animate2to1 	= InitAnimate2to1(DIGIT_ANIMATION_SPEED);
-Animator::ComplexAmination* Animate1to0 	= InitAnimate1to0(DIGIT_ANIMATION_SPEED);
-Animator::ComplexAmination* Animate0to9 	= InitAnimate0to9(DIGIT_ANIMATION_SPEED);
-Animator::ComplexAmination* Animate0to5 	= InitAnimate0to5(DIGIT_ANIMATION_SPEED);
-/** \} */
-
-/**
  * \brief This transformation lookup table defines which animation to call for which transition.
  * 		  Every row decides from which digits we want to morph and than the column of the digit we want to morph to is selected.
  * 		  The resulting animation is then executed in case that transition is neccesary.
  *
  */
 Animator::ComplexAmination* TransformationLookupTable[11][11] = {
-		  //To:0              1              2              3              4              5              6              7              8              9             OFF
-/*from 0	*/{nullptr      , Animate0to1  , nullptr      , nullptr      , nullptr      , Animate0to5  , nullptr      , nullptr      , nullptr      , Animate0to9  , nullptr      },
-/*from 1	*/{Animate1to0  , nullptr      , Animate1to2  , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , Animate1toOFF},
-/*from 2	*/{Animate2to0  , Animate2to1  , nullptr      , Animate2to3  , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      },
-/*from 3	*/{nullptr      , nullptr      , Animate3to2  , nullptr      , Animate3to4  , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      },
-/*from 4	*/{nullptr      , nullptr      , nullptr      , Animate4to3  , nullptr      , Animate4to5  , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      },
-/*from 5	*/{Animate5to0  , nullptr      , nullptr      , nullptr      , Animate5to4  , nullptr      , Animate5to6  , nullptr      , nullptr      , nullptr      , nullptr      },
-/*from 6	*/{nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , Animate6to5  , nullptr      , Animate6to7  , nullptr      , nullptr      , nullptr      },
-/*from 7	*/{nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , Animate7to6  , nullptr      , Animate7to8  , nullptr      , nullptr      },
-/*from 8	*/{nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , Animate8to7  , nullptr      , Animate8to9  , nullptr      },
-/*from 9	*/{Animate9to0  , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , Animate9to8  , nullptr      , nullptr      },
-/*from OFF	*/{nullptr      , AnimateOFFto1, nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      , nullptr      }
+		  //To:0			1				2				3				4				5				6				7				8				9				OFF
+/*from 0	*/{nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		},
+/*from 1	*/{nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		},
+/*from 2	*/{nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		},
+/*from 3	*/{nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		},
+/*from 4	*/{nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		},
+/*from 5	*/{nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		},
+/*from 6	*/{nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		},
+/*from 7	*/{nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		},
+/*from 8	*/{nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		},
+/*from 9	*/{nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		},
+/*from OFF	*/{nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		, nullptr		}
 };
+
+AnimationInitFunction TransformationInitLookupTable[11][11] = {
+		  //To:0              	1              		2              		3              		4              		5              		6              		7              		8              		9             OFF
+/*from 0	*/{nullptr			, InitAnimate0to1	, nullptr			, nullptr			, nullptr			, InitAnimate0to5	, nullptr			, nullptr			, nullptr			, InitAnimate0to9	, nullptr			},
+/*from 1	*/{InitAnimate1to0	, nullptr			, InitAnimate1to2	, nullptr			, nullptr			, nullptr			, nullptr			, nullptr			, nullptr			, nullptr			, InitAnimate1toOFF	},
+/*from 2	*/{InitAnimate2to0	, InitAnimate2to1	, nullptr			, InitAnimate2to3	, nullptr			, nullptr			, nullptr			, nullptr			, nullptr			, nullptr			, nullptr			},
+/*from 3	*/{nullptr			, nullptr			, InitAnimate3to2	, nullptr			, InitAnimate3to4	, nullptr			, nullptr			, nullptr			, nullptr			, nullptr			, nullptr			},
+/*from 4	*/{nullptr			, nullptr			, nullptr			, InitAnimate4to3	, nullptr			, InitAnimate4to5	, nullptr			, nullptr			, nullptr			, nullptr			, nullptr			},
+/*from 5	*/{InitAnimate5to0	, nullptr			, nullptr			, nullptr			, InitAnimate5to4	, nullptr			, InitAnimate5to6	, nullptr			, nullptr			, nullptr			, nullptr			},
+/*from 6	*/{nullptr			, nullptr			, nullptr			, nullptr			, nullptr			, InitAnimate6to5	, nullptr			, InitAnimate6to7	, nullptr			, nullptr			, nullptr			},
+/*from 7	*/{nullptr			, nullptr			, nullptr			, nullptr			, nullptr			, nullptr			, InitAnimate7to6	, nullptr			, InitAnimate7to8	, nullptr			, nullptr			},
+/*from 8	*/{nullptr			, nullptr			, nullptr			, nullptr			, nullptr			, nullptr			, nullptr			, InitAnimate8to7	, nullptr			, InitAnimate8to9	, nullptr			},
+/*from 9	*/{InitAnimate9to0	, nullptr			, nullptr			, nullptr			, nullptr			, nullptr			, nullptr			, nullptr			, InitAnimate9to8	, nullptr			, nullptr			},
+/*from OFF	*/{nullptr			, InitAnimateOFFto1	, nullptr			, nullptr			, nullptr			, nullptr			, nullptr			, nullptr			, nullptr			, nullptr			, nullptr			}
+};
+
+
+void cleanupMorphAnimation(Animator::ComplexAmination* animation)
+{
+	int animationChainLength = animation->animations->size();
+	for (int i = 0; i < animationChainLength; i++)
+	{
+		Animator::animationStep* currentStep = animation->animations->get(i);
+		delete currentStep->animationEffects;
+		delete currentStep->arrayIndex;
+		delete currentStep->easingEffects;
+		delete currentStep;
+	}
+	animation->animations->clear();
+	delete animation->animations; //TODO: check if problematic
+	delete animation;
+}
+
+void SetupAllMorphAnimations(uint16_t animationLength)
+{
+	for (uint8_t i = 0; i < 11; i++)
+	{
+		for (uint8_t j = 0; j < 11; j++)
+		{
+			if(TransformationInitLookupTable[i][j] != nullptr)
+			{
+				if(TransformationLookupTable[i][j] != nullptr)
+				{
+					cleanupMorphAnimation(TransformationLookupTable[i][j]);
+				}
+				TransformationLookupTable[i][j] = TransformationInitLookupTable[i][j](animationLength);
+			}
+		}
+	}
+}
+
+void ChangeMorphAnimationSpeed(uint16_t newAnimationLength)
+{
+	for (uint8_t i = 0; i < 11; i++)
+	{
+		for (uint8_t j = 0; j < 11; j++)
+		{
+			if(TransformationLookupTable[i][j] != nullptr)
+			{
+				TransformationLookupTable[i][j]->LengthPerAnimation = newAnimationLength / (TransformationLookupTable[i][j]->animations->size() + 1);
+			}
+		}
+	}
+}
 
 Animator::ComplexAmination* InitAnimate0to1(uint16_t totalAnimationLength)
 {
