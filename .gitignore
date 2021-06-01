@@ -12,6 +12,14 @@ doc/_templates
 doc/doxygen
 doc/doxyapi
 
+#compressed files in the data folder
+data/*.gz
+
+# Web UI files
+WebConfigUI/node_modules
+WebConfigUI/build
+WebConfigUI/package-lock.json
+
 # Created by https://www.gitignore.io/api/platformio
 # Edit at https://www.gitignore.io/?templates=platformio
 
