@@ -66,7 +66,7 @@ const SettingsForm = (props) => {
 					console.log("Invalid value");
 					return;
 				}
-				newSettingValue[target] = newValue;
+				newSettingValue[target] = parseInt(newValue, 10);
 			case "color":
 				parseRGBColor(target);
 				switch (event.target.id) {

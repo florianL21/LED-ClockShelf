@@ -30,6 +30,7 @@ TimeManager::TimeManager()
 	AlarmActive = false;
 	AlarmTriggered = false;
 	AlarmCleared = false;
+	lastWifiConnectionTime = millis();
 }
 
 TimeManager::~TimeManager()
@@ -50,9 +51,7 @@ TimeManager* TimeManager::getInstance()
 
 bool TimeManager::init()
 {
-	#if TIME_MANAGER_DEMO_MODE == false
-		configTzTime(TIMEZONE_INFO, NTP_SERVER);
-	#endif
+	configTzTime(TIMEZONE_INFO, NTP_SERVER);
 	// timer 0 divider 80 because 80Mhz and count up
 	timer = timerBegin(0, 80, true);
 
@@ -256,7 +255,7 @@ void IRAM_ATTR onTimer()
 	// Time code, use this for normal operation
 	if(!config->getProperty<bool>(ConfigManager::HW_CONFIG, DEMO_MODE_KEY))
 	{
-		if(timeM->offlineTimeCounter++ >= TIME_SYNC_INTERVALL && WiFi.status() == WL_CONNECTED)
+		if(timeM->offlineTimeCounter++ >= TIME_SYNC_INTERVALL)
 		{
 			if(timeM->synchronize() == true)
 			{
@@ -308,6 +307,15 @@ void IRAM_ATTR onTimer()
 			{
 				timeM->AlarmTriggered = false;
 				timeM->AlarmCleared = false;
+			}
+		}
+		//handle wifi lost
+		if(WiFi.status() != WL_CONNECTED)
+		{
+			if(timeM->lastWifiConnectionTime + BROKEN_WIFI_CONNECT_RETRY < millis())
+			{
+				timeM->lastWifiConnectionTime = millis();
+				WiFi.begin(); // try to reconnect in a non blocking way
 			}
 		}
 	}

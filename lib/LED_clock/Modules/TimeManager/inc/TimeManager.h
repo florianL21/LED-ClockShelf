@@ -54,6 +54,7 @@ private:
 	TimeInfo currentTime;
 	hw_timer_t* timer;
 	uint32_t offlineTimeCounter;
+	uint32_t lastWifiConnectionTime;
 	static TimeManager* TimeManagerSingelton;
 	TimeInfo TimerInitialDuration;
 	TimeInfo TimerDuration;

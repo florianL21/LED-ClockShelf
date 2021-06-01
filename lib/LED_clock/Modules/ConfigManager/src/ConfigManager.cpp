@@ -17,6 +17,7 @@ template const char* ConfigManager::getProperty<const char*>(ConfigType config, 
 
 ConfigManager::ConfigManager()
 {
+	restartRequested = false;
     if(!SPIFFS.begin(true))
 	{
 		Serial.println("Filesystem mount failed aborting...");
@@ -259,11 +260,19 @@ bool ConfigManager::setProperty(JsonPair& keyValuePair, ConfigType config)
 	{
 		if((*doc)[keyValuePair.key()] != keyValuePair.value())
 		{
-			//TODO: find a better solution for this
-			uint8_t eventID = (*EventIDs)[keyValuePair.key()];
-			configClassWasUpdated[eventID] = true;
-			configNeedsSaving[config] = true;
-			return (*doc)[keyValuePair.key()].set(keyValuePair.value());
+			if(isSameValueType((*doc)[keyValuePair.key()], keyValuePair.value()) == true)
+			{
+				//TODO: find a better solution for this
+				uint8_t eventID = (*EventIDs)[keyValuePair.key()];
+				configClassWasUpdated[eventID] = true;
+				configNeedsSaving[config] = true;
+				return (*doc)[keyValuePair.key()].set(keyValuePair.value());
+			}
+			else
+			{
+				Serial.printf("[E]: value of key %s is not the right type\n\r", keyValuePair.key().c_str());
+				return false;
+			}
 		}
 		else
 		{
@@ -272,6 +281,41 @@ bool ConfigManager::setProperty(JsonPair& keyValuePair, ConfigType config)
 	}
 	Serial.printf("[E]: Config does not contain key %s\n\r", keyValuePair.key().c_str());
 	return false;
+}
+
+bool ConfigManager::isSameValueType(JsonVariant type1, JsonVariant type2)
+{
+	uint8_t typeOf1 = 0;
+	uint8_t typeOf2 = 0;
+	if(type1.is<bool>())
+	{
+		typeOf1 = 1;
+	} else if(type1.is<int>())
+	{
+		typeOf1 = 2;
+	} else if(type1.is<float>())
+	{
+		typeOf1 = 3;
+	} else if(type1.is<String>())
+	{
+		typeOf1 = 4;
+	}
+
+	if(type1.is<bool>())
+	{
+		typeOf2 = 1;
+	} else if(type1.is<int>())
+	{
+		typeOf2 = 2;
+	} else if(type1.is<float>())
+	{
+		typeOf2 = 3;
+	} else if(type1.is<String>())
+	{
+		typeOf2 = 4;
+	}
+
+	return typeOf1 == typeOf2 && typeOf1 != 0 && typeOf2 != 0;
 }
 
 void ConfigManager::saveConfigPersistent(ConfigType config)
@@ -307,6 +351,21 @@ void ConfigManager::applyChanges()
 	checkCallbacks(updatedConfigClasses);
 }
 
+void ConfigManager::applySaveAndRestart(ConfigType config)
+{
+	applyChanges();
+	saveConfigPersistent(config);
+	restartIfRequired();
+}
+
+void ConfigManager::restartIfRequired()
+{
+	if(restartRequested == true)
+	{
+		ESP.restart();
+	}
+}
+
 void ConfigManager::checkCallbacks(uint8_t ConfigEvent)
 {
 	bool needsRestart = false;
@@ -319,7 +378,8 @@ void ConfigManager::checkCallbacks(uint8_t ConfigEvent)
     }
 	if(needsRestart == true)
 	{
-		ESP.restart();
+		restartRequested = true;
+		Serial.println("System restart was requested due to config change.");
 	}
 }
 

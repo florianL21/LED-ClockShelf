@@ -81,6 +81,7 @@ private:
 	DynamicJsonDocument* ColorConfig;
 	DynamicJsonDocument* HWConfig;
 	DynamicJsonDocument* EventIDs;
+	bool restartRequested;
 
 	bool configClassWasUpdated[_CONFIG_CLASS_ID_LENGTH];
 	bool configNeedsSaving[_CONFIG_TYPE_LENGTH];
@@ -97,6 +98,7 @@ private:
 	const char* getFileName(ConfigType config);
 
 	void checkCallbacks(uint8_t ConfigEvent);
+	bool isSameValueType(JsonVariant type1, JsonVariant type2);
 public:
 
 	enum ConfigEvents {
@@ -129,6 +131,8 @@ public:
 
 	void saveConfigPersistent(ConfigType config);
 	void applyChanges();
+	void applySaveAndRestart(ConfigType config);
+	void restartIfRequired();
 
 	void registerOnChangedCallback(uint8_t ConfigEvent, propertyChangedCallback Callback);
 	void unregisterOnChangedCallback(propertyChangedCallback Callback);

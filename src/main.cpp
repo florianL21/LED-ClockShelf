@@ -94,7 +94,6 @@ void setup()
 	Serial.println("Initializing modules...");
 	ShelfDisplays 		= DisplayManager::getInstance();
 	BlynkConfiguration 	= BlynkConfig::getInstance();
-	timeM 				= TimeManager::getInstance();
 	states 				= ClockState::getInstance();
 	WIFIManager			= WiFiManager::getInstance();
 
@@ -114,8 +113,7 @@ void setup()
 
 	BlynkConfiguration->setup();
 
-	// startWebServer();
-
+	timeM = TimeManager::getInstance();
 	Serial.println("Fetching time from NTP server...");
 	if(timeM->init() == false)
 	{

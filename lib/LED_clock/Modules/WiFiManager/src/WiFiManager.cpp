@@ -60,6 +60,10 @@ bool WiFiManager::autoConnect()
 
 	if (connectWifi("", "") == WL_CONNECTED)
 	{
+		if(ShelfDisplays != nullptr)
+		{
+			ShelfDisplays->setAllSegmentColors(config->getProperty<int>(ConfigManager::COLOR_CONFIG, WIFI_CONNECTED_COLOR_KEY));
+		}
 		Serial.print("IP Address: ");
 		Serial.println(WiFi.localIP());
 		//connected
@@ -72,10 +76,6 @@ bool WiFiManager::autoConnect()
 
 int WiFiManager::connectWifi(String ssid, String pass)
 {
-	if(ShelfDisplays != nullptr)
-	{
-		ShelfDisplays->setAllSegmentColors(config->getProperty<int>(ConfigManager::COLOR_CONFIG, WIFI_CONNECTING_COLOR_KEY));
-	}
 	Serial.println("Connecting as wifi client...");
 
 	//fix for auto connect racing issue
@@ -129,7 +129,14 @@ uint8_t WiFiManager::waitForConnectResult()
 		{
 			keepConnecting = false;
 		}
-		delay(100);
+		if(ShelfDisplays != nullptr)
+		{
+			ShelfDisplays->delay(100);
+		}
+		else
+		{
+			delay(100);
+		}
 	}
 	return status;
 }
@@ -236,10 +243,11 @@ bool WiFiManager::startConfigPortal()
 			{
 				Serial.println("Failed to connect.");
 			}
-			else
+			else //connected
 			{
-				//connected
+				//TODO: Display the new IP in the UI and wait for user confirmation before switching off the fallback AP
 				WiFi.mode(WIFI_STA);
+				reconnectEvent = WiFi.onEvent(std::bind(&WiFiManager::tryToReconnect, this, std::placeholders::_1, std::placeholders::_2), SYSTEM_EVENT_STA_DISCONNECTED);
 				stopAnimation();
 				break;
 			}
@@ -251,6 +259,15 @@ bool WiFiManager::startConfigPortal()
 	dnsServer->stop();
 
 	return WiFi.status() == WL_CONNECTED;
+}
+
+void WiFiManager::tryToReconnect(WiFiEvent_t event, WiFiEventInfo_t info)
+{
+	Serial.print("WiFi lost connection. Reason: ");
+	Serial.println(info.disconnected.reason);
+	Serial.println("Trying to Reconnect");
+	WiFi.disconnect();
+	connectWifi("","");
 }
 
 /** Redirect to captive portal if we got a request for another domain. Return true in that case so the page handler do not try to handle the request again. */
@@ -342,6 +359,7 @@ void WiFiManager::startWebUI()
 	{
 		JsonObject temp = json.as<JsonObject>();
 		request->send(200, "text/plain", saveSettings(ConfigManager::BASE_CONFIG, &temp));
+		config->restartIfRequired();
 	});
 	server->addHandler(baseConfigHandler);
 
@@ -349,6 +367,7 @@ void WiFiManager::startWebUI()
 	{
 		JsonObject temp = json.as<JsonObject>();
 		request->send(200, "text/plain", saveSettings(ConfigManager::COLOR_CONFIG, &temp));
+		config->restartIfRequired();
 	});
 	server->addHandler(colorConfigHandler);
 
@@ -356,6 +375,7 @@ void WiFiManager::startWebUI()
 	{
 		JsonObject temp = json.as<JsonObject>();
 		request->send(200, "text/plain", saveSettings(ConfigManager::HW_CONFIG, &temp));
+		config->restartIfRequired();
 	});
 	server->addHandler(hwConfigHandler);
 

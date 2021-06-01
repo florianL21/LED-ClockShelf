@@ -33,6 +33,7 @@ private:
 	bool connect;
 	String WIFI_SSID;
 	String WIFI_PW;
+	wifi_event_id_t reconnectEvent;
 
 	static WiFiManager* currentInstance;
 	WiFiManager();
@@ -51,6 +52,7 @@ private:
 	void setupConfigPortal();
 	bool captivePortal(AsyncWebServerRequest *request);
 	String saveSettings(ConfigManager::ConfigType type, JsonObject* json);
+	void tryToReconnect(WiFiEvent_t event, WiFiEventInfo_t info);
 public:
 	static WiFiManager* getInstance();
 	~WiFiManager();

@@ -9,6 +9,13 @@
 #ifndef _CONFIGURATIONS_H_
 #define _CONFIGURATIONS_H_
 
+//Place all new configs here:
+#define BROKEN_WIFI_CONNECT_RETRY		120000
+
+
+// Legacy configs:
+
+
 /**
  * \addtogroup MainConfiguration
  * \brief Main configuration settings

@@ -11,7 +11,10 @@
 
 //Place all new configs here:
 
-
+/**
+ * \brief Time period in which to retry connecting to the WIFI if the connection got lost
+ */
+#define BROKEN_WIFI_CONNECT_RETRY		120000
 
 // Legacy configs:
 
