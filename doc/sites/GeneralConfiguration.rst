@@ -5,12 +5,12 @@
 General Configuration
 ######################
 
-*********************
-Display configuration
-*********************
-.. doxygengroup:: DisplayConfiguration
-
 *************************
 Configuration parameters
 *************************
 .. doxygengroup:: MainConfiguration
+
+*********************
+Display configuration
+*********************
+.. doxygengroup:: DisplayConfiguration
