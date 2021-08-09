@@ -1,0 +1,14 @@
+{
+    "name": "Easings",
+    "version": "1.0.0",
+    "build": {
+		"srcFilter": [
+            "+<*.cpp>",
+            "+<**/*.cpp>"
+		],
+		"flags": [
+            "-I src",
+            "-I src/easetypes"
+		]
+	}
+}
