@@ -1,0 +1,9 @@
+Modified library taken from:
+
+Arduino Easing Library Copyright 2010 Andy Brown.
+
+This repository is a port of Andy Brown's Arduino Easing Library for the Particle platform, and adds newly-written instructions and examples showing how to integrate the library for the Particle platform.
+2017 Chuan Khoo
+
+This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License.
+https://creativecommons.org/licenses/by-sa/4.0/

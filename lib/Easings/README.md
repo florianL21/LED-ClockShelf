@@ -1,0 +1,1 @@
+This is a fork from the Easings library from [here](https://github.com/chuank/Easing) To make it usable with PlatformIO and also some other small changes to be able to work with the EasingBase object more efficiently.
