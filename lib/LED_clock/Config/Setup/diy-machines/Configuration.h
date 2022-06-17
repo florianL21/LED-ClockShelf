@@ -34,6 +34,16 @@
 		#define BLYNK_AUTH_TOKEN 	"AUTH_TOKEN_GOES_HERE"
 
 		/**
+		 * \brief Template ID for this device. If you want to use your own custom Template you will have to change this
+		 */
+		#define BLYNK_TEMPLATE_ID "TMPLz_acZmIA"
+
+		/**
+		 * \brief Name of this device in the Blynk app
+		 */
+		#define BLYNK_DEVICE_NAME "LED Clock"
+
+		/**
 		 * \brief In case the blynk communication is not working this line causes Blynk to send debug output to the serial port.
 		 * 		  If you are not worried about Blynk or have to diagnose some other issue you can comment this line out.
 		 */
@@ -169,6 +179,11 @@
  * \brief How often the time is checked and the displays are updated
  */
 #define TIME_UPDATE_INTERVAL	500
+
+/**
+ * \brief Default brightness of the display. If you are using blynk you may ignore this setting.
+ */
+#define DEFAULT_CLOCK_BRIGHTNESS 128
 
 /**
  * \brief Whether to activate night mode or not. If you want the clock to reduce brightness/switch off during certain hours set this to true.

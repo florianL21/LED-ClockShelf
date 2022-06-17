@@ -25,13 +25,23 @@
 	/**
 	 * \brief If you want Blynk functionality set this to true and set your authentication token. Otherwise set it to false
 	 */
-	#define IS_BLYNK_ACTIVE 		false
+	#define IS_BLYNK_ACTIVE 		true
 
 	#if IS_BLYNK_ACTIVE == true
 		/**
 		 * \brief If you want Blynk functionality paste your authentication token here.
 		 */
 		#define BLYNK_AUTH_TOKEN 	"AUTH_TOKEN_GOES_HERE"
+
+		/**
+		 * \brief Template ID for this device. If you want to use your own custom Template you will have to change this
+		 */
+		#define BLYNK_TEMPLATE_ID "TMPLz_acZmIA"
+
+		/**
+		 * \brief Name of this device in the Blynk app
+		 */
+		#define BLYNK_DEVICE_NAME "LED Clock"
 
 		/**
 		 * \brief In case the blynk communication is not working this line causes Blynk to send debug output to the serial port.
