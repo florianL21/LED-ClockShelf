@@ -146,7 +146,7 @@
 		Blynk.syncVirtual(BLYNK_CHANNEL_DOT_COLOR_SAVE);
 		Blynk.syncVirtual(BLYNK_CHANNEL_NIGHT_MODE_BRIGHTNESS);
 		Blynk.syncVirtual(BLYNK_CHANNEL_NIGHT_MODE_TIME_INPUT);
-		Blynk.syncVirtual(BLYNK_CHANNEL_NUM_SEPERATION_DOTS);
+		Blynk.syncVirtual(BLYNK_CHANNEL_NUM_SEPARATION_DOTS);
 		Blynk.syncVirtual(BLYNK_CHANNEL_ALARM_START_BUTTON);
 		Blynk.syncVirtual(BLYNK_CHANNEL_ALARM_TIME_INPUT);
 		Blynk.virtualWrite(BLYNK_CHANNEL_TIMER_START_BUTTON, 0);
@@ -353,7 +353,7 @@
      * \brief Handle the change of the dots display setting by the user through the blynk app
      *
      */
-	BLYNK_WRITE(BLYNK_CHANNEL_NUM_SEPERATION_DOTS)
+	BLYNK_WRITE(BLYNK_CHANNEL_NUM_SEPARATION_DOTS)
 	{
 		ClockS->numDots = param[0].asInt() - 1;
 	}

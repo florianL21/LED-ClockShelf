@@ -17,7 +17,7 @@
 
 /**
  * \brief If you want to run the system in a minimal mode to test some basic functionality or
- * 		  debug something it could be useful to disable wifi functionality completley.
+ * 		  debug something it could be useful to disable wifi functionality completely.
  */
 #define RUN_WITHOUT_WIFI 		false
 
@@ -101,9 +101,9 @@
 #define INTERNAL_COLOR						CRGB::Blue
 
 /**
- * \brief Color of the seperation dot LEDs, this will be the default color if blynk functionality is disabled
+ * \brief Color of the separation dot LEDs, this will be the default color if blynk functionality is disabled
  */
-#define SEPERATION_DOT_COLOR				CRGB::Blue
+#define SEPARATION_DOT_COLOR				CRGB::Blue
 
 /**
  * \brief Color of the LEDs for the OTA update progress bar
@@ -141,9 +141,9 @@
 #define TIMEZONE_INFO "CET-1CEST-2,M3.5.0/02:00:00,M10.5.0/03:00:00"
 
 /**
- * \brief Time in seconds for the intervall in which the time should be synchronized with the time server
+ * \brief Time in seconds for the interval in which the time should be synchronized with the time server
  */
-#define TIME_SYNC_INTERVALL 1800
+#define TIME_SYNC_INTERVAL 1800
 
 /**
  * \brief Flash the current time in case a timer is expired instead of flashing 00:00
@@ -168,7 +168,42 @@
 /**
  * \brief How often the time is checked and the displays are updated
  */
-#define TIME_UPDATE_INTERVALL	500
+#define TIME_UPDATE_INTERVAL	500
+
+/**
+ * \brief Whether to activate night mode or not. If you want the clock to reduce brightness/switch off during certain hours set this to true.
+ * If you are using Blynk to control the settings of your clock you may ignore the default settings as they can be changed dynamically during runtime in that case
+ */
+#define USE_NIGHT_MODE true
+
+#if USE_NIGHT_MODE == true
+
+	/**
+	 * \brief Start hour for the night mode
+	 */
+	#define DEFAULT_NIGHT_MODE_START_HOUR 22
+
+	/**
+	 * \brief Start minute for the night mode
+	 */
+	#define DEFAULT_NIGHT_MODE_START_MINUTE 0
+
+	/**
+	 * \brief End hour for the night mode
+	 */
+	#define DEFAULT_NIGHT_MODE_END_HOUR 7
+
+	/**
+	 * \brief End minute for the night mode
+	 */
+	#define DEFAULT_NIGHT_MODE_END_MINUTE 0
+
+	/**
+	 * \brief Brightness that the clock should be set to while night mode is active
+	 */
+	#define DEFAULT_NIGHT_MODE_BRIGHTNESS 0
+
+#endif
 
 
 /***************************
@@ -198,7 +233,7 @@
 #define APPEND_DOWN_LIGHTERS	false
 
 /**
- * \brief Number of LEDs For interrior lights
+ * \brief Number of LEDs For interior lights
  */
 #define ADDITIONAL_LEDS			12
 
@@ -265,7 +300,7 @@ enum DisplayIDs {
 /**
  * \brief If set to -1 the flashing middle dot is disabled, otherwise this is the index of the Display segment that should display the dot.
  */
-#define DISPLAY_FOR_SEPERATION_DOT -1
+#define DISPLAY_FOR_SEPARATION_DOT -1
 
 /**
  * \brief Target Frames per second for the smoothness of animations
@@ -284,15 +319,15 @@ enum DisplayIDs {
 #define DOT_FLASH_SPEED 2000
 
 /**
- * \brief Intervall in which the dot/s should flash
+ * \brief Interval in which the dot/s should flash
  */
-#define DOT_FLASH_INTERVALL	4000
+#define DOT_FLASH_INTERVAL	4000
 
 /**
- * \brief Number of seperation dots to use by default (or if no blynk functionality is avaliable)
+ * \brief Number of separation dots to use by default (or if no blynk functionality is available)
  * 		  allowed values are 1, 2 and 0 to turn it off
  */
-#define NUM_SEPERATION_DOTS	2
+#define NUM_SEPARATION_DOTS	2
 
 
 /***************************
@@ -313,12 +348,12 @@ enum DisplayIDs {
 	#define LIGHT_SENSOR_PIN			34
 
 	/**
-	 * \brief How many measurements shall be avaeraged. Higher number -> smoother but slower change
+	 * \brief How many measurements shall be averaged. Higher number -> smoother but slower change
 	 */
 	#define LIGHT_SENSOR_AVERAGE		15
 
 	/**
-	 * \brief Width of the meadian calculation. Higher number -> smoother change
+	 * \brief Width of the median calculation. Higher number -> smoother change
 	 * 		  Should never be higher than the LIGHT_SENSOR_AVERAGE
 	 */
 	#define LIGHT_SENSOR_MEDIAN_WIDTH	5
@@ -339,7 +374,7 @@ enum DisplayIDs {
 	#define LIGHT_SENSOR_MAX			4095
 
 	/**
-	 * \brief Value betwee 0 and 255 that determines how much the light sensor values can influence the led brightness
+	 * \brief Value between 0 and 255 that determines how much the light sensor values can influence the led brightness
 	 */
 	#define LIGHT_SENSOR_SENSITIVITY	100
 

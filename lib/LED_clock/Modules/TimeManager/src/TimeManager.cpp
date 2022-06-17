@@ -253,7 +253,7 @@ void IRAM_ATTR onTimer()
 	TimeManager* timeM = TimeManager::getInstance();
 	// Time code, use this for normal operation
 	#if TIME_MANAGER_DEMO_MODE == false
-		if(timeM->offlineTimeCounter++ >= TIME_SYNC_INTERVALL && WiFi.status() == WL_CONNECTED)
+		if(timeM->offlineTimeCounter++ >= TIME_SYNC_INTERVAL && WiFi.status() == WL_CONNECTED)
 		{
 			if(timeM->synchronize() == true)
 			{

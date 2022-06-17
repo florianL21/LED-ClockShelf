@@ -211,7 +211,7 @@ public:
 	/**
 	 * \brief Calling the Flash dot animation for the appropriate segments in the middle of the clock face
 	 */
-	void flashSeperationDot(uint8_t numDots);
+	void flashSeparationDot(uint8_t numDots);
 
     /**
      * \brief Used for testing purposes

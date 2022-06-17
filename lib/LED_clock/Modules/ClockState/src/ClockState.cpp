@@ -5,10 +5,13 @@ ClockState* ClockState::instance = nullptr;
 ClockState::ClockState()
 {
 	MainState = CLOCK_MODE;
-	clockBrightness = 128;
+	clockBrightness = DEFAULT_CLOCK_BRIGHTNESS;
 	alarmToggleCount = 0;
-	nightModeBrightness = 0;
-	numDots = NUM_SEPERATION_DOTS;
+	nightModeBrightness = DEFAULT_NIGHT_MODE_BRIGHTNESS;
+	numDots = NUM_SEPARATION_DOTS;
+
+	NightModeStartTime = TimeManager::TimeInfo {DEFAULT_NIGHT_MODE_START_HOUR, DEFAULT_NIGHT_MODE_START_MINUTE, 0};
+	NightModeStopTime = TimeManager::TimeInfo {DEFAULT_NIGHT_MODE_END_HOUR, DEFAULT_NIGHT_MODE_END_MINUTE, 0};
 
 	lastUpdateMillis = millis();
 	lastDotFlash = millis();
@@ -48,7 +51,7 @@ ClockState::ClockStates ClockState::getMode()
 
 void ClockState::handleStates()
 {
-	if(lastUpdateMillis + TIME_UPDATE_INTERVALL <= millis()) // update the display only in a certain intervall
+	if(lastUpdateMillis + TIME_UPDATE_INTERVAL <= millis()) // update the display only in a certain intervall
 	{
 		lastUpdateMillis = millis();
 		TimeManager::TimeInfo currentTime;
@@ -56,30 +59,32 @@ void ClockState::handleStates()
 		switch (MainState)
 		{
 		case ClockState::CLOCK_MODE:
-			if(timeM->isInBetween(NightModeStartTime, NightModeStopTime))
-			{
-				if(isinNightMode == false)
+			#if USE_NIGHT_MODE == true
+				if(timeM->isInBetween(NightModeStartTime, NightModeStopTime))
 				{
-					isinNightMode = true;
-					ShelfDisplays->setGlobalBrightness(nightModeBrightness);
+					if(isinNightMode == false)
+					{
+						isinNightMode = true;
+						ShelfDisplays->setGlobalBrightness(nightModeBrightness);
+					}
 				}
-			}
-			else
-			{
-				if(isinNightMode == true)
+				else
 				{
-					isinNightMode = false;
-					ShelfDisplays->setGlobalBrightness(clockBrightness);
+					if(isinNightMode == true)
+					{
+						isinNightMode = false;
+						ShelfDisplays->setGlobalBrightness(clockBrightness);
+					}
 				}
-			}
+			#endif
 			ShelfDisplays->displayTime(currentTime.hours, currentTime.minutes);
-			#if DISPLAY_FOR_SEPERATION_DOT > -1
+			#if DISPLAY_FOR_SEPARATION_DOT > -1
 				if(numDots > 0)
 				{
-					if(lastDotFlash + DOT_FLASH_INTERVALL <= millis())
+					if(lastDotFlash + DOT_FLASH_INTERVAL <= millis())
 					{
 						lastDotFlash = millis();
-						ShelfDisplays->flashSeperationDot(numDots);
+						ShelfDisplays->flashSeparationDot(numDots);
 					}
 				}
 			#endif

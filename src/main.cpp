@@ -20,9 +20,13 @@
 #endif
 
 DisplayManager* ShelfDisplays = DisplayManager::getInstance();
-BlynkConfig* BlynkConfiguration = BlynkConfig::getInstance();
 TimeManager* timeM = TimeManager::getInstance();
 ClockState* states = ClockState::getInstance();
+
+#if IS_BLYNK_ACTIVE == true
+	BlynkConfig* BlynkConfiguration = BlynkConfig::getInstance();
+#endif
+
 
 #if ENABLE_OTA_UPLOAD == true
 	void setupOTA();
@@ -88,7 +92,7 @@ void setup()
 	ShelfDisplays->setHourSegmentColors(HOUR_COLOR);
 	ShelfDisplays->setMinuteSegmentColors(MINUTE_COLOR);
 	ShelfDisplays->setInternalLEDColor(INTERNAL_COLOR);
-	ShelfDisplays->setDotLEDColor(SEPERATION_DOT_COLOR);
+	ShelfDisplays->setDotLEDColor(SEPARATION_DOT_COLOR);
 
 	#if RUN_WITHOUT_WIFI == false
 		wifiSetup();
@@ -107,7 +111,7 @@ void setup()
 	Serial.println("Fetching time from NTP server...");
 	if(timeM->init() == false)
 	{
-		Serial.printf("[E]: TimeManager failed to synchronize for the first time with the NTP server. Retrying in %d seconds", TIME_SYNC_INTERVALL);
+		Serial.printf("[E]: TimeManager failed to synchronize for the first time with the NTP server. Retrying in %d seconds", TIME_SYNC_INTERVAL);
 	}
 	timeM->setTimerTickCallback(TimerTick);
 	timeM->setTimerDoneCallback(TimerDone);
@@ -161,7 +165,7 @@ void TimerDone()
 	void WiFiStationDisconnected(WiFiEvent_t event, WiFiEventInfo_t info)
 	{
 		Serial.print("WiFi lost connection. Reason: ");
-		Serial.println(info.disconnected.reason);
+		Serial.println(info.wifi_sta_disconnected.reason);
 		Serial.println("Trying to Reconnect");
 		WiFi.disconnect();
 		WiFi.reconnect();
@@ -234,7 +238,7 @@ void TimerDone()
 				abort();
 			}
 		}
-		WiFi.onEvent(WiFiStationDisconnected, SYSTEM_EVENT_STA_DISCONNECTED);
+		WiFi.onEvent(WiFiStationDisconnected, ARDUINO_EVENT_WIFI_STA_DISCONNECTED);
 		ShelfDisplays->stopLoadingAnimation();
 		Serial.println("Waiting for loading animation to finish...");
 		ShelfDisplays->waitForLoadingAnimationFinish();
