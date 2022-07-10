@@ -3,63 +3,108 @@ Default blynk config
 ############################
 
 This configuration is supposed to give all the basic functionality while also staying inside the free tier.
-Optional elements can be added but these will need more energy than which is proved for free.
-You can add and remove elements in the app you don't need without any problems to make it fit your needs.
+
+This guide will cover how to setup a dashboard and the datastreams for the new Blynk 2.0
+
+An example of how the dashboard will look like:
+
+.. image:: ../images/BlynkAppDashboard.jpg
+
 
 ****************
-Minimal example
+Setup guide
 ****************
 
-This one has the minimal set of UI elements and can easily be replicated using only the free 2000 Energy:
+Sadly I could not find any way to export my own template, make it public, or share it in any way shape or form with the new blynk cloud.
+It seems like this is just simply not possible. So for now I will provide some instructions here on how to replicate my dashboard manually.
+If someone knows how to share templates on the new blynk cloud please let me know!
 
-.. image:: ../images/BlynkAppMinimal.jpg
+1. Follow the first setup instructions in the blynk cloud interface to create a new device and template.
+2. Then in the web app open the template that you just created and go to the Datastreams tab. Here you should create the following datastreams
 
-+------------------+-------------+-------------------+-----+---------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Element          | Energy used | Purpose           | Pin | Comment                                                                                                                                                 |
-+==================+=============+===================+=====+=========================================================================================================================================================+
-| Vertical slider  | 200         | Global brightness | V0  | Range 0-100; One decimal; Send on release is off with interval of 100ms                                                                                 |
-+------------------+-------------+-------------------+-----+---------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Segmented switch | 400         | Element selection | V1  | Element 1 is Hours; 2 is Minutes; 3 is Internal LEDs and 4 is seperation dot                                                                            |
-+------------------+-------------+-------------------+-----+---------------------------------------------------------------------------------------------------------------------------------------------------------+
-| zeRGBa           | 400         | Setting the color | V2  | Output -> Merge is on with default settings. Send on release is off with an interval of 100ms                                                           |
-+------------------+-------------+-------------------+-----+---------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Time input       | 200         | Night time range  | V7  | Format -> HH:mm; allow start/stop input -> Yes; allow day of week selection -> No; Allow sunset/sunrise selection -> No; Allow Timezone selection -> No |
-+------------------+-------------+-------------------+-----+---------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Menu             | 400         | Dot mode selector | V9  | (optional; can also just be statically set using Config.h) Element 1 is No Dot; 2 is One Dot and 3 is Two Dots                                          |
-+------------------+-------------+-------------------+-----+---------------------------------------------------------------------------------------------------------------------------------------------------------+
++--------------------------+------+-----------+-----+-----+---------+
+| Name                     | Pin  | Data Type | Min | Max | Default |
++==========================+======+===========+=====+=====+=========+
+| LED Brightness           | V0   | Integer   | 0   | 255 | 128     |
++--------------------------+------+-----------+-----+-----+---------+
+| Light group selector     | V1   | Integer   | 0   | 4   | 0       |
++--------------------------+------+-----------+-----+-----+---------+
+| Current Color            | V2   | String    | -   | -   | -       |
++--------------------------+------+-----------+-----+-----+---------+
+| Timer time               | V3   | String    | -   | -   | -       |
++--------------------------+------+-----------+-----+-----+---------+
+| Timer start button       | V4   | Integer   | 0   | 1   | 0       |
++--------------------------+------+-----------+-----+-----+---------+
+| Alarm time               | V5   | String    | -   | -   | -       |
++--------------------------+------+-----------+-----+-----+---------+
+| Alarm start button       | V6   | Integer   | 0   | 1   | 0       |
++--------------------------+------+-----------+-----+-----+---------+
+| Night mode time          | V7   | String    | -   | -   | -       |
++--------------------------+------+-----------+-----+-----+---------+
+| Night mode Brightness    | V8   | Integer   | 0   | 255 | 0       |
++--------------------------+------+-----------+-----+-----+---------+
+| Number of separation dots| V9   | Integer   | 0   | 2   | 0       |
++--------------------------+------+-----------+-----+-----+---------+
+| Hour color               | V10  | String    | -   | -   | -       |
++--------------------------+------+-----------+-----+-----+---------+
+| Minute color             | V11  | String    | -   | -   | -       |
++--------------------------+------+-----------+-----+-----+---------+
+| Internal color           | V12  | String    | -   | -   | -       |
++--------------------------+------+-----------+-----+-----+---------+
+| Dot color                | V13  | String    | -   | -   | -       |
++--------------------------+------+-----------+-----+-----+---------+
 
-Total Energy used: 1400 or if using the optional dot mode selector 1800
+3. Now you can start replicating the Dashboard in the app. Here are some screenshots of it. You can see most of the pin associations in the screenshot itself:
 
-For easy cloning you can use this:
+.. image:: ../images/BlynkAppDashboardSetup1.jpg
 
-.. image:: ../images/BlynkSetupMinimalQR.png
+.. image:: ../images/BlynkAppDashboardSetup2.jpg
 
-**********************
-Fully featured example
-**********************
+Some settings which are not obvious from the screenshots above:
 
-This one is an extension of the minimal example to also include a Timer and an Alarm function.
+Hour/min/int/dot selectors:
+	Should be set to toggle
 
-.. image:: ../images/BlynkAppFull_main.jpg
+zeRGBa:
+	Pin: V2
 
-.. image:: ../images/BlynkAppFull_settings.jpg
+	Send on release: false
 
-In addition to the same elements used in the Minimal example this config has been extended by these elements:
+	send interval: 300ms
 
-+------------+-------------+-------------------+-----+---------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Element    | Energy used | Purpose           | Pin | Comment                                                                                                                                                 |
-+============+=============+===================+=====+=========================================================================================================================================================+
-| Time input | 200         | Timer setting     | V3  | Format -> HH:mm; allow start/stop input -> No; allow day of week selection -> No; Allow sunset/sunrise selection -> No; Allow Timezone selection -> No  |
-+------------+-------------+-------------------+-----+---------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Button     | 200         | En/Dis-able Timer | V4  | Mode -> Switch                                                                                                                                          |
-+------------+-------------+-------------------+-----+---------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Time input | 200         | Alarm setting     | V5  | Format -> HH:mm; allow start/stop input -> No; allow day of week selection -> Yes; Allow sunset/sunrise selection -> No; Allow Timezone selection -> No |
-+------------+-------------+-------------------+-----+---------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Button     | 200         | En/Dis-able Alarm | V6  | Mode -> Switch                                                                                                                                          |
-+------------+-------------+-------------------+-----+---------------------------------------------------------------------------------------------------------------------------------------------------------+
+Brightness Slider:
+	Pin: V0
 
-Total Energy used: 2200
+	Send on release: false
 
-For easy cloning you can use this:
+	send interval: 300ms
 
-.. image:: ../images/BlynkSetupFullQR.png
+Timer time selector:
+	Pin: V3
+
+	Format: HH:mm
+
+	All other options are set to false
+
+Alarm time selector:
+	Pin: V5
+
+	Format: HH:mm
+
+	All other options are set to false
+
+Alarm/timer buttons:
+	Should be set to toggle
+
+Night mode time selector:
+	Pin: V7
+
+	Switch start/stop time input to true
+
+Night time brightness slider:
+	Pin: V8
+
+	Send on release: false
+
+	send interval: 300ms
+

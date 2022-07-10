@@ -36,7 +36,7 @@
 		/**
 		 * \brief Template ID for this device. If you want to use your own custom Template you will have to change this
 		 */
-		#define BLYNK_TEMPLATE_ID "TMPLz_acZmIA"
+		#define BLYNK_TEMPLATE_ID "YOUR_TEMPLATE_ID_GOES_HERE"
 
 		/**
 		 * \brief Name of this device in the Blynk app
