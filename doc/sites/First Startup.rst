@@ -1,3 +1,5 @@
+.. _first-startup:
+
 ############################
 The first Startup
 ############################
@@ -31,3 +33,5 @@ The color of the animation determines the state that the ESP is in:
 .. note::
     If you would like to rather not use smart config you can also still go the good old way of hardcoding the WIFI name and password into the code. You can change this setting in your Configuration.h file.
 
+
+- If you want to use the Blynk functionality do not forget to set your blynk auth token and template ID in your Configuration.h file.

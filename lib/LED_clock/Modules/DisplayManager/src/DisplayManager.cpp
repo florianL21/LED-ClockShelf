@@ -279,8 +279,8 @@ void DisplayManager::setInternalLEDColor(CRGB color)
 
 void DisplayManager::setDotLEDColor(CRGB color)
 {
-	#if DISPLAY_FOR_SEPERATION_DOT > -1
-		Displays[DISPLAY_FOR_SEPERATION_DOT]->setColor(color);
+	#if DISPLAY_FOR_SEPARATION_DOT > -1
+		Displays[DISPLAY_FOR_SEPARATION_DOT]->setColor(color);
 	#endif
 }
 
@@ -363,10 +363,10 @@ void DisplayManager::setGlobalBrightness(uint8_t brightness, bool enableSmoothTr
 	}
 }
 
-void DisplayManager::flashSeperationDot(uint8_t numDots)
+void DisplayManager::flashSeparationDot(uint8_t numDots)
 {
-	#if DISPLAY_FOR_SEPERATION_DOT > -1
-		Displays[DISPLAY_FOR_SEPERATION_DOT]->FlashMiddleDot(numDots);
+	#if DISPLAY_FOR_SEPARATION_DOT > -1
+		Displays[DISPLAY_FOR_SEPARATION_DOT]->FlashMiddleDot(numDots);
 	#endif
 }
 
