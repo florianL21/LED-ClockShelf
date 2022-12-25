@@ -1,5 +1,5 @@
 {
-    "name": "LED_24h-Clock",
+    "name": "LED_Clock-Only",
     "version": "1.0.0",
     "build": {
 		"srcFilter": [
@@ -7,12 +7,12 @@
             "+<Modules/*.cpp>",
             "+<Modules/**/*.cpp>",
             "+<Modules/**/*.c>",
-            "+<Config/Animations/24h-clock/*.c>",
-            "+<Config/Animations/24h-clock/*.cpp>",
+            "+<Config/Animations/12h-extended/*.c>",
+            "+<Config/Animations/12h-extended/*.cpp>",
             "+<Config/Blynk/default/*.c>",
             "+<Config/Blynk/default/*.cpp>",
-            "+<Config/Setup/24h-clock/*.c>",
-			"+<Config/Setup/24h-clock/*.cpp>",
+            "+<Config/Setup/12h-extended/*.c>",
+			"+<Config/Setup/12h-extended/*.cpp>",
             "+<Config/Transitions/default/*.c>",
             "+<Config/Transitions/default/*.cpp>"
 		],
@@ -22,9 +22,9 @@
             "-I Modules/DisplayManager/inc",
             "-I Modules/SevenSegment/inc",
             "-I Modules/TimeManager/inc",
-            "-I Config/Setup/24h-clock",
+            "-I Config/Setup/12h-extended",
             "-I Config/Blynk/default",
-            "-I Config/Animations/24h-clock",
+            "-I Config/Animations/12h-extended",
             "-I Config/Transitions/default"
 		]
 	}

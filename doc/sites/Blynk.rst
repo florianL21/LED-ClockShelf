@@ -53,8 +53,16 @@ If someone knows how to share templates on the new blynk cloud please let me kno
 +--------------------------+------+-----------+-----+-----+---------+
 | Dot color                | V13  | String    | -   | -   | -       |
 +--------------------------+------+-----------+-----+-----+---------+
+| Selector Hours           | V14  | Integer   | 0   | 1   | 0       |
++--------------------------+------+-----------+-----+-----+---------+
+| Selector Minutes         | V15  | Integer   | 0   | 1   | 0       |
++--------------------------+------+-----------+-----+-----+---------+
+| Selector Internal        | V16  | Integer   | 0   | 1   | 0       |
++--------------------------+------+-----------+-----+-----+---------+
+| Selector Dot             | V17  | Integer   | 0   | 1   | 0       |
++--------------------------+------+-----------+-----+-----+---------+
 
-3. Now you can start replicating the Dashboard in the app. Here are some screenshots of it. You can see most of the pin associations in the screenshot itself:
+1. Now you can start replicating the Dashboard in the app. Here are some screenshots of it. You can see most of the pin associations in the screenshot itself:
 
 .. image:: ../images/BlynkAppDashboardSetup1.jpg
 
@@ -69,6 +77,8 @@ zeRGBa:
 	Pin: V2
 
 	Send on release: false
+
+	Mode: Merge
 
 	send interval: 300ms
 
@@ -108,3 +118,7 @@ Night time brightness slider:
 
 	send interval: 300ms
 
+Selection buttons:
+	Pins: V14 - V17
+
+	Behavior: Toggle

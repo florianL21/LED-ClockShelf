@@ -54,7 +54,7 @@
 		 * \note I had troubles with using the proper blynk domain so I am using the IP address instead.
 		 * 		 Maybe this could create problems in the future so it is recommended to use the official domain.
 		 */
-		#define BLYNK_SERVER 		"blynk-cloud.com" // "139.59.206.133"
+		#define BLYNK_SERVER 		BLYNK_DEFAULT_DOMAIN
 
 	#endif
 

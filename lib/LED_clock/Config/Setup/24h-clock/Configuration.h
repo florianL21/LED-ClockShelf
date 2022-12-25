@@ -52,7 +52,7 @@
 		/**
 		 * \brief Set the Blynk server address.
 		 */
-		#define BLYNK_SERVER BLYNK_DEFAULT_DOMAIN
+		#define BLYNK_SERVER		BLYNK_DEFAULT_DOMAIN
 
 	#endif
 
