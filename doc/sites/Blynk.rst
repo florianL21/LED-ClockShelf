@@ -82,6 +82,15 @@ zeRGBa:
 
 	send interval: 300ms
 
+	.. note:: **Workaround for iOS users:**
+
+		It seems like blynk has a bug in their RGB widget that will prevent you from selecting the correct virtual pin.
+		To get it working you can follow this workaround:
+
+			1. Set the data stream type for V2 to integer in the blynk web dashboard and apply the change
+			2. Select V2 as the data stream for the RGB widget and save the changes
+			3. Change the data stream type of the V2 pin back to String via the web dashboard, save and apply changes
+
 Brightness Slider:
 	Pin: V0
 
