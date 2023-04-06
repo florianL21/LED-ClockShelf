@@ -136,6 +136,7 @@ void loop()
 	// 	last = millis();
 	// }
     ShelfDisplays->handle();
+	timeM->handle();
 }
 
 void AlarmTriggered()

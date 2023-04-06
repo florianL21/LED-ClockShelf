@@ -68,6 +68,7 @@ private:
 	bool AlarmActive;
 	bool AlarmTriggered;
 	bool AlarmCleared;
+	bool SynchronizeRequested;
 
 	TimeManager();
 	void advanceByOneSecondOffline();
@@ -89,6 +90,11 @@ public:
 	 * \returns true if init was successful
 	 */
 	bool init();
+
+	/**
+	 * \brief Handle any Time manager tasks that need to be handled outside of interrupts
+	 */
+	void handle();
 
 	/**
 	 * \brief Disable the timer and deactivate the interrupt

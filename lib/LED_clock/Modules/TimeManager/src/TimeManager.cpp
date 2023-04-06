@@ -30,6 +30,7 @@ TimeManager::TimeManager()
 	AlarmActive = false;
 	AlarmTriggered = false;
 	AlarmCleared = false;
+	SynchronizeRequested = false;
 }
 
 TimeManager::~TimeManager()
@@ -248,6 +249,22 @@ void TimeManager::clearAlarm()
 	AlarmCleared = true;
 }
 
+void TimeManager::handle()
+{
+	if(SynchronizeRequested == true)
+	{
+		if(synchronize() == true)
+		{
+			offlineTimeCounter = 0;
+		}
+		else
+		{
+			advanceByOneSecondOffline();
+		}
+		SynchronizeRequested = false;
+	}
+}
+
 void IRAM_ATTR onTimer()
 {
 	TimeManager* timeM = TimeManager::getInstance();
@@ -255,14 +272,7 @@ void IRAM_ATTR onTimer()
 	#if TIME_MANAGER_DEMO_MODE == false
 		if(timeM->offlineTimeCounter++ >= TIME_SYNC_INTERVAL && WiFi.status() == WL_CONNECTED)
 		{
-			if(timeM->synchronize() == true)
-			{
-				timeM->offlineTimeCounter = 0;
-			}
-			else
-			{
-				timeM->advanceByOneSecondOffline();
-			}
+			timeM->SynchronizeRequested = true;
 		}
 		else
 		{
