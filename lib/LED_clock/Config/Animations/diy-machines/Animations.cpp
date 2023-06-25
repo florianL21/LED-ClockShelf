@@ -27,31 +27,31 @@ Animator::ComplexAmination* InitIndefiniteLoadingAnimation(uint16_t totalAnimati
 	#undef LENGTH
 	#define LENGTH 2
 	Animator::animationStep* step0 = new Animator::animationStep;
-	step0->arrayIndex 		= new int16_t[LENGTH]								{SEGMENT(BOTTOM_MIDDLE_SEGMENT, HIGHER_DIGIT_HOUR_DISPLAY), NO_SEGMENTS};
+	step0->arrayIndex 			= new int16_t[LENGTH]								{SEGMENT(BOTTOM_MIDDLE_SEGMENT, LOWER_DIGIT_MINUTE_DISPLAY), NO_SEGMENTS};
 	step0->animationEffects 	= new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateInToRight, 						NO_ANIMATION};
 	step0->easingEffects 		= new EasingBase*[LENGTH] 							{NO_EASING, 												NO_EASING};
 	Animator::animationStep* step1 = new Animator::animationStep;
-	step1->arrayIndex 			= new int16_t[LENGTH]								{SEGMENT(BOTTOM_MIDDLE_SEGMENT, HIGHER_DIGIT_HOUR_DISPLAY), SEGMENT(BOTTOM_RIGHT_SEGMENT, HIGHER_DIGIT_HOUR_DISPLAY)};
+	step1->arrayIndex 			= new int16_t[LENGTH]								{SEGMENT(BOTTOM_MIDDLE_SEGMENT, LOWER_DIGIT_MINUTE_DISPLAY), SEGMENT(BOTTOM_RIGHT_SEGMENT, LOWER_DIGIT_MINUTE_DISPLAY)};
 	step1->animationEffects 	= new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateOutToRight, 						AnimationEffects::AnimateInToTop};
 	step1->easingEffects 		= new EasingBase*[LENGTH] 							{NO_EASING, 												NO_EASING};
 	Animator::animationStep* step2 = new Animator::animationStep;
-	step2->arrayIndex 			= new int16_t[LENGTH]								{SEGMENT(BOTTOM_RIGHT_SEGMENT, HIGHER_DIGIT_HOUR_DISPLAY), 	SEGMENT(TOP_RIGHT_SEGMENT, HIGHER_DIGIT_HOUR_DISPLAY)};
+	step2->arrayIndex 			= new int16_t[LENGTH]								{SEGMENT(BOTTOM_RIGHT_SEGMENT, LOWER_DIGIT_MINUTE_DISPLAY), 	SEGMENT(TOP_RIGHT_SEGMENT, LOWER_DIGIT_MINUTE_DISPLAY)};
 	step2->animationEffects 	= new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateOutToTop, 						AnimationEffects::AnimateInToTop};
 	step2->easingEffects 		= new EasingBase*[LENGTH] 							{NO_EASING, 												NO_EASING};
 	Animator::animationStep* step3 = new Animator::animationStep;
-	step3->arrayIndex 			= new int16_t[LENGTH]								{SEGMENT(TOP_RIGHT_SEGMENT, HIGHER_DIGIT_HOUR_DISPLAY), 	SEGMENT(TOP_MIDDLE_SEGMENT, HIGHER_DIGIT_HOUR_DISPLAY)};
+	step3->arrayIndex 			= new int16_t[LENGTH]								{SEGMENT(TOP_RIGHT_SEGMENT, LOWER_DIGIT_MINUTE_DISPLAY), 	SEGMENT(TOP_MIDDLE_SEGMENT, LOWER_DIGIT_MINUTE_DISPLAY)};
 	step3->animationEffects 	= new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateOutToTop, 						AnimationEffects::AnimateInToLeft};
 	step3->easingEffects 		= new EasingBase*[LENGTH] 							{NO_EASING, 												NO_EASING};
 	Animator::animationStep* step4 = new Animator::animationStep;
-	step4->arrayIndex 			= new int16_t[LENGTH]								{SEGMENT(TOP_MIDDLE_SEGMENT, HIGHER_DIGIT_HOUR_DISPLAY), 	SEGMENT(TOP_LEFT_SEGMENT, HIGHER_DIGIT_HOUR_DISPLAY)};
+	step4->arrayIndex 			= new int16_t[LENGTH]								{SEGMENT(TOP_MIDDLE_SEGMENT, LOWER_DIGIT_MINUTE_DISPLAY), 	SEGMENT(TOP_LEFT_SEGMENT, LOWER_DIGIT_MINUTE_DISPLAY)};
 	step4->animationEffects 	= new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateOutToLeft, 						AnimationEffects::AnimateInToBottom};
 	step4->easingEffects 		= new EasingBase*[LENGTH] 							{NO_EASING, 												NO_EASING};
 	Animator::animationStep* step5 = new Animator::animationStep;
-	step5->arrayIndex 			= new int16_t[LENGTH]								{SEGMENT(TOP_LEFT_SEGMENT, HIGHER_DIGIT_HOUR_DISPLAY), 		SEGMENT(BOTTOM_LEFT_SEGMENT, HIGHER_DIGIT_HOUR_DISPLAY)};
+	step5->arrayIndex 			= new int16_t[LENGTH]								{SEGMENT(TOP_LEFT_SEGMENT, LOWER_DIGIT_MINUTE_DISPLAY), 		SEGMENT(BOTTOM_LEFT_SEGMENT, LOWER_DIGIT_MINUTE_DISPLAY)};
 	step5->animationEffects 	= new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateOutToBottom, 						AnimationEffects::AnimateInToBottom};
 	step5->easingEffects 		= new EasingBase*[LENGTH] 							{NO_EASING, 												NO_EASING};
 	Animator::animationStep* step6 = new Animator::animationStep;
-	step6->arrayIndex 			= new int16_t[LENGTH]								{SEGMENT(BOTTOM_LEFT_SEGMENT, HIGHER_DIGIT_HOUR_DISPLAY), NO_SEGMENTS};
+	step6->arrayIndex 			= new int16_t[LENGTH]								{SEGMENT(BOTTOM_LEFT_SEGMENT, LOWER_DIGIT_MINUTE_DISPLAY), NO_SEGMENTS};
 	step6->animationEffects 	= new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateOutToBottom, 						NO_ANIMATION};
 	step6->easingEffects 		= new EasingBase*[LENGTH] 							{NO_EASING, 												NO_EASING};
 
@@ -76,27 +76,27 @@ Animator::ComplexAmination* InitLoadingProgressAnimation(uint16_t totalAnimation
 	#undef LENGTH
 	#define LENGTH 1
 	Animator::animationStep* step0 = new Animator::animationStep;
-	step0->arrayIndex 		= new int16_t[LENGTH]									{SEGMENT(BOTTOM_MIDDLE_SEGMENT, HIGHER_DIGIT_HOUR_DISPLAY)};
+	step0->arrayIndex 			= new int16_t[LENGTH]								{SEGMENT(BOTTOM_MIDDLE_SEGMENT, LOWER_DIGIT_MINUTE_DISPLAY)};
 	step0->animationEffects 	= new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateInToRight};
 	step0->easingEffects 		= new EasingBase*[LENGTH] 							{NO_EASING};
 	Animator::animationStep* step1 = new Animator::animationStep;
-	step1->arrayIndex 			= new int16_t[LENGTH]								{SEGMENT(BOTTOM_RIGHT_SEGMENT, HIGHER_DIGIT_HOUR_DISPLAY)};
+	step1->arrayIndex 			= new int16_t[LENGTH]								{SEGMENT(BOTTOM_RIGHT_SEGMENT, LOWER_DIGIT_MINUTE_DISPLAY)};
 	step1->animationEffects 	= new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateInToTop};
 	step1->easingEffects 		= new EasingBase*[LENGTH] 							{NO_EASING};
 	Animator::animationStep* step2 = new Animator::animationStep;
-	step2->arrayIndex 			= new int16_t[LENGTH]								{SEGMENT(TOP_RIGHT_SEGMENT, HIGHER_DIGIT_HOUR_DISPLAY)};
+	step2->arrayIndex 			= new int16_t[LENGTH]								{SEGMENT(TOP_RIGHT_SEGMENT, LOWER_DIGIT_MINUTE_DISPLAY)};
 	step2->animationEffects 	= new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateInToTop};
 	step2->easingEffects 		= new EasingBase*[LENGTH] 							{NO_EASING};
 	Animator::animationStep* step3 = new Animator::animationStep;
-	step3->arrayIndex 			= new int16_t[LENGTH]								{SEGMENT(TOP_MIDDLE_SEGMENT, HIGHER_DIGIT_HOUR_DISPLAY)};
+	step3->arrayIndex 			= new int16_t[LENGTH]								{SEGMENT(TOP_MIDDLE_SEGMENT, LOWER_DIGIT_MINUTE_DISPLAY)};
 	step3->animationEffects 	= new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateInToLeft};
 	step3->easingEffects 		= new EasingBase*[LENGTH] 							{NO_EASING};
 	Animator::animationStep* step4 = new Animator::animationStep;
-	step4->arrayIndex 			= new int16_t[LENGTH]								{SEGMENT(TOP_LEFT_SEGMENT, HIGHER_DIGIT_HOUR_DISPLAY)};
+	step4->arrayIndex 			= new int16_t[LENGTH]								{SEGMENT(TOP_LEFT_SEGMENT, LOWER_DIGIT_MINUTE_DISPLAY)};
 	step4->animationEffects 	= new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateInToBottom};
 	step4->easingEffects 		= new EasingBase*[LENGTH] 							{NO_EASING};
 	Animator::animationStep* step5 = new Animator::animationStep;
-	step5->arrayIndex 			= new int16_t[LENGTH]								{SEGMENT(BOTTOM_LEFT_SEGMENT, HIGHER_DIGIT_HOUR_DISPLAY)};
+	step5->arrayIndex 			= new int16_t[LENGTH]								{SEGMENT(BOTTOM_LEFT_SEGMENT, LOWER_DIGIT_MINUTE_DISPLAY)};
 	step5->animationEffects 	= new AnimatableObject::AnimationFunction[LENGTH] 	{AnimationEffects::AnimateInToBottom};
 	step5->easingEffects 		= new EasingBase*[LENGTH] 							{NO_EASING};
 
