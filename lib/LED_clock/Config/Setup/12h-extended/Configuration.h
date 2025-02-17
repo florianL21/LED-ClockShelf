@@ -194,7 +194,7 @@
 
 #if USE_NIGHT_MODE == true
 
-	/**
+	 /**
 	 * \brief Start hour for the night mode
 	 */
 	#define DEFAULT_NIGHT_MODE_START_HOUR 22
