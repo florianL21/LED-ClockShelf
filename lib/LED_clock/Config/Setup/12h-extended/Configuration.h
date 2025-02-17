@@ -38,6 +38,8 @@
 		 */
 		#define BLYNK_TEMPLATE_ID "YOUR_TEMPLATE_ID_GOES_HERE"
 
+		#define BLYNK_TEMPLATE_NAME "YOUR_TEMPLATE_NAME_GOES_HERE"
+
 		/**
 		 * \brief Name of this device in the Blynk app
 		 */
@@ -194,7 +196,7 @@
 
 #if USE_NIGHT_MODE == true
 
-	/**
+         /**
 	 * \brief Start hour for the night mode
 	 */
 	#define DEFAULT_NIGHT_MODE_START_HOUR 22
@@ -385,17 +387,19 @@ enum DisplayIDs {
 	/**
 	 * \brief AnalogRead value if the light sensor reads complete darkness
 	 */
-	#define LIGHT_SENSOR_MIN			0
+	#define LIGHT_SENSOR_MIN			4095
 
 	/**
 	 * \brief AnalogRead value if the light sensor reads the brightest
 	 */
-	#define LIGHT_SENSOR_MAX			4095
+	#define LIGHT_SENSOR_MAX			0				
 
 	/**
-	 * \brief Value between 0 and 255 that determines how much the light sensor values can influence the led brightness
+	 * \brief The dimming percentage (between 0 and 100) applied to DEFAULT_CLOCK_BRIGHTNESS when the light sensor detects low light conditions
+	 *        Example: DEFAULT_CLOCK_BRIGHTNESS = 128; LIGHT_SENSOR_PERCENTAGE = 85; if the light sensor reads complete darkness (4095),
+	 *        LED brightness will reduced by 85% to 19 brightness
 	 */
-	#define LIGHT_SENSOR_SENSITIVITY	100
+	#define LIGHT_SENSOR_PERCENTAGE		85
 
 #endif
 
