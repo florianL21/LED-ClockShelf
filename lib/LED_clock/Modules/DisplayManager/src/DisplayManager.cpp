@@ -102,7 +102,7 @@ void DisplayManager::takeBrightnessMeasurement()
 			{
 				BrightnessListSum += lightSensorMeasurements.get(i);
 			}
-			lightSensorBrightnessNew = map(BrightnessListSum / lightSensorMeasurements.size(), 0, 4095, 0, 255);
+			lightSensorBrightnessNew = map(BrightnessListSum / lightSensorMeasurements.size(), 4095, 0, 0, 100);
 		}
 		else
 		{
@@ -120,14 +120,13 @@ void DisplayManager::takeBrightnessMeasurement()
 			{
 				BrightnessListSum += sortedMeasurements.get(i + medianOffset);
 			}
-			lightSensorBrightnessNew = map(BrightnessListSum / LIGHT_SENSOR_MEDIAN_WIDTH, LIGHT_SENSOR_MIN, LIGHT_SENSOR_MAX, LIGHT_SENSOR_SENSITIVITY, 0);
+			lightSensorBrightnessNew = map(BrightnessListSum / LIGHT_SENSOR_MEDIAN_WIDTH, LIGHT_SENSOR_MAX, LIGHT_SENSOR_MIN, 0, LIGHT_SENSOR_PERCENTAGE);
 		}
 		if(lightSensorBrightnessNew != lightSensorBrightness)
 		{
 			lightSensorBrightness = lightSensorBrightnessNew;
 			setGlobalBrightness(currentLEDBrightness);
 		}
-		// Serial.printf("Sensor brightness: %d\n\r", lightSensorBrightness);
 	}
 }
 #endif
@@ -347,10 +346,13 @@ void DisplayManager::setGlobalBrightness(uint8_t brightness, bool enableSmoothTr
 	currentLEDBrightness = brightness;
 
 	#if ENABLE_LIGHT_SENSOR == true
-		LEDBrightnessSetPoint = constrain(brightness - lightSensorBrightness, 0, 255);
+	    double double_lightSensorBrightness = static_cast<double>(lightSensorBrightness);
+		double double_brightness = static_cast<double>(brightness);
+		LEDBrightnessSetPoint = constrain(double_brightness * (1 - (double_lightSensorBrightness / 100)), 0, 255);
 	#else
 		LEDBrightnessSetPoint = brightness;
 	#endif
+
 	if(enableSmoothTransition)
 	{
 		LEDBrightnessSmoothingStartPoint = LEDBrightnessCurrent;

@@ -87,12 +87,7 @@ void setup()
 {
 	Serial.begin(115200);
 
-	ShelfDisplays->InitSegments(0, NUM_LEDS_PER_SEGMENT, WIFI_CONNECTING_COLOR, 50);
-
-	ShelfDisplays->setHourSegmentColors(HOUR_COLOR);
-	ShelfDisplays->setMinuteSegmentColors(MINUTE_COLOR);
-	ShelfDisplays->setInternalLEDColor(INTERNAL_COLOR);
-	ShelfDisplays->setDotLEDColor(SEPARATION_DOT_COLOR);
+	ShelfDisplays->InitSegments(0, NUM_LEDS_PER_SEGMENT, WIFI_CONNECTING_COLOR, DEFAULT_CLOCK_BRIGHTNESS);
 
 	#if RUN_WITHOUT_WIFI == false
 		wifiSetup();
@@ -116,6 +111,11 @@ void setup()
 	timeM->setTimerTickCallback(TimerTick);
 	timeM->setTimerDoneCallback(TimerDone);
 	timeM->setAlarmCallback(AlarmTriggered);
+
+	ShelfDisplays->setHourSegmentColors(HOUR_COLOR);
+	ShelfDisplays->setMinuteSegmentColors(MINUTE_COLOR);
+	ShelfDisplays->setInternalLEDColor(INTERNAL_COLOR);
+	ShelfDisplays->setDotLEDColor(SEPARATION_DOT_COLOR);
 
 	Serial.println("Displaying startup animation...");
 	startupAnimation();
@@ -282,7 +282,7 @@ void TimerDone()
 			#endif
 			ShelfDisplays->setAllSegmentColors(OTA_UPDATE_COLOR);
 			ShelfDisplays->turnAllLEDsOff(); //instead of the loading animation show a progress bar
-			ShelfDisplays->setGlobalBrightness(50);
+			ShelfDisplays->setGlobalBrightness(DEFAULT_CLOCK_BRIGHTNESS, false);
 		})
 		.onEnd([]()
 		{
