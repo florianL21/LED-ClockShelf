@@ -65,7 +65,7 @@ void ClockState::handleStates()
 					if(isinNightMode == false)
 					{
 						isinNightMode = true;
-						ShelfDisplays->setGlobalBrightness(nightModeBrightness);
+						ShelfDisplays->setGlobalBrightness(nightModeBrightness, false);
 					}
 				}
 				else
@@ -73,7 +73,7 @@ void ClockState::handleStates()
 					if(isinNightMode == true)
 					{
 						isinNightMode = false;
-						ShelfDisplays->setGlobalBrightness(clockBrightness);
+						ShelfDisplays->setGlobalBrightness(clockBrightness, false);
 					}
 				}
 			#endif
